@@ -1,22 +1,37 @@
-### Windows
-# Windows thumbnail cache files
-Thumbs.db
+# ==========================================
+# Premake & Build Output Directories
+# ==========================================
+build/
+bin/
+bin-int/
+obj/
+ipch/
 
-# Folder config file
-[Dd]esktop.ini
+# ==========================================
+# Visual Studio Project & Solution Files
+# (Generated automatically via Premake)
+# ==========================================
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.vcxproj.user*
+*.vcxproj.idb
 
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
-
-# Windows shortcuts
-*.lnk
-
-### VisualStudio
-# User-specific files
+# ==========================================
+# Visual Studio User Specific & Cache Files
+# ==========================================
+.vs/
 *.suo
 *.user
+*.userosscache
+*.sln.docstates
+*.db
+*.opendb
 
-# Build results
+# ==========================================
+# C++ Build Artifacts & Intermediate Files
+# ==========================================
 [Dd]ebug/
 [Rr]elease/
 x64/
@@ -24,22 +39,32 @@ x86/
 [Ww][Ii][Nn]32/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
-[Bb]in/
-[Oo]bj/
 
-# Visual Studio cache/options directory
-.vs/
+*.obj
+*.ilk
+*.pdb
+*.tlog
+*.idb
+*.exp
+*.log
+*.tmp
 
-# MSTest test Results
+# Executables & Dynamic Libraries (Except premake5.exe)
+*.exe
+!premake5.exe
+*.dll
+
+# ==========================================
+# Test & Diagnostics
+# ==========================================
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 
-# NuGet
-*.nupkg
-**/[Pp]ackages/*
-!**/[Pp]ackages/build/
-*.nuget.props
-*.nuget.targets
-
-# Publish Web Output
-*.[Pp]ublish.xml
+# ==========================================
+# OS / Environment Files
+# ==========================================
+Thumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.lnk
+.DS_Store
