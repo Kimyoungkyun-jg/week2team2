@@ -59,6 +59,7 @@ public:
 	FLOAT ClearColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f };
 	unsigned int Stride;
 	float wAspectRatio;
+	float GetAspectRatio() { return wAspectRatio; }
 
 	// 깊이 스텐실 버퍼
 	ID3D11DepthStencilView* depthStencilView = nullptr;

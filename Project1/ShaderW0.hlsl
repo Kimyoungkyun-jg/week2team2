@@ -4,8 +4,8 @@ cbuffer constants : register(b0) // FConstants
     matrix viewmat;
     matrix projmat;
     float AspectRatio;
-    float3 Pad;
-};
+    float4x4 WVP;
+}
 
 
 struct VS_INPUT
@@ -40,6 +40,7 @@ PS_INPUT mainVS(VS_INPUT input) // Vertex Shader
     output.position = mul(output.position, projmat);
 
     
+    output.position = mul(input.position, WVP);
     output.color = input.color;
     
     return output;

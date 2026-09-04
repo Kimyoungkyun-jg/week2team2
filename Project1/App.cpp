@@ -2,6 +2,7 @@
 #include "App.h"
 #include "Scenes/DefaultScene.h"
 #include "SceneManager.h"
+#include "Camera.h"
 
 App* App::Instance = nullptr;
 
@@ -91,6 +92,22 @@ void App::mainLoop()
 
 void App::Update()
 {
+	// ----------------------------------------------------------
+	// 카메라 적용 확인용 임시코드(나중에 InputManager로 이사 필요)
+	// ----------------------------------------------------------
+	Camera& camera = Camera::GetInstance();
+	float speed = 5.0f * DELTA;
+	if (KEY_PRESS(ImGuiKey_W)) camera.MoveForward(speed);
+	if (KEY_PRESS(ImGuiKey_S)) camera.MoveForward(-speed);
+	if (KEY_PRESS(ImGuiKey_D)) camera.MoveRight(speed);
+	if (KEY_PRESS(ImGuiKey_A)) camera.MoveRight(-speed);
+
+	if (MOUSE_PRESS(0)) {
+		ImVec2 delta = ImGui::GetIO().MouseDelta;
+		camera.Rotate(delta.x * 0.2f, -delta.y * 0.2f);
+	}
+
+
 	SCENE.Update(DELTA);
 }
 

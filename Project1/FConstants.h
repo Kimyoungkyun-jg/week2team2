@@ -9,5 +9,6 @@ struct FConstants
 	DirectX::XMMATRIX projmat;
 
 	float AspectRatio;
-	float Pad[3];
+
+	DirectX::XMFLOAT4X4 WVP;
 };

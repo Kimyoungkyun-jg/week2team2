@@ -337,6 +337,16 @@ void Renderer::Update()
 		HRESULT hr = DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &constantbufferMSR);
 		if (SUCCEEDED(hr))
 		{
+			constants->Offset = Offset;
+			constants->Rotation = Rotation; // Radians
+			constants->Scale = Scale;
+			constants->AspectRatio = wAspectRatio;
+			DirectX::XMStoreFloat4x4(
+				&constants->WVP, DirectX::XMMatrixTranspose(WVP));
+		}
+		DeviceContext->Unmap(ConstantBuffer, 0);
+	}
+}
 			memcpy(constantbufferMSR.pData, &constants, sizeof(FConstants));
 			DeviceContext->Unmap(ConstantBuffer, 0);
 		}

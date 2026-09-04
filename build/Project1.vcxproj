@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -110,6 +110,7 @@
     <ClInclude Include="..\Project1\AActor.h" />
     <ClInclude Include="..\Project1\ACollider.h" />
     <ClInclude Include="..\Project1\App.h" />
+    <ClInclude Include="..\Project1\Camera.h" />
     <ClInclude Include="..\Project1\CollisionManager.h" />
     <ClInclude Include="..\Project1\D3D11Util.h" />
     <ClInclude Include="..\Project1\FConstants.h" />
@@ -141,6 +142,7 @@
     <ClCompile Include="..\Project1\AActor.cpp" />
     <ClCompile Include="..\Project1\ACollider.cpp" />
     <ClCompile Include="..\Project1\App.cpp" />
+    <ClCompile Include="..\Project1\Camera.cpp" />
     <ClCompile Include="..\Project1\CollisionManager.cpp" />
     <ClCompile Include="..\Project1\D3D11Util.cpp" />
     <ClCompile Include="..\Project1\FVector.cpp" />

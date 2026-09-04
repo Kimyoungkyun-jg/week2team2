@@ -40,6 +40,15 @@ struct FVector
 		return a.x * b.y - a.y * b.x;
 	}
 
+	static FVector Cross3D(const FVector& a, const FVector& b)
+	{
+		return FVector(
+			a.y * b.z - a.z * b.y,
+			a.z * b.x - a.x * b.z,
+			a.x * b.y - a.y * b.x
+		);
+	}
+
 	static FVector Cross(float w, FVector r) // w = (0, 0, w), r = 충돌지점 - 중심 거리
 	{
 		return FVector(-w * r.y, w * r.x, 0.0f);
