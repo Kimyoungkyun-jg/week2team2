@@ -62,6 +62,10 @@
 #define SCENE SceneManager::GetInstance()
 #define DELTA ImGui::GetIO().DeltaTime
 
+#define WIN_WIDTH 1920	
+#define WIN_HEIGHT 1080
+
+
 //Scene Header
 #include "Scene.h"
 #include "SceneManager.h"

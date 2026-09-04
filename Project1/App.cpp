@@ -63,7 +63,7 @@ void App::Initwindow(HINSTANCE hInstance)
 	RegisterClassW(&wndclass);
 
 	m_mainWindow = CreateWindowExW(0, WindowClass, Title, WS_POPUP | WS_VISIBLE | WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT, CW_USEDEFAULT, 1024, 1024,
+		CW_USEDEFAULT, CW_USEDEFAULT, WIN_WIDTH, WIN_HEIGHT,
 		nullptr, nullptr, wndclass.hInstance, nullptr);
 
 	if (m_mainWindow)

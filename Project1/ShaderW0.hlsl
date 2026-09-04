@@ -6,6 +6,22 @@ cbuffer constants : register(b0) // FConstants
     float AspectRatio;
 }
 
+cbuffer world : register(b1)
+{
+    matrix worldmat;
+}
+
+cbuffer view : register(b2)
+{
+    matrix viewmat;
+}
+
+cbuffer projection : register(b3)
+{
+    matrix projmat;
+}
+
+
 struct VS_INPUT
 {
     float4 position : POSITION;
@@ -22,20 +38,21 @@ PS_INPUT mainVS(VS_INPUT input) // Vertex Shader
 {
     PS_INPUT output;
     
-    // Scale
-    float2 scaled = input.position.xy * Scale.xy;
+    //// Scale
+    //float2 scaled = input.position.xy * Scale.xy;
     
-    // Rotate
-    float cosTheta = cos(Rotation);
-    float sinTheta = sin(Rotation);
-    float2 rotated = float2(scaled.x * cosTheta - scaled.y * sinTheta, scaled.x * sinTheta + scaled.y * cosTheta);
+    //// Rotate
+    //float cosTheta = cos(Rotation);
+    //float sinTheta = sin(Rotation);
+    //float2 rotated = float2(scaled.x * cosTheta - scaled.y * sinTheta, scaled.x * sinTheta + scaled.y * cosTheta);
     
-    // Offset
-    float2 translated = rotated + Offset.xy;
+    //// Offset
+    //float2 translated = rotated + Offset.xy;
     
-    translated.x /= AspectRatio;
+    output.position = mul(input.position, worldmat);
+    output.position = mul(output.position, viewmat);
+    output.position = mul(output.position, projmat);
     
-    output.position = float4(translated, input.position.z, 1.0);
     output.color = input.color;
     
     return output;

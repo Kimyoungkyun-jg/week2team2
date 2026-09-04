@@ -7,12 +7,11 @@ void Renderer::Create(HWND hWindow)
 	CreateDeviceAndSwapChain(hWindow);
 	CreateFrameBuffer();
 	CreateRasterizerState();
-	CreateD2D();
+
 }
 
 void Renderer::Release()
 {
-	ReleaseD2D();
 	ReleaseRasterizerState();
 	if (DeviceContext)
 	{
@@ -126,34 +125,20 @@ void Renderer::CreateShader()
 	ID3DBlob* pixelshaderCSO = nullptr;
 	ID3DBlob* errorBlob = nullptr;
 
-	const wchar_t* shaderPaths[] = {
-		L"ShaderW0.hlsl",
-		L"Project1/ShaderW0.hlsl",
-		L"../Project1/ShaderW0.hlsl"
-	};
+	const wchar_t* shaderPath = L"ShaderW0.hlsl";
 
-	const wchar_t* validShaderPath = nullptr;
-	HRESULT hr = E_FAIL;
-
-	for (const wchar_t* path : shaderPaths)
-	{
-		hr = D3DCompileFromFile(
-			path, nullptr, nullptr,
-			"mainVS", "vs_5_0", 0, 0, &vertexshaderCSO, &errorBlob);
-		if (SUCCEEDED(hr))
-		{
-			validShaderPath = path;
-			break;
-		}
-		if (errorBlob)
-		{
-			errorBlob->Release();
-			errorBlob = nullptr;
-		}
-	}
+	// Vertex Shader 컴파일
+	HRESULT hr = D3DCompileFromFile(
+		shaderPath, nullptr, nullptr,
+		"mainVS", "vs_5_0", 0, 0, &vertexshaderCSO, &errorBlob);
 
 	if (FAILED(hr) || !vertexshaderCSO)
 	{
+		if (errorBlob)
+		{
+			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+			errorBlob->Release();
+		}
 		OutputDebugStringA("Failed to compile vertex shader!\n");
 		return;
 	}
@@ -162,9 +147,10 @@ void Renderer::CreateShader()
 		vertexshaderCSO->GetBufferPointer(),
 		vertexshaderCSO->GetBufferSize(), nullptr, &SimpleVertexShader);
 
+	// Pixel Shader 컴파일
 	hr = D3DCompileFromFile(
-		validShaderPath, nullptr, nullptr, "mainPS",
-		"ps_5_0", 0, 0, &pixelshaderCSO, &errorBlob);
+		shaderPath, nullptr, nullptr,
+		"mainPS", "ps_5_0", 0, 0, &pixelshaderCSO, &errorBlob);
 
 	if (FAILED(hr) || !pixelshaderCSO)
 	{
@@ -361,127 +347,3 @@ void Renderer::SwapBuffer()
 	SwapChain->Present(1, 0);
 }
 
-bool Renderer::CreateD2D()
-{
-	if (!SwapChain) return false;
-
-	HRESULT hr;
-	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &D2DFactory);
-	if (FAILED(hr)) return false;
-
-	hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&DWriteFactory));
-	if (FAILED(hr)) return false;
-
-	IDXGISurface* surface = nullptr;
-	hr = SwapChain->GetBuffer(0, IID_PPV_ARGS(&surface));
-	if (FAILED(hr)) return false;
-
-	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
-		D2D1_RENDER_TARGET_TYPE_DEFAULT,
-		D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED)
-	);
-
-	hr = D2DFactory->CreateDxgiSurfaceRenderTarget(surface, &props, &D2DRenderTarget);
-	surface->Release();
-	if (FAILED(hr)) return false;
-
-	CoInitialize(nullptr);
-	hr = CoCreateInstance(
-		CLSID_WICImagingFactory,
-		nullptr,
-		CLSCTX_INPROC_SERVER,
-		IID_PPV_ARGS(&WICFactory)
-	);
-	if (FAILED(hr)) return false;
-
-	return true;
-}
-
-void Renderer::ReleaseD2D()
-{
-	if (D2DRenderTarget) { D2DRenderTarget->Release(); D2DRenderTarget = nullptr; }
-	if (DWriteFactory) { DWriteFactory->Release(); DWriteFactory = nullptr; }
-	if (D2DFactory) { D2DFactory->Release(); D2DFactory = nullptr; }
-	if (WICFactory) { WICFactory->Release(); WICFactory = nullptr; }
-}
-
-ID2D1Bitmap* Renderer::LoadBitmapFromFile(const wchar_t* uri)
-{
-	if (!WICFactory || !D2DRenderTarget) return nullptr;
-
-	IWICBitmapDecoder* decoder = nullptr;
-	IWICBitmapFrameDecode* frame = nullptr;
-	IWICFormatConverter* converter = nullptr;
-	ID2D1Bitmap* bitmap = nullptr;
-
-	if (FAILED(WICFactory->CreateDecoderFromFilename(uri, nullptr, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &decoder)))
-	{
-		return nullptr;
-	}
-
-	if (FAILED(decoder->GetFrame(0, &frame)))
-	{
-		decoder->Release();
-		return nullptr;
-	}
-
-	if (FAILED(WICFactory->CreateFormatConverter(&converter)))
-	{
-		frame->Release();
-		decoder->Release();
-		return nullptr;
-	}
-
-	converter->Initialize(
-		frame,
-		GUID_WICPixelFormat32bppPBGRA,
-		WICBitmapDitherTypeNone,
-		nullptr,
-		0.0f,
-		WICBitmapPaletteTypeMedianCut
-	);
-
-	D2DRenderTarget->CreateBitmapFromWicBitmap(converter, nullptr, &bitmap);
-
-	converter->Release();
-	frame->Release();
-	decoder->Release();
-
-	return bitmap;
-}
-
-void Renderer::DrawBitmap(ID2D1Bitmap* bitmap, float left, float top, float width, float height, float opacity)
-{
-	if (!D2DRenderTarget || !bitmap) return;
-
-	D2D1_RECT_F destRect = D2D1::RectF(left, top, left + width, top + height);
-	D2DRenderTarget->BeginDraw();
-	D2DRenderTarget->DrawBitmap(bitmap, &destRect, opacity, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR);
-	D2DRenderTarget->EndDraw();
-}
-
-void Renderer::DrawWorldBitmap(ID2D1Bitmap* bitmap, const FVector& worldLocation, float rotation, const FVector& worldScale, float opacity, const D2D1_RECT_F* srcRect)
-{
-	if (!D2DRenderTarget || !bitmap) return;
-
-	float aspect = (ViewportInfo.Height > 0.0f) ? (ViewportInfo.Width / ViewportInfo.Height) : (16.0f / 9.0f);
-	float screenX = (worldLocation.x / aspect + 1.0f) * 0.5f * ViewportInfo.Width;
-	float screenY = (1.0f - worldLocation.y) * 0.5f * ViewportInfo.Height;
-
-	float screenW = (worldScale.x / aspect) * 0.5f * ViewportInfo.Width;
-	float screenH = (worldScale.y) * 0.5f * ViewportInfo.Height;
-
-	D2D1_RECT_F destRect = D2D1::RectF(-screenW * 0.5f, -screenH * 0.5f, screenW * 0.5f, screenH * 0.5f);
-
-	D2DRenderTarget->BeginDraw();
-	D2D1::Matrix3x2F oldTransform;
-	D2DRenderTarget->GetTransform(&oldTransform);
-
-	D2D1::Matrix3x2F transform = D2D1::Matrix3x2F::Rotation(-rotation * (180.0f / 3.14159265f), D2D1::Point2F(0, 0))
-		* D2D1::Matrix3x2F::Translation(screenX, screenY);
-
-	D2DRenderTarget->SetTransform(transform);
-	D2DRenderTarget->DrawBitmap(bitmap, &destRect, opacity, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, srcRect);
-	D2DRenderTarget->SetTransform(oldTransform);
-	D2DRenderTarget->EndDraw();
-}
