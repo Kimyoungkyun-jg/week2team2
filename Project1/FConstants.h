@@ -8,4 +8,6 @@ struct FConstants
 	float Rotation;	// radians
 	FVector Scale;	// (width, height, depth)
 	float AspectRatio;
+
+	DirectX::XMFLOAT4X4 WVP;
 };

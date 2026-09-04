@@ -311,7 +311,7 @@ void Renderer::PrepareShader()
 	DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
 }
 
-void Renderer::UpdateConstant(FVector Offset, float Rotation, FVector Scale)
+void Renderer::UpdateConstant(FVector Offset, float Rotation, FVector Scale, const DirectX::XMMATRIX& WVP)
 {
 	if (ConstantBuffer)
 	{
@@ -324,6 +324,8 @@ void Renderer::UpdateConstant(FVector Offset, float Rotation, FVector Scale)
 			constants->Rotation = Rotation; // Radians
 			constants->Scale = Scale;
 			constants->AspectRatio = wAspectRatio;
+			DirectX::XMStoreFloat4x4(
+				&constants->WVP, DirectX::XMMatrixTranspose(WVP));
 		}
 		DeviceContext->Unmap(ConstantBuffer, 0);
 	}
@@ -332,7 +334,7 @@ void Renderer::UpdateConstant(FVector Offset, float Rotation, FVector Scale)
 void Renderer::UpdateConstant(FVector Offset, FVector Scale)
 {
 	//Scale.y *= ViewportInfo.Width / ViewportInfo.Height;
-	UpdateConstant(Offset, 0.0f, Scale);
+	UpdateConstant(Offset, 0.0f, Scale, DirectX::XMMatrixIdentity());
 }
 
 void Renderer::RenderPrimitive(EPrimitive Primitive)

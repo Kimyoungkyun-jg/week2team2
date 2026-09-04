@@ -1,9 +1,17 @@
-#pragma once
+﻿#pragma once
 class Camera
 {
 public:
 	Camera() {};
 	~Camera() {};
+
+	static Camera& GetInstance() {
+		static Camera instance;
+		return instance;
+	}
+	Camera(const Camera&) = delete;
+	Camera& operator=(const Camera&) = delete;
+
 
 	void Rotate(float deltaYaw, float deltaPitch);
 

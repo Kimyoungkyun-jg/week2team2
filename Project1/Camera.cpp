@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Camera.h"
 #include <Global.h>
 
@@ -59,3 +59,4 @@ DirectX::XMMATRIX Camera::GetProjectionMatrix(float aspectRatio) const
 	float fovRadians = fov * (Global::PI / 180.0f);
 	return DirectX::XMMatrixPerspectiveFovLH(fovRadians, aspectRatio, NearZ, FarZ);
 }
+  

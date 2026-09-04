@@ -4,6 +4,7 @@ cbuffer constants : register(b0) // FConstants
     float Rotation;
     float3 Scale;
     float AspectRatio;
+    float4x4 WVP;
 }
 
 struct VS_INPUT
@@ -35,7 +36,7 @@ PS_INPUT mainVS(VS_INPUT input) // Vertex Shader
     
     translated.x /= AspectRatio;
     
-    output.position = float4(translated, input.position.z, 1.0);
+    output.position = mul(input.position, WVP);
     output.color = input.color;
     
     return output;
