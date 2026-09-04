@@ -65,11 +65,14 @@
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <ProjectReference>
     </ProjectReference>
+    <PostBuildEvent>
+      <Command>copy /B /Y $(SolutionDir)\..\Project1\ShaderW0.hlsl ..\bin\Debug\ShaderW0.hlsl</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -86,15 +89,53 @@
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <ProjectReference>
     </ProjectReference>
+    <PostBuildEvent>
+      <Command>copy /B /Y $(SolutionDir)\..\Project1\ShaderW0.hlsl ..\bin\Release\ShaderW0.hlsl</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Project1\CollisionManager.h" />
+    <ClInclude Include="..\Project1\Global.h" />
+    <ClInclude Include="..\Project1\ImGui\imconfig.h" />
+    <ClInclude Include="..\Project1\ImGui\imgui.h" />
+    <ClInclude Include="..\Project1\ImGui\imgui_impl_dx11.h" />
+    <ClInclude Include="..\Project1\ImGui\imgui_impl_win32.h" />
+    <ClInclude Include="..\Project1\ImGui\imgui_internal.h" />
+    <ClInclude Include="..\Project1\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="..\Project1\ImGui\imstb_textedit.h" />
+    <ClInclude Include="..\Project1\ImGui\imstb_truetype.h" />
+    <ClInclude Include="..\Project1\ObjectManager.h" />
+    <ClInclude Include="..\Project1\Renderer.h" />
+    <ClInclude Include="..\Project1\Sphere.h" />
+    <ClInclude Include="..\Project1\TemplateLibrary.h" />
+    <ClInclude Include="..\Project1\UObject.h" />
+    <ClInclude Include="..\Project1\Vector.h" />
+    <ClInclude Include="..\Project1\VertexSimple.h" />
+    <ClInclude Include="..\Project1\enums.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Project1\CollisionManager.cpp" />
+    <ClCompile Include="..\Project1\ImGui\imgui.cpp" />
+    <ClCompile Include="..\Project1\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="..\Project1\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="..\Project1\ImGui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="..\Project1\ImGui\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\Project1\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="..\Project1\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="..\Project1\ObjectManager.cpp" />
+    <ClCompile Include="..\Project1\Renderer.cpp" />
+    <ClCompile Include="..\Project1\UObject.cpp" />
+    <ClCompile Include="..\Project1\Vector.cpp" />
     <ClCompile Include="..\Project1\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Project1\ShaderW0.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
