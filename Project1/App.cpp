@@ -93,6 +93,7 @@ void App::Update()
 	// ----------------------------------------------------------
 	// 카메라 적용 확인용 임시코드(나중에 InputManager로 이사 필요)
 	// ----------------------------------------------------------
+
 	Camera& camera = Camera::GetInstance();
 	float speed = 5.0f * DELTA;
 	if (KEY_PRESS(ImGuiKey_W)) camera.MoveForward(speed);

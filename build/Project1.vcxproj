@@ -21,13 +21,13 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -64,7 +64,6 @@
       <Optimization>Disabled</Optimization>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -112,6 +111,7 @@
     <ClInclude Include="..\Project1\CollisionManager.h" />
     <ClInclude Include="..\Project1\D3D11Util.h" />
     <ClInclude Include="..\Project1\FConstants.h" />
+    <ClInclude Include="..\Project1\FMatrix.h" />
     <ClInclude Include="..\Project1\FPixelConstant.h" />
     <ClInclude Include="..\Project1\FVector.h" />
     <ClInclude Include="..\Project1\FVertexSimple.h" />
@@ -124,6 +124,7 @@
     <ClInclude Include="..\Project1\ImGui\imstb_rectpack.h" />
     <ClInclude Include="..\Project1\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Project1\ImGui\imstb_truetype.h" />
+    <ClInclude Include="..\Project1\ObjectManager.h" />
     <ClInclude Include="..\Project1\Renderer.h" />
     <ClInclude Include="..\Project1\Scene.h" />
     <ClInclude Include="..\Project1\SceneManager.h" />
@@ -131,7 +132,6 @@
     <ClInclude Include="..\Project1\Sphere.h" />
     <ClInclude Include="..\Project1\TemplateLibrary.h" />
     <ClInclude Include="..\Project1\UObject.h" />
-    <ClInclude Include="..\Project1\ObjectManager.h" />
     <ClInclude Include="..\Project1\enums.h" />
     <ClInclude Include="..\Project1\pch.h" />
   </ItemGroup>
@@ -140,6 +140,7 @@
     <ClCompile Include="..\Project1\Camera.cpp" />
     <ClCompile Include="..\Project1\CollisionManager.cpp" />
     <ClCompile Include="..\Project1\D3D11Util.cpp" />
+    <ClCompile Include="..\Project1\FMatrix.cpp" />
     <ClCompile Include="..\Project1\FVector.cpp" />
     <ClCompile Include="..\Project1\ImGui\imgui.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -162,12 +163,12 @@
     <ClCompile Include="..\Project1\ImGui\imgui_widgets.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\Project1\ObjectManager.cpp" />
     <ClCompile Include="..\Project1\Renderer.cpp" />
     <ClCompile Include="..\Project1\Scene.cpp" />
     <ClCompile Include="..\Project1\SceneManager.cpp" />
     <ClCompile Include="..\Project1\Scenes\DefaultScene.cpp" />
     <ClCompile Include="..\Project1\UObject.cpp" />
-    <ClCompile Include="..\Project1\ObjectManager.cpp" />
     <ClCompile Include="..\Project1\main.cpp" />
     <ClCompile Include="..\Project1\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
