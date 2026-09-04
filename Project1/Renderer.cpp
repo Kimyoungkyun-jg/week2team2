@@ -311,7 +311,38 @@ void Renderer::PrepareShader()
 	DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
 }
 
-void Renderer::UpdateConstant(FVector Offset, float Rotation, FVector Scale)
+
+void Renderer::UpdateConstant(const FMatrix& Model, const FMatrix& View, const FMatrix& Projection, float FovY, float NearZ, float FarZ) 
+{
+	if (ConstantBuffer)
+	{
+		D3D11_MAPPED_SUBRESOURCE MSR;
+
+		DeviceContext->Map(
+			ConstantBuffer,
+			0,
+			D3D11_MAP_WRITE_DISCARD,
+			0,
+			&MSR
+		);
+
+		FConstants* Constants =
+			(FConstants*)MSR.pData;
+
+		Constants->Model = Model;
+		Constants->View = View;
+		Constants->Projection = Projection;
+
+		Constants->FovY = FovY;
+		Constants->AspectRatio = wAspectRatio;
+		Constants->NearZ = NearZ;
+		Constants->FarZ = FarZ;
+
+		DeviceContext->Unmap(ConstantBuffer, 0);
+	}
+}
+
+void Renderer::UpdateConstant(FVector Offset, float Rotation, FVector Scale, const DirectX::XMMATRIX& WVP)
 {
 	if (ConstantBuffer)
 	{
@@ -324,6 +355,8 @@ void Renderer::UpdateConstant(FVector Offset, float Rotation, FVector Scale)
 			constants->Rotation = Rotation; // Radians
 			constants->Scale = Scale;
 			constants->AspectRatio = wAspectRatio;
+			DirectX::XMStoreFloat4x4(
+				&constants->WVP, DirectX::XMMatrixTranspose(WVP));
 		}
 		DeviceContext->Unmap(ConstantBuffer, 0);
 	}
@@ -332,7 +365,7 @@ void Renderer::UpdateConstant(FVector Offset, float Rotation, FVector Scale)
 void Renderer::UpdateConstant(FVector Offset, FVector Scale)
 {
 	//Scale.y *= ViewportInfo.Width / ViewportInfo.Height;
-	UpdateConstant(Offset, 0.0f, Scale);
+	UpdateConstant(Offset, 0.0f, Scale, DirectX::XMMatrixIdentity());
 }
 
 void Renderer::RenderPrimitive(EPrimitive Primitive)

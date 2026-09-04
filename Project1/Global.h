@@ -4,6 +4,8 @@
 
 namespace Global
 {
+	const float PI = 3.14159265358979323846f;
+
 	// 화면 경계 (NDC). x는 종횡비에 따라 달라져서 여기 없다 -> SpawnWalls 참고
 	constexpr float topBorder = 1.0f;
 	constexpr float bottomBorder = -1.0f;

@@ -4,6 +4,7 @@
 #include "FVector.h"
 #include "enums.h"
 #include "FConstants.h"
+#include "FMatrix.h"
 
 struct FVertexBufferInfo
 {
@@ -13,8 +14,6 @@ struct FVertexBufferInfo
 
 class Renderer
 {
-
-
 public:
 	static Renderer& GetInstance()
 	{
@@ -55,6 +54,8 @@ public:
 	FLOAT ClearColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f };
 	unsigned int Stride;
 	float wAspectRatio;
+	float GetAspectRatio() { return wAspectRatio; }
+
 
 public:
 	void Create(HWND hWindow);
@@ -89,7 +90,8 @@ public:
 	void Prepare();
 	void PrepareShader();
 
-	void UpdateConstant(FVector Offset, float Rotation, FVector Scale);
+	void UpdateConstant(const FMatrix& Model, const FMatrix& View, const FMatrix& Projection, float FovY, float NearZ, float FarZ);
+	void UpdateConstant(FVector Offset, float Rotation, FVector Scale, const DirectX::XMMATRIX& WVP);
 	void UpdateConstant(FVector Offset, FVector Scale);
 	void RenderPrimitive(EPrimitive Primitive);
 	void SwapBuffer();

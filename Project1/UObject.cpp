@@ -5,6 +5,7 @@
 #include "ObjectManager.h"
 #include "TemplateLibrary.h"
 #include "Renderer.h"
+#include "Camera.h"
 
 
 
@@ -26,7 +27,15 @@ void AActor::Draw(Renderer& renderer)
 	}
 	else
 	{
-		renderer.UpdateConstant(Location, Rotation, Scale);
+		Camera& camera = Camera::GetInstance();
+		DirectX::XMMATRIX world = DirectX::XMMatrixScaling(Scale.x, Scale.y, Scale.z) * DirectX::XMMatrixRotationZ(Rotation) * DirectX::XMMatrixTranslation(Location.x, Location.y, Location.z);
+		DirectX::XMMATRIX view = camera.GetViewMatrix();
+		DirectX::XMMATRIX projection = camera.GetProjectionMatrix(Renderer::GetInstance().GetAspectRatio());
+		
+		DirectX::XMMATRIX WVP = world * view * projection;
+		
+		
+		renderer.UpdateConstant(Location, Rotation, Scale, WVP);
 		renderer.RenderPrimitive(Primitive);
 	}
 }

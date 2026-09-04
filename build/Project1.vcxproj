@@ -107,10 +107,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Project1\App.h" />
+    <ClInclude Include="..\Project1\Camera.h" />
     <ClInclude Include="..\Project1\CollisionManager.h" />
     <ClInclude Include="..\Project1\D3D11Util.h" />
     <ClInclude Include="..\Project1\EditorConsole.h" />
     <ClInclude Include="..\Project1\FConstants.h" />
+    <ClInclude Include="..\Project1\FMatrix.h" />
     <ClInclude Include="..\Project1\FPixelConstant.h" />
     <ClInclude Include="..\Project1\FVector.h" />
     <ClInclude Include="..\Project1\FVertexSimple.h" />
@@ -136,9 +138,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Project1\App.cpp" />
+    <ClCompile Include="..\Project1\Camera.cpp" />
     <ClCompile Include="..\Project1\CollisionManager.cpp" />
     <ClCompile Include="..\Project1\D3D11Util.cpp" />
     <ClCompile Include="..\Project1\EditorConsole.cpp" />
+    <ClCompile Include="..\Project1\FMatrix.cpp" />
     <ClCompile Include="..\Project1\FVector.cpp" />
     <ClCompile Include="..\Project1\ImGui\imgui.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
