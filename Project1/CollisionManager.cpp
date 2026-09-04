@@ -1,5 +1,4 @@
-#include <algorithm>
-
+#include "pch.h"
 #include "CollisionManager.h"
 #include "ObjectManager.h"
 

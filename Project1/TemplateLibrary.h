@@ -1,11 +1,10 @@
 #pragma once
 
-#include <d3d11.h>
-#include "Vector.h"
+#include "FVector.h"
 #include "UObject.h"
 #include "ObjectManager.h"
 #include "CollisionManager.h"
-#include <vector>
+#include "enums.h"
 
 
 template<class T>
@@ -14,7 +13,7 @@ inline T* NewObject()
 	static_assert(std::is_base_of_v<UObject, T>);
 
 	T* Obj = new T;
-	UObjectManager::GetInstance().AllObjects.push_back(Obj);
+	ObjectManager::GetInstance().AllObjects.push_back(Obj);
 
 	return static_cast<T*>(Obj);
 }
@@ -40,12 +39,11 @@ inline T* SpawnActor(FVector Location, EPrimitive Primitive, FVector Scale = { 0
 }
 
 template<class T>
-inline T* SpawnColider(FVector Location, EPrimitive Primitive, bool bUseGravity = true, FVector Scale = { 0.1, 0.1, 1 }, float Mass = 10)
+inline T* SpawnColider(FVector Location, EPrimitive Primitive, FVector Scale = { 1, 1, 1 }, float Mass = 1)
 {
 	static_assert(std::is_base_of_v<ACollider, T>);
 	ACollider* Colider = SpawnActor<T>(Location, Primitive, Scale);
 
-	Colider->bUseGravity = bUseGravity;
 	Colider->SetMass(Mass);
 	CollisionManager::GetInstance().AddColider(Colider);
 

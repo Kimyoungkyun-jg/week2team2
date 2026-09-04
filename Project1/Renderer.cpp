@@ -1,9 +1,8 @@
-#include <DirectXMath.h>
-
+#include "pch.h"
 #include "Renderer.h"
 #include "Sphere.h"	
 
-void URenderer::Create(HWND hWindow)
+void Renderer::Create(HWND hWindow)
 {
 	CreateDeviceAndSwapChain(hWindow);
 	CreateFrameBuffer();
@@ -11,16 +10,19 @@ void URenderer::Create(HWND hWindow)
 	CreateD2D();
 }
 
-void URenderer::Release()
+void Renderer::Release()
 {
 	ReleaseD2D();
 	ReleaseRasterizerState();
-	DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+	if (DeviceContext)
+	{
+		DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+	}
 	ReleaseFrameBuffer();
 	ReleaseDeviceAndSwapChain();
 }
 
-void URenderer::CreateDeviceAndSwapChain(HWND hWindow)
+void Renderer::CreateDeviceAndSwapChain(HWND hWindow)
 {
 	D3D_FEATURE_LEVEL featurelevels[] = { D3D_FEATURE_LEVEL_11_0 };
 
@@ -48,7 +50,7 @@ void URenderer::CreateDeviceAndSwapChain(HWND hWindow)
 	wAspectRatio = (float)swapchaindesc.BufferDesc.Width / (float)swapchaindesc.BufferDesc.Height;
 }
 
-void URenderer::ReleaseDeviceAndSwapChain()
+void Renderer::ReleaseDeviceAndSwapChain()
 {
 	if (DeviceContext)
 	{
@@ -74,7 +76,7 @@ void URenderer::ReleaseDeviceAndSwapChain()
 	}
 }
 
-void URenderer::CreateFrameBuffer()
+void Renderer::CreateFrameBuffer()
 {
 	SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&FrameBuffer);
 
@@ -85,7 +87,7 @@ void URenderer::CreateFrameBuffer()
 	Device->CreateRenderTargetView(FrameBuffer, &framebufferRTVdesc, &FrameBufferRTV);
 }
 
-void URenderer::ReleaseFrameBuffer()
+void Renderer::ReleaseFrameBuffer()
 {
 	if (FrameBuffer)
 	{
@@ -100,7 +102,7 @@ void URenderer::ReleaseFrameBuffer()
 	}
 }
 
-void URenderer::CreateRasterizerState()
+void Renderer::CreateRasterizerState()
 {
 	D3D11_RASTERIZER_DESC rasterizerdesc = {};
 	rasterizerdesc.FillMode = D3D11_FILL_SOLID;
@@ -109,7 +111,7 @@ void URenderer::CreateRasterizerState()
 	Device->CreateRasterizerState(&rasterizerdesc, &RasterizerState);
 }
 
-void URenderer::ReleaseRasterizerState()
+void Renderer::ReleaseRasterizerState()
 {
 	if (RasterizerState)
 	{
@@ -118,7 +120,7 @@ void URenderer::ReleaseRasterizerState()
 	}
 }
 
-void URenderer::CreateShader()
+void Renderer::CreateShader()
 {
 	ID3DBlob* vertexshaderCSO = nullptr;
 	ID3DBlob* pixelshaderCSO = nullptr;
@@ -195,7 +197,7 @@ void URenderer::CreateShader()
 	pixelshaderCSO->Release();
 }
 
-void URenderer::ReleaseShader()
+void Renderer::ReleaseShader()
 {
 	if (SimpleInputLayout)
 	{
@@ -216,7 +218,7 @@ void URenderer::ReleaseShader()
 	}
 }
 
-void URenderer::CreateConstantBuffer()
+void Renderer::CreateConstantBuffer()
 {
 	D3D11_BUFFER_DESC constantbufferdesc = {};
 	constantbufferdesc.ByteWidth = sizeof(FConstants) + 0xf & 0xfffffff0;
@@ -227,7 +229,7 @@ void URenderer::CreateConstantBuffer()
 	Device->CreateBuffer(&constantbufferdesc, nullptr, &ConstantBuffer);
 }
 
-void URenderer::ReleaseConstantBuffer()
+void Renderer::ReleaseConstantBuffer()
 {
 	if (ConstantBuffer)
 	{
@@ -236,7 +238,7 @@ void URenderer::ReleaseConstantBuffer()
 	}
 }
 
-void URenderer::CreateVertexBufferInfos()
+void Renderer::CreateVertexBufferInfos()
 {
 	UINT numVerticesCube = sizeof(cube_vertices) / sizeof(FVertexSimple);
 	UINT numVerticesSphere = sizeof(sphere_vertices) / sizeof(FVertexSimple);
@@ -249,7 +251,7 @@ void URenderer::CreateVertexBufferInfos()
 }
 
 
-ID3D11Buffer* URenderer::CreateVertexBuffer(FVertexSimple* vertices, UINT byteWidth)
+ID3D11Buffer* Renderer::CreateVertexBuffer(FVertexSimple* vertices, UINT byteWidth)
 {
 	D3D11_BUFFER_DESC vertexbufferdesc = {};
 	vertexbufferdesc.ByteWidth = byteWidth;
@@ -265,20 +267,25 @@ ID3D11Buffer* URenderer::CreateVertexBuffer(FVertexSimple* vertices, UINT byteWi
 	return vertexBuffer;
 }
 
-void URenderer::ReleaseVertexBuffers()
+void Renderer::ReleaseVertexBuffers()
 {
 	for (FVertexBufferInfo& vi : VertexBufferInfos)
 	{
 		ReleaseVertexBuffer(vi.vertexBuffer);
+		vi.vertexBuffer = nullptr;
+	}
+	VertexBufferInfos.clear();
+}
+
+void Renderer::ReleaseVertexBuffer(ID3D11Buffer* vertexBuffer)
+{
+	if (vertexBuffer)
+	{
+		vertexBuffer->Release();
 	}
 }
 
-void URenderer::ReleaseVertexBuffer(ID3D11Buffer* vertexBuffer)
-{
-	vertexBuffer->Release();
-}
-
-void URenderer::Prepare()
+void Renderer::Prepare()
 {
 	DeviceContext->ClearRenderTargetView(FrameBufferRTV, ClearColor);
 
@@ -291,7 +298,7 @@ void URenderer::Prepare()
 	DeviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff);
 }
 
-void URenderer::PrepareShader()
+void Renderer::PrepareShader()
 {
 	DeviceContext->IASetInputLayout(SimpleInputLayout);
 
@@ -304,7 +311,7 @@ void URenderer::PrepareShader()
 	DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
 }
 
-void URenderer::UpdateConstant(FVector Offset, float Rotation, FVector Scale)
+void Renderer::UpdateConstant(FVector Offset, float Rotation, FVector Scale)
 {
 	if (ConstantBuffer)
 	{
@@ -322,13 +329,13 @@ void URenderer::UpdateConstant(FVector Offset, float Rotation, FVector Scale)
 	}
 }
 
-void URenderer::UpdateConstant(FVector Offset, FVector Scale)
+void Renderer::UpdateConstant(FVector Offset, FVector Scale)
 {
 	//Scale.y *= ViewportInfo.Width / ViewportInfo.Height;
 	UpdateConstant(Offset, 0.0f, Scale);
 }
 
-void URenderer::RenderPrimitive(EPrimitive Primitive)
+void Renderer::RenderPrimitive(EPrimitive Primitive)
 {
 	UINT offset = 0;
 
@@ -349,12 +356,12 @@ void URenderer::RenderPrimitive(EPrimitive Primitive)
 	DeviceContext->Draw(numVertices, 0);
 }
 
-void URenderer::SwapBuffer()
+void Renderer::SwapBuffer()
 {
 	SwapChain->Present(1, 0);
 }
 
-bool URenderer::CreateD2D()
+bool Renderer::CreateD2D()
 {
 	if (!SwapChain) return false;
 
@@ -390,7 +397,7 @@ bool URenderer::CreateD2D()
 	return true;
 }
 
-void URenderer::ReleaseD2D()
+void Renderer::ReleaseD2D()
 {
 	if (D2DRenderTarget) { D2DRenderTarget->Release(); D2DRenderTarget = nullptr; }
 	if (DWriteFactory) { DWriteFactory->Release(); DWriteFactory = nullptr; }
@@ -398,7 +405,7 @@ void URenderer::ReleaseD2D()
 	if (WICFactory) { WICFactory->Release(); WICFactory = nullptr; }
 }
 
-ID2D1Bitmap* URenderer::LoadBitmapFromFile(const wchar_t* uri)
+ID2D1Bitmap* Renderer::LoadBitmapFromFile(const wchar_t* uri)
 {
 	if (!WICFactory || !D2DRenderTarget) return nullptr;
 
@@ -443,7 +450,7 @@ ID2D1Bitmap* URenderer::LoadBitmapFromFile(const wchar_t* uri)
 	return bitmap;
 }
 
-void URenderer::DrawBitmap(ID2D1Bitmap* bitmap, float left, float top, float width, float height, float opacity)
+void Renderer::DrawBitmap(ID2D1Bitmap* bitmap, float left, float top, float width, float height, float opacity)
 {
 	if (!D2DRenderTarget || !bitmap) return;
 
@@ -453,7 +460,7 @@ void URenderer::DrawBitmap(ID2D1Bitmap* bitmap, float left, float top, float wid
 	D2DRenderTarget->EndDraw();
 }
 
-void URenderer::DrawWorldBitmap(ID2D1Bitmap* bitmap, const FVector& worldLocation, float rotation, const FVector& worldScale, float opacity, const D2D1_RECT_F* srcRect)
+void Renderer::DrawWorldBitmap(ID2D1Bitmap* bitmap, const FVector& worldLocation, float rotation, const FVector& worldScale, float opacity, const D2D1_RECT_F* srcRect)
 {
 	if (!D2DRenderTarget || !bitmap) return;
 

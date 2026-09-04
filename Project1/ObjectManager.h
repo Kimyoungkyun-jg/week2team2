@@ -1,15 +1,14 @@
 #pragma once
 
-#include <vector>
 #include "UObject.h"
 #include "CollisionManager.h"
 
 //모든 UObject를 관리하는 클래스, Main 초기에 Get 호출
-class UObjectManager
+class ObjectManager
 {
 public:
 
-	~UObjectManager()
+	~ObjectManager()
 	{
 		DestroyAllObjects();
 	}
@@ -75,14 +74,14 @@ public:
 		return nullptr;
 	}
 
-	static UObjectManager& GetInstance()
+	static ObjectManager& GetInstance()
 	{
-		static UObjectManager Manager;
+		static ObjectManager Manager;
 		return Manager;
 	}
-	UObjectManager(const UObjectManager&) = delete;
-	UObjectManager& operator=(const UObjectManager&) = delete;
+	ObjectManager(const ObjectManager&) = delete;
+	ObjectManager& operator=(const ObjectManager&) = delete;
 
 private:
-	UObjectManager(){}
+	ObjectManager(){}
 };

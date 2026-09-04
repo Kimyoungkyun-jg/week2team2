@@ -1,25 +1,9 @@
 #pragma once
 
-#pragma comment(lib, "d3d11")			
-#pragma comment(lib, "d3dcompiler")		
-#pragma comment(lib, "d2d1.lib")
-#pragma comment(lib, "dwrite.lib")
-#pragma comment(lib, "windowscodecs.lib")
-#pragma comment(lib, "gdi32.lib")
-
-#include <d3d11.h>						
-#include <d3dcompiler.h>
-#include <d2d1.h>
-#include <d2d1helper.h>
-#include <dwrite.h>
-#include <wincodec.h>
-#include <vector>
-#include <cmath>
-#include <cstdlib>
-
-#include "VertexSimple.h"
-#include "Vector.h"
+#include "FVertexSimple.h"
+#include "FVector.h"
 #include "enums.h"
+#include "FConstants.h"
 
 struct FVertexBufferInfo
 {
@@ -27,20 +11,14 @@ struct FVertexBufferInfo
 	UINT numVertucies;
 };
 
-class URenderer
+class Renderer
 {
-	struct FConstants
-	{
-		FVector Offset;
-		float Rotation;	// radians
-		FVector Scale;	// (width, height, depth)
-		float AspectRatio;
-	};
+
 
 public:
-	static URenderer& GetInstance()
+	static Renderer& GetInstance()
 	{
-		static URenderer instance;
+		static Renderer instance;
 		return instance;
 	}
 

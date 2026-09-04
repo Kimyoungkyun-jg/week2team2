@@ -1,15 +1,15 @@
 #pragma once
 
-#include "VertexSimple.h"
+#include "FVertexSimple.h"
 
-FVertexSimple triangle_vertices[] =
+inline FVertexSimple triangle_vertices[] =
 {
 	{  0.0f,  1.0f, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f }, // Top vertex (red)
 	{  1.0f, -1.0f, 0.0f,  0.0f, 1.0f, 0.0f, 1.0f }, // Bottom-right vertex (green)
 	{ -1.0f, -1.0f, 0.0f,  0.0f, 0.0f, 1.0f, 1.0f }  // Bottom-left vertex (blue)
 };
 
-FVertexSimple cube_vertices[] =
+inline FVertexSimple cube_vertices[] =
 {
 	// Front face (Z+)
 	{ -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 1.0f }, // Bottom-left (red)
@@ -60,7 +60,7 @@ FVertexSimple cube_vertices[] =
 	{  0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.5f, 1.0f }, // Bottom-right (purple)
 };
 
-FVertexSimple sphere_vertices[] = {
+inline FVertexSimple sphere_vertices[] = {
 	{ 0.000000f, 0.500000f, 0.000000f, 0.500000f, 1.000000f, 0.500000f, 1.000000f },
 	{ 0.078217f, 0.493844f, 0.000000f, 0.578217f, 0.993844f, 0.500000f, 1.000000f },
 	{ 0.074389f, 0.493844f, 0.024171f, 0.574389f, 0.993844f, 0.524170f, 1.000000f },
