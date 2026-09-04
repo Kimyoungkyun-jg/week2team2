@@ -132,7 +132,6 @@
     <ClInclude Include="..\Project1\ObjectManager.h" />
     <ClInclude Include="..\Project1\enums.h" />
     <ClInclude Include="..\Project1\pch.h" />
-    <ClInclude Include="FConstant.h" />
     <ClInclude Include="USphere.h" />
   </ItemGroup>
   <ItemGroup>
