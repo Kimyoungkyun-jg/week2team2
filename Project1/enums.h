@@ -3,5 +3,6 @@
 enum class EPrimitive
 {
 	Circle,
-	Rectangle
+	Rectangle,
+	Sphere,
 };
