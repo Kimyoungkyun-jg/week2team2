@@ -5,6 +5,8 @@
 #include "enums.h"
 #include "FConstants.h"
 
+
+
 struct FVertexBufferInfo
 {
 	ID3D11Buffer* vertexBuffer;
@@ -22,6 +24,8 @@ public:
 		return instance;
 	}
 
+	ID3D11Device* GetDevice() { return Device; }
+	ID3D11DeviceContext* GetDeviceContext() { return DeviceContext; }
 
 public:
 	// CreateDeviceAndSwapChain
@@ -56,6 +60,9 @@ public:
 	unsigned int Stride;
 	float wAspectRatio;
 
+	FConstants constants; //매트릭스 넣어야됌
+
+
 public:
 	void Create(HWND hWindow);
 	void Release();
@@ -82,12 +89,23 @@ public:
 	void Prepare();
 	void PrepareShader();
 
-	void UpdateConstant(FVector Offset, float Rotation, FVector Scale);
+	
 	void UpdateConstant(FVector Offset, FVector Scale);
+	void Update();
+
+	//매트릭스 세팅
+	void SetWorldMatrix(XMMATRIX worldmat);
+	void SetViewMatrix(XMMATRIX viewdmat);
+	void SetProjMatrix(XMMATRIX projmat);
+
+	//
+	void SetVSBuffer(UINT slot);
+
 	void RenderPrimitive(EPrimitive Primitive);
 	void SwapBuffer();
 
 private:
 	void ReleaseVertexBuffer(ID3D11Buffer* vertexBuffer);
 	std::vector<FVertexBufferInfo> VertexBufferInfos;
+
 };

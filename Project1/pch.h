@@ -23,7 +23,9 @@
 #include <wincodec.h>
 #include <DirectXMath.h>
 #include <DirectXTex.h>
+#include <DirectXCollision.h>
 
+using namespace DirectX;
 // IMGUI
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"

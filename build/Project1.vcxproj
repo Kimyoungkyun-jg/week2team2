@@ -106,6 +106,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Project1\AActor.h" />
+    <ClInclude Include="..\Project1\ACollider.h" />
     <ClInclude Include="..\Project1\App.h" />
     <ClInclude Include="..\Project1\CollisionManager.h" />
     <ClInclude Include="..\Project1\D3D11Util.h" />
@@ -122,6 +124,7 @@
     <ClInclude Include="..\Project1\ImGui\imstb_rectpack.h" />
     <ClInclude Include="..\Project1\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Project1\ImGui\imstb_truetype.h" />
+    <ClInclude Include="..\Project1\ObjectManager.h" />
     <ClInclude Include="..\Project1\Renderer.h" />
     <ClInclude Include="..\Project1\Scene.h" />
     <ClInclude Include="..\Project1\SceneManager.h" />
@@ -129,12 +132,12 @@
     <ClInclude Include="..\Project1\Sphere.h" />
     <ClInclude Include="..\Project1\TemplateLibrary.h" />
     <ClInclude Include="..\Project1\UObject.h" />
-    <ClInclude Include="..\Project1\ObjectManager.h" />
     <ClInclude Include="..\Project1\enums.h" />
     <ClInclude Include="..\Project1\pch.h" />
-    <ClInclude Include="USphere.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Project1\AActor.cpp" />
+    <ClCompile Include="..\Project1\ACollider.cpp" />
     <ClCompile Include="..\Project1\App.cpp" />
     <ClCompile Include="..\Project1\CollisionManager.cpp" />
     <ClCompile Include="..\Project1\D3D11Util.cpp" />
@@ -160,17 +163,16 @@
     <ClCompile Include="..\Project1\ImGui\imgui_widgets.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\Project1\ObjectManager.cpp" />
     <ClCompile Include="..\Project1\Renderer.cpp" />
     <ClCompile Include="..\Project1\Scene.cpp" />
     <ClCompile Include="..\Project1\SceneManager.cpp" />
     <ClCompile Include="..\Project1\Scenes\DefaultScene.cpp" />
     <ClCompile Include="..\Project1\UObject.cpp" />
-    <ClCompile Include="..\Project1\ObjectManager.cpp" />
     <ClCompile Include="..\Project1\main.cpp" />
     <ClCompile Include="..\Project1\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="USphere.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Project1\ShaderW0.hlsl" />

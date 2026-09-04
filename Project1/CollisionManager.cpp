@@ -5,7 +5,7 @@
 OBB MakeOBB(const ACollider* collider)
 {
 	// Rotation은 라디안, 반시계 방향 (UObject.h)
-	float angle = collider->GetRotation();
+	float angle = collider->GetRotation().z;
 	float cs = std::cos(angle);
 	float sn = std::sin(angle);
 
@@ -56,7 +56,7 @@ namespace
 	FVector ToLocal(const ACollider* body, const FVector& world)
 	{
 		FVector d = world - body->GetLocation();
-		float angle = body->GetRotation();
+		float angle = body->GetRotation().z;
 		float cs = std::cos(angle);
 		float sn = std::sin(angle);
 
@@ -65,7 +65,7 @@ namespace
 
 	FVector ToWorld(const ACollider* body, const FVector& local)
 	{
-		float angle = body->GetRotation();
+		float angle = body->GetRotation().z;
 		float cs = std::cos(angle);
 		float sn = std::sin(angle);
 
@@ -566,15 +566,15 @@ CollisionInfo CollisionManager::CheckCollision(ACollider* a, ACollider* b)
 	{
 		return CheckCollisionCircleCircle(a, b);
 	}
-	else if (a->GetPrimitive() == EPrimitive::Rectangle && b->GetPrimitive() == EPrimitive::Rectangle)
+	else if (a->GetPrimitive() == EPrimitive::Cube && b->GetPrimitive() == EPrimitive::Cube)
 	{
 		return CheckCollisionRectangleRectangle(a, b);
 	}
-	else if (a->GetPrimitive() == EPrimitive::Circle && b->GetPrimitive() == EPrimitive::Rectangle)
+	else if (a->GetPrimitive() == EPrimitive::Circle && b->GetPrimitive() == EPrimitive::Cube)
 	{
 		return CheckCollisionCircleRectangle(a, b);
 	}
-	else if (a->GetPrimitive() == EPrimitive::Rectangle && b->GetPrimitive() == EPrimitive::Circle)
+	else if (a->GetPrimitive() == EPrimitive::Cube && b->GetPrimitive() == EPrimitive::Circle)
 	{
 		CollisionInfo info = CheckCollisionCircleRectangle(b, a);
 
@@ -785,8 +785,8 @@ void CollisionManager::ResolvePosition(ACollider* a, ACollider* b, const Collisi
 
 		a->SetLocation(a->GetLocation() + normal * (correction * invMassA));
 		b->SetLocation(b->GetLocation() - normal * (correction * invMassB));
-		a->SetRotation(a->GetRotation() + raxn * correction * invIA);
-		b->SetRotation(b->GetRotation() - rbxn * correction * invIB);
+		a->SetRotation(a->GetRotation().z + raxn * correction * invIA);
+		b->SetRotation(b->GetRotation().z - rbxn * correction * invIB);
 	}
 }
 

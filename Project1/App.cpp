@@ -9,7 +9,7 @@ extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	// ImGui에도 입력 전달
+
 	bool imguiHandled = ImGui_ImplWin32_WndProcHandler(hwnd, message, wParam, lParam);
 
 	switch (message)
@@ -77,6 +77,8 @@ void App::InitImgui()
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_Init((void*)m_mainWindow);
 	ImGui_ImplDX11_Init(Renderer::GetInstance().Device, Renderer::GetInstance().DeviceContext);
 }
@@ -105,6 +107,15 @@ void App::Render()
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+
+	// ImGui 테스트 및 데모 윈도우 (상시 출력)
+	ImGui::ShowDemoWindow();
+
+	ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
+	ImGui::Begin("Engine Main Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+	ImGui::Text("DirectX 11 & ImGui Active!");
+	ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
+	ImGui::End();
 
 	// 씬 오브젝트 렌더링 (Renderer를 통해 Draw)
 	SCENE.Render();

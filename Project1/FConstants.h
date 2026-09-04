@@ -4,8 +4,10 @@
 
 struct FConstants
 {
-	FVector Offset;
-	float Rotation;	// radians
-	FVector Scale;	// (width, height, depth)
+	DirectX::XMMATRIX worldmat;
+	DirectX::XMMATRIX viewmat;
+	DirectX::XMMATRIX projmat;
+
 	float AspectRatio;
+	float Pad[3];
 };

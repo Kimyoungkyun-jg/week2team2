@@ -1,6 +1,6 @@
 #pragma once
 
-#include "UObject.h"
+#include "ACollider.h"
 
 
 // 접촉점
@@ -116,7 +116,7 @@ public:
 					return c;
 				}
 			}
-			else if (c->GetPrimitive() == EPrimitive::Rectangle)
+			else if (c->GetPrimitive() == EPrimitive::Cube)
 			{
 				FVector loc = c->GetLocation();
 				float halfX = c->GetScale().x * 0.5f;

@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene.h"
-#include "UObject.h"
+#include "ACollider.h"
 
 class DefaultScene : public Scene
 {
@@ -12,7 +12,7 @@ public:
 	virtual void Update(float deltatime) override;
 	virtual void Render() override;
 
-	ACircle* circle = nullptr;
+	ACube* cube = nullptr;
 
 
 

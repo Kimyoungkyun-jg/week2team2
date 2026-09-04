@@ -2,6 +2,8 @@
 
 #include "FVector.h"
 #include "UObject.h"
+#include "AActor.h"
+#include "ACollider.h"
 #include "ObjectManager.h"
 #include "CollisionManager.h"
 #include "enums.h"

@@ -1,25 +1,11 @@
 cbuffer constants : register(b0) // FConstants
 {
-    float3 Offset;
-    float Rotation;
-    float3 Scale;
-    float AspectRatio;
-}
-
-cbuffer world : register(b1)
-{
     matrix worldmat;
-}
-
-cbuffer view : register(b2)
-{
     matrix viewmat;
-}
-
-cbuffer projection : register(b3)
-{
     matrix projmat;
-}
+    float AspectRatio;
+    float3 Pad;
+};
 
 
 struct VS_INPUT
@@ -52,6 +38,7 @@ PS_INPUT mainVS(VS_INPUT input) // Vertex Shader
     output.position = mul(input.position, worldmat);
     output.position = mul(output.position, viewmat);
     output.position = mul(output.position, projmat);
+
     
     output.color = input.color;
     

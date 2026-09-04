@@ -79,11 +79,7 @@ void Renderer::CreateFrameBuffer()
 {
 	SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&FrameBuffer);
 
-	D3D11_RENDER_TARGET_VIEW_DESC framebufferRTVdesc = {};
-	framebufferRTVdesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
-	framebufferRTVdesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-
-	Device->CreateRenderTargetView(FrameBuffer, &framebufferRTVdesc, &FrameBufferRTV);
+	Device->CreateRenderTargetView(FrameBuffer, nullptr, &FrameBufferRTV);
 }
 
 void Renderer::ReleaseFrameBuffer()
@@ -105,7 +101,7 @@ void Renderer::CreateRasterizerState()
 {
 	D3D11_RASTERIZER_DESC rasterizerdesc = {};
 	rasterizerdesc.FillMode = D3D11_FILL_SOLID;
-	rasterizerdesc.CullMode = D3D11_CULL_BACK;
+	rasterizerdesc.CullMode = D3D11_CULL_NONE;
 
 	Device->CreateRasterizerState(&rasterizerdesc, &RasterizerState);
 }
@@ -125,7 +121,23 @@ void Renderer::CreateShader()
 	ID3DBlob* pixelshaderCSO = nullptr;
 	ID3DBlob* errorBlob = nullptr;
 
+	const wchar_t* candidatePaths[] = {
+		L"ShaderW0.hlsl",
+		L"Project1/ShaderW0.hlsl",
+		L"../Project1/ShaderW0.hlsl",
+		L"bin/Debug/ShaderW0.hlsl",
+		L"../bin/Debug/ShaderW0.hlsl"
+	};
+
 	const wchar_t* shaderPath = L"ShaderW0.hlsl";
+	for (const wchar_t* path : candidatePaths)
+	{
+		if (std::filesystem::exists(path))
+		{
+			shaderPath = path;
+			break;
+		}
+	}
 
 	// Vertex Shader 컴파일
 	HRESULT hr = D3DCompileFromFile(
@@ -213,6 +225,11 @@ void Renderer::CreateConstantBuffer()
 	constantbufferdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
 	Device->CreateBuffer(&constantbufferdesc, nullptr, &ConstantBuffer);
+
+	constants.worldmat = XMMatrixIdentity();
+	constants.viewmat = XMMatrixIdentity();
+	constants.projmat = XMMatrixTranspose(XMMatrixScaling(1.0f / wAspectRatio, 1.0f, 1.0f));
+	constants.AspectRatio = 0;
 }
 
 void Renderer::ReleaseConstantBuffer()
@@ -297,28 +314,41 @@ void Renderer::PrepareShader()
 	DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
 }
 
-void Renderer::UpdateConstant(FVector Offset, float Rotation, FVector Scale)
+
+void Renderer::Update()
 {
 	if (ConstantBuffer)
 	{
 		D3D11_MAPPED_SUBRESOURCE constantbufferMSR;
 
-		DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &constantbufferMSR);
-		FConstants* constants = (FConstants*)constantbufferMSR.pData;
+		HRESULT hr = DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &constantbufferMSR);
+		if (SUCCEEDED(hr))
 		{
-			constants->Offset = Offset;
-			constants->Rotation = Rotation; // Radians
-			constants->Scale = Scale;
-			constants->AspectRatio = wAspectRatio;
+			memcpy(constantbufferMSR.pData, &constants, sizeof(FConstants));
+			DeviceContext->Unmap(ConstantBuffer, 0);
 		}
-		DeviceContext->Unmap(ConstantBuffer, 0);
 	}
 }
 
-void Renderer::UpdateConstant(FVector Offset, FVector Scale)
+void Renderer::SetWorldMatrix(XMMATRIX worldmat)
 {
-	//Scale.y *= ViewportInfo.Width / ViewportInfo.Height;
-	UpdateConstant(Offset, 0.0f, Scale);
+	constants.worldmat = XMMatrixTranspose(worldmat);
+}
+
+void Renderer::SetViewMatrix(XMMATRIX viewmat)
+{
+	constants.viewmat = XMMatrixTranspose(viewmat);
+}
+
+void Renderer::SetProjMatrix(XMMATRIX projmat)
+{
+	constants.projmat = XMMatrixTranspose(projmat);
+}
+
+void Renderer::SetVSBuffer(UINT slot)
+{
+	Update();
+	DeviceContext->VSSetConstantBuffers(slot, 1, &ConstantBuffer);
 }
 
 void Renderer::RenderPrimitive(EPrimitive Primitive)
@@ -332,7 +362,7 @@ void Renderer::RenderPrimitive(EPrimitive Primitive)
 		pBuffer = VertexBufferInfos[0].vertexBuffer;
 		numVertices = VertexBufferInfos[0].numVertucies;
 	}
-	else if (Primitive == EPrimitive::Rectangle)
+	else if (Primitive == EPrimitive::Cube)
 	{
 		pBuffer = VertexBufferInfos[1].vertexBuffer;
 		numVertices = VertexBufferInfos[1].numVertucies;
