@@ -109,7 +109,7 @@ public:
 		for (ACollider* c : colliders)
 		{
 			if (!c) continue;
-			if (c->GetPrimitive() == EPrimitive::Circle)
+			if (c->GetPrimitive() == EPrimitive::Sphere)
 			{
 				if ((c->GetLocation() - point).Length() <= c->GetScale().x * 0.5f)
 				{

@@ -4,7 +4,7 @@
 
 DefaultScene::DefaultScene()
 {
-	cube = SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), EPrimitive::Cube);
+	cube = SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.2f), EPrimitive::Cube, {0.2f,0.2f,0.2f});
 
 	SceneObjects.push_back(cube);
 }

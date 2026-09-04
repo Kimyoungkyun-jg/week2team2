@@ -11,53 +11,53 @@ inline FVertexSimple triangle_vertices[] =
 
 inline FVertexSimple cube_vertices[] =
 {
-	// Front face (Z+)
-	{ -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 1.0f }, // Bottom-left (red)
-	{ -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f, 1.0f }, // Top-left (yellow)
-	{  0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 1.0f }, // Bottom-right (green)
-	{ -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f, 1.0f }, // Top-left (yellow)
-	{  0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f, 1.0f }, // Top-right (blue)
-	{  0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 1.0f }, // Bottom-right (green)
+	// Front face (Z+) - 빨강 (Red)
+	{ -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 1.0f },
+	{  0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 1.0f },
+	{  0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 1.0f },
+	{ -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 1.0f },
+	{  0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 1.0f },
+	{ -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 1.0f },
 
-	// Back face (Z-)
-	{ -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f, 1.0f }, // Bottom-left (cyan)
-	{  0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f, 1.0f }, // Bottom-right (magenta)
-	{ -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f, 1.0f }, // Top-left (blue)
-	{ -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f, 1.0f }, // Top-left (blue)
-	{  0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f, 1.0f }, // Bottom-right (magenta)
-	{  0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f, 1.0f }, // Top-right (yellow)
+	// Back face (Z-) - 초록 (Green)
+	{  0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f, 1.0f },
+	{ -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f, 1.0f },
+	{ -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f, 1.0f },
+	{  0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f, 1.0f },
+	{ -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f, 1.0f },
+	{  0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f, 1.0f },
 
-	// Left face (X-)
-	{ -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f, 1.0f }, // Bottom-left (purple)
-	{ -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f, 1.0f }, // Top-left (blue)
-	{ -0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 1.0f }, // Bottom-right (green)
-	{ -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f, 1.0f }, // Top-left (blue)
-	{ -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f, 1.0f }, // Top-right (yellow)
-	{ -0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 1.0f }, // Bottom-right (green)
+	// Left face (X-) - 파랑 (Blue)
+	{ -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f, 1.0f },
+	{ -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f, 1.0f },
+	{ -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f, 1.0f },
+	{ -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f, 1.0f },
+	{ -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f, 1.0f },
+	{ -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 1.0f, 1.0f },
 
-	// Right face (X+)
-	{  0.5f, -0.5f, -0.5f,  1.0f, 0.5f, 0.0f, 1.0f }, // Bottom-left (orange)
-	{  0.5f, -0.5f,  0.5f,  0.5f, 0.5f, 0.5f, 1.0f }, // Bottom-right (gray)
-	{  0.5f,  0.5f, -0.5f,  0.5f, 0.0f, 0.5f, 1.0f }, // Top-left (purple)
-	{  0.5f,  0.5f, -0.5f,  0.5f, 0.0f, 0.5f, 1.0f }, // Top-left (purple)
-	{  0.5f, -0.5f,  0.5f,  0.5f, 0.5f, 0.5f, 1.0f }, // Bottom-right (gray)
-	{  0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.5f, 1.0f }, // Top-right (dark blue)
+	// Right face (X+) - 노랑 (Yellow)
+	{  0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f, 1.0f },
+	{  0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f, 1.0f },
+	{  0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 0.0f, 1.0f },
+	{  0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f, 1.0f },
+	{  0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 0.0f, 1.0f },
+	{  0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 0.0f, 1.0f },
 
-	// Top face (Y+)
-	{ -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.5f, 1.0f }, // Bottom-left (light green)
-	{ -0.5f,  0.5f,  0.5f,  0.0f, 0.5f, 1.0f, 1.0f }, // Top-left (cyan)
-	{  0.5f,  0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f }, // Bottom-right (white)
-	{ -0.5f,  0.5f,  0.5f,  0.0f, 0.5f, 1.0f, 1.0f }, // Top-left (cyan)
-	{  0.5f,  0.5f,  0.5f,  0.5f, 0.5f, 0.0f, 1.0f }, // Top-right (brown)
-	{  0.5f,  0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f }, // Bottom-right (white)
+	// Top face (Y+) - 청록 (Cyan) [수정됨: 위에서 내려다볼 때 시계 방향]
+	{ -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f, 1.0f },
+	{  0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f, 1.0f },
+	{  0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f, 1.0f },
+	{ -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f, 1.0f },
+	{  0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f, 1.0f },
+	{ -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f, 1.0f },
 
-	// Bottom face (Y-)
-	{ -0.5f, -0.5f, -0.5f,  0.5f, 0.5f, 0.0f, 1.0f }, // Bottom-left (brown)
-	{ -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 1.0f }, // Top-left (red)
-	{  0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.5f, 1.0f }, // Bottom-right (purple)
-	{ -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 1.0f }, // Top-left (red)
-	{  0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 1.0f }, // Top-right (green)
-	{  0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.5f, 1.0f }, // Bottom-right (purple)
+	// Bottom face (Y-) - 마젠타 (Magenta) [수정됨: 아래에서 올려다볼 때 시계 방향]
+	{ -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f, 1.0f },
+	{  0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f, 1.0f },
+	{  0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f, 1.0f },
+	{ -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f, 1.0f },
+	{  0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f, 1.0f },
+	{ -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f, 1.0f },
 };
 
 inline FVertexSimple sphere_vertices[] = {

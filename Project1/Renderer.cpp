@@ -7,6 +7,7 @@ void Renderer::Create(HWND hWindow)
 	CreateDeviceAndSwapChain(hWindow);
 	CreateFrameBuffer();
 	CreateRasterizerState();
+	CreateDepthStencil();
 
 }
 
@@ -19,6 +20,7 @@ void Renderer::Release()
 	}
 	ReleaseFrameBuffer();
 	ReleaseDeviceAndSwapChain();
+	ReleaseDepthStencil();
 }
 
 void Renderer::CreateDeviceAndSwapChain(HWND hWindow)
@@ -297,8 +299,19 @@ void Renderer::Prepare()
 	DeviceContext->RSSetViewports(1, &ViewportInfo);
 	DeviceContext->RSSetState(RasterizerState);
 
-	DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, nullptr);
+
+	DeviceContext->ClearDepthStencilView(
+		depthStencilView,
+		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
+		1.0f,
+		0
+	);
+
+	DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, depthStencilView);
 	DeviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff);
+
+	UINT stencilRef = 1; // 스텐실에 기록할 기준값
+	DeviceContext->OMSetDepthStencilState(dsState, stencilRef);
 }
 
 void Renderer::PrepareShader()
@@ -351,13 +364,75 @@ void Renderer::SetVSBuffer(UINT slot)
 	DeviceContext->VSSetConstantBuffers(slot, 1, &ConstantBuffer);
 }
 
+void Renderer::CreateDepthStencil()
+{
+	//깊이 버퍼용 텍스쳐 생성
+	D3D11_TEXTURE2D_DESC descDepth = {};
+	descDepth.Width = (UINT)ViewportInfo.Width;
+	descDepth.Height = (UINT)ViewportInfo.Height;
+	descDepth.MipLevels = 1;
+	descDepth.ArraySize = 1;
+	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; // Depth 24비트, Stencil 8비트
+	descDepth.SampleDesc.Count = 1;
+	descDepth.SampleDesc.Quality = 0;
+	descDepth.Usage = D3D11_USAGE_DEFAULT;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+
+	ID3D11Texture2D* depthStencilBuffer = nullptr;
+	Device->CreateTexture2D(&descDepth, nullptr, &depthStencilBuffer);
+
+	Device->CreateDepthStencilView(depthStencilBuffer, nullptr, &depthStencilView);
+
+	depthStencilBuffer->Release();
+
+	//
+
+	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
+
+	// 깊이 테스트 설정
+	dsDesc.DepthEnable = TRUE;
+	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL; // Z 버퍼 기록 허용
+	dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;     // 가까운 것만 통과
+
+	// 스텐실 테스트 설정
+	dsDesc.StencilEnable = FALSE;
+	dsDesc.StencilReadMask = 0xFF;
+	dsDesc.StencilWriteMask = 0xFF;
+
+	// 전면 폴리곤(Front Face) 스텐실 규칙
+	dsDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE; // 통과 시 Ref 값으로 기록
+	dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;    // 무조건 통과 (마스킹 단계)
+
+	// 후면 폴리곤(Back Face) 스텐실 규칙
+	dsDesc.BackFace = dsDesc.FrontFace;
+
+	Device->CreateDepthStencilState(&dsDesc, &dsState);
+}
+
+void Renderer::ReleaseDepthStencil()
+{
+	if (dsState)
+	{
+		dsState->Release();
+		dsState = nullptr;
+	}
+
+	if (depthStencilView)
+	{
+		depthStencilView->Release();
+		depthStencilView = nullptr;
+	}
+}
+
 void Renderer::RenderPrimitive(EPrimitive Primitive)
 {
 	UINT offset = 0;
 
 	ID3D11Buffer* pBuffer = nullptr;
 	UINT numVertices;
-	if (Primitive == EPrimitive::Circle)
+	if (Primitive == EPrimitive::Sphere)
 	{ 
 		pBuffer = VertexBufferInfos[0].vertexBuffer;
 		numVertices = VertexBufferInfos[0].numVertucies;

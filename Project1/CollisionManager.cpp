@@ -562,7 +562,7 @@ std::vector<CollisionInfo> CollisionManager::CheckCollisionAll(float t)
 // 충돌 감지
 CollisionInfo CollisionManager::CheckCollision(ACollider* a, ACollider* b)
 {
-	if (a->GetPrimitive() == EPrimitive::Circle && b->GetPrimitive() == EPrimitive::Circle)
+	if (a->GetPrimitive() == EPrimitive::Sphere && b->GetPrimitive() == EPrimitive::Sphere)
 	{
 		return CheckCollisionCircleCircle(a, b);
 	}
@@ -570,11 +570,11 @@ CollisionInfo CollisionManager::CheckCollision(ACollider* a, ACollider* b)
 	{
 		return CheckCollisionRectangleRectangle(a, b);
 	}
-	else if (a->GetPrimitive() == EPrimitive::Circle && b->GetPrimitive() == EPrimitive::Cube)
+	else if (a->GetPrimitive() == EPrimitive::Sphere && b->GetPrimitive() == EPrimitive::Cube)
 	{
 		return CheckCollisionCircleRectangle(a, b);
 	}
-	else if (a->GetPrimitive() == EPrimitive::Cube && b->GetPrimitive() == EPrimitive::Circle)
+	else if (a->GetPrimitive() == EPrimitive::Cube && b->GetPrimitive() == EPrimitive::Sphere)
 	{
 		CollisionInfo info = CheckCollisionCircleRectangle(b, a);
 

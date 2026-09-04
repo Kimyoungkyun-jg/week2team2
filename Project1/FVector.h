@@ -1,10 +1,34 @@
 #pragma once
 
+#include <DirectXMath.h>
+
 struct FVector
 {
 	float x, y, z;
 
 	FVector(float _x = 0, float _y = 0, float _z = 0);
+
+	// XMVECTOR -> FVector 변환 생성자
+	FVector(DirectX::FXMVECTOR v)
+	{
+		DirectX::XMFLOAT3 f3;
+		DirectX::XMStoreFloat3(&f3, v);
+		x = f3.x;
+		y = f3.y;
+		z = f3.z;
+	}
+
+	// FVector -> XMVECTOR 자동 형변환 연산자
+	operator DirectX::XMVECTOR() const
+	{
+		return DirectX::XMVectorSet(x, y, z, 0.0f);
+	}
+
+	// 명시적 변환 헬퍼 함수
+	DirectX::XMVECTOR ToXMVECTOR(float w = 0.0f) const
+	{
+		return DirectX::XMVectorSet(x, y, z, w);
+	}
 
 	float LengthSquared() const;
 	float Length() const;

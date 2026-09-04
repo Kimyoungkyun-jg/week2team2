@@ -2,6 +2,7 @@
 
 enum class EPrimitive
 {
-	Circle,
-	Cube
+	Sphere,
+	Cube,
+	None
 };

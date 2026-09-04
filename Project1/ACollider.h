@@ -40,7 +40,7 @@ public:
 	virtual void Released(FVector _Location) override;
 	virtual float GetInertia() const
 	{
-		return Mass * (Scale.x * Scale.x + Scale.y * Scale.y) / 12.0f;
+		return Mass * (transform.Scale.x * transform.Scale.x + transform.Scale.y * transform.Scale.y) / 12.0f;
 	}
 
 	bool bEditing = false;
@@ -73,9 +73,9 @@ class ACircle : public ACollider
 public:
 	ACircle()
 	{
-		Primitive = EPrimitive::Circle;
+		Primitive = EPrimitive::Sphere;
 	}
-	float GetRadius() const { return Scale.x * 0.5f; }
+	float GetRadius() const { return transform.Scale.x * 0.5f; }
 	virtual float GetInertia() const override
 	{
 		float r = GetRadius();

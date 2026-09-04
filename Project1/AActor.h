@@ -2,7 +2,7 @@
 
 #include "UObject.h"
 #include "enums.h"
-#include "FVector.h"
+#include "Transform.h"
 
 using namespace DirectX;
 
@@ -15,15 +15,19 @@ public:
 	virtual void Render() override;
 	virtual void Update(float Deltatime) override;
 
-	void SetLocation(const FVector& loc) { Location = loc; }
-	void SetRotation(const FVector& _Rotation) { Rotation = _Rotation; }
-	void SetScale(const FVector& _Scale) { Scale = _Scale; }
+	void SetLocation(const FVector& loc) { transform.SetLocation(loc); }
+	void SetRotation(const FVector& _Rotation) { transform.SetRotation(_Rotation); }
+	void SetScale(const FVector& _Scale) { transform.SetScale(_Scale); }
 
 	void SetPrimitive(EPrimitive _Primitive) { Primitive = _Primitive; }
-	FVector GetRotation() const { return Rotation; }
+	const FVector& GetRotation() const { return transform.GetRotation(); }
 	EPrimitive GetPrimitive() const { return Primitive; }
-	FVector GetScale() const { return Scale; }
-	FVector GetLocation() const { return Location; }
+	const FVector& GetScale() const { return transform.GetScale(); }
+	const FVector& GetLocation() const { return transform.GetLocation(); }
+
+	Transform& GetTransform() { return transform; }
+	const Transform& GetTransform() const { return transform; }
+	void SetTransform(const Transform& inTransform) { transform = inTransform; }
 
 	virtual void Pressed(FVector _Location) {}
 	virtual void Released(FVector _Location) {}
@@ -31,13 +35,8 @@ public:
 	bool isInvalid = false;
 
 protected:
-	FVector Location = FVector(0, 0, 0);
+	Transform transform;
 	EPrimitive Primitive = EPrimitive::Cube;
-	FVector Rotation = FVector(0, 0, 0);
-	FVector Scale = { 1, 1, 1 };
 	ID2D1Bitmap* Bitmap = nullptr;
-
-
-	DirectX::XMMATRIX worldmat;
-
 };
+

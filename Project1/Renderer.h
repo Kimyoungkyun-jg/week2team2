@@ -60,6 +60,10 @@ public:
 	unsigned int Stride;
 	float wAspectRatio;
 
+	// 깊이 스텐실 버퍼
+	ID3D11DepthStencilView* depthStencilView = nullptr;
+	ID3D11DepthStencilState* dsState = nullptr;
+
 	FConstants constants; //매트릭스 넣어야됌
 
 
@@ -98,8 +102,12 @@ public:
 	void SetViewMatrix(XMMATRIX viewdmat);
 	void SetProjMatrix(XMMATRIX projmat);
 
-	//
+	//버텍스 버퍼 세팅
 	void SetVSBuffer(UINT slot);
+
+	//깊이 버퍼 세팅
+	void CreateDepthStencil();
+	void ReleaseDepthStencil();
 
 	void RenderPrimitive(EPrimitive Primitive);
 	void SwapBuffer();
