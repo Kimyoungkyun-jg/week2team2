@@ -228,10 +228,7 @@ void Renderer::CreateConstantBuffer()
 
 	Device->CreateBuffer(&constantbufferdesc, nullptr, &ConstantBuffer);
 
-	constants.worldmat = XMMatrixIdentity();
-	constants.viewmat = XMMatrixIdentity();
-	constants.projmat = XMMatrixTranspose(XMMatrixScaling(1.0f / wAspectRatio, 1.0f, 1.0f));
-	constants.AspectRatio = 0;
+	constants.WVP = XMMatrixIdentity();
 }
 
 void Renderer::ReleaseConstantBuffer()
@@ -337,35 +334,31 @@ void Renderer::Update()
 		HRESULT hr = DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &constantbufferMSR);
 		if (SUCCEEDED(hr))
 		{
-			constants->Offset = Offset;
-			constants->Rotation = Rotation; // Radians
-			constants->Scale = Scale;
-			constants->AspectRatio = wAspectRatio;
-			DirectX::XMStoreFloat4x4(
-				&constants->WVP, DirectX::XMMatrixTranspose(WVP));
-		}
-		DeviceContext->Unmap(ConstantBuffer, 0);
-	}
-}
 			memcpy(constantbufferMSR.pData, &constants, sizeof(FConstants));
 			DeviceContext->Unmap(ConstantBuffer, 0);
 		}
 	}
 }
 
-void Renderer::SetWorldMatrix(XMMATRIX worldmat)
+void Renderer::SetViewMatrix(const XMMATRIX& viewmat)
 {
-	constants.worldmat = XMMatrixTranspose(worldmat);
+	viewMatrix = viewmat;
 }
 
-void Renderer::SetViewMatrix(XMMATRIX viewmat)
+void Renderer::SetProjMatrix(const XMMATRIX& projmat)
 {
-	constants.viewmat = XMMatrixTranspose(viewmat);
+	projMatrix = projmat;
 }
 
-void Renderer::SetProjMatrix(XMMATRIX projmat)
+void Renderer::SetWorldMatrix(const XMMATRIX& worldmat)
 {
-	constants.projmat = XMMatrixTranspose(projmat);
+	XMMATRIX wvp = worldmat * viewMatrix * projMatrix;
+	constants.WVP = XMMatrixTranspose(wvp);
+}
+
+void Renderer::SetWVPMatrix(const XMMATRIX& wvpmat)
+{
+	constants.WVP = XMMatrixTranspose(wvpmat);
 }
 
 void Renderer::SetVSBuffer(UINT slot)

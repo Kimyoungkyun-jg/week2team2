@@ -133,10 +133,10 @@
     <ClInclude Include="..\Project1\Scenes\DefaultScene.h" />
     <ClInclude Include="..\Project1\Sphere.h" />
     <ClInclude Include="..\Project1\TemplateLibrary.h" />
+    <ClInclude Include="..\Project1\Transform.h" />
     <ClInclude Include="..\Project1\UObject.h" />
     <ClInclude Include="..\Project1\enums.h" />
     <ClInclude Include="..\Project1\pch.h" />
-    <ClInclude Include="ACamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Project1\AActor.cpp" />
@@ -177,7 +177,6 @@
     <ClCompile Include="..\Project1\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ACamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Project1\ShaderW0.hlsl" />

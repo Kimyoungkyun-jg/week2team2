@@ -12,6 +12,7 @@ public:
 		, Scale(1.0f, 1.0f, 1.0f)
 		, WorldMatrix(DirectX::XMMatrixIdentity())
 	{
+		UpdateWorldMatrix();
 	}
 
 	Transform(const FVector& InLocation, const FVector& InRotation = FVector(0.0f, 0.0f, 0.0f), const FVector& InScale = FVector(1.0f, 1.0f, 1.0f))
@@ -32,9 +33,9 @@ public:
 		WorldMatrix = S * R * T;
 	}
 
-	void SetLocation(const FVector& InLocation) { Location = InLocation; }
-	void SetRotation(const FVector& InRotation) { Rotation = InRotation; }
-	void SetScale(const FVector& InScale) { Scale = InScale; }
+	void SetLocation(const FVector& InLocation) { Location = InLocation; UpdateWorldMatrix(); }
+	void SetRotation(const FVector& InRotation) { Rotation = InRotation; UpdateWorldMatrix(); }
+	void SetScale(const FVector& InScale) { Scale = InScale; UpdateWorldMatrix(); }
 
 	const FVector& GetLocation() const { return Location; }
 	const FVector& GetRotation() const { return Rotation; }

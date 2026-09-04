@@ -67,10 +67,14 @@ public:
 
 	FConstants constants; //매트릭스 넣어야됌
 
+	XMMATRIX viewMatrix = DirectX::XMMatrixIdentity();
+	XMMATRIX projMatrix = DirectX::XMMatrixIdentity();
+
 
 public:
 	void Create(HWND hWindow);
 	void Release();
+
 
 	void CreateDeviceAndSwapChain(HWND hWindow);
 	void ReleaseDeviceAndSwapChain();
@@ -99,9 +103,10 @@ public:
 	void Update();
 
 	//매트릭스 세팅
-	void SetWorldMatrix(XMMATRIX worldmat);
-	void SetViewMatrix(XMMATRIX viewdmat);
-	void SetProjMatrix(XMMATRIX projmat);
+	void SetWorldMatrix(const XMMATRIX& worldmat);
+	void SetViewMatrix(const XMMATRIX& viewmat);
+	void SetProjMatrix(const XMMATRIX& projmat);
+	void SetWVPMatrix(const XMMATRIX& wvpmat);
 
 	//버텍스 버퍼 세팅
 	void SetVSBuffer(UINT slot);

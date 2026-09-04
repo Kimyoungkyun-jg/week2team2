@@ -2,8 +2,8 @@
 
 #include "UObject.h"
 #include "TemplateLibrary.h"
-
-class Renderer;
+#include "Camera.h"
+#include "Renderer.h"
 
 struct FFadeOverlay
 {
@@ -25,7 +25,10 @@ public:
     virtual void Exit() {}
     
     virtual void Update(float deltaTime) {}
-    virtual void Render() {}
+    virtual void Render() {
+        Renderer::GetInstance().SetViewMatrix(Camera::GetInstance().GetViewMatrix());
+        Renderer::GetInstance().SetProjMatrix(Camera::GetInstance().GetProjectionMatrix(Renderer::GetInstance().GetAspectRatio()));
+    };
 
     FFadeOverlay& GetFadeOverlay() { return m_fadeOverlay; }
 
