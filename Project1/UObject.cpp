@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "UObject.h"
 #include "Global.h"
 #include "CollisionManager.h"
@@ -9,10 +10,15 @@
 
 void UObject::Destroy()
 {
-	UObjectManager::GetInstance().Destroy(this);
+	ObjectManager::GetInstance().Destroy(this);
 }
 
-void AActor::Draw(URenderer& renderer)
+void UObject::Update(float deltatime)
+{
+	if (bIsActive) return;
+}
+
+void AActor::Draw(Renderer& renderer)
 {
 	if (Bitmap)
 	{

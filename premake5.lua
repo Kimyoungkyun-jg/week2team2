@@ -9,6 +9,9 @@ project "Project1"
     cppdialect "C++20"
     location "build"
 
+    pchheader "pch.h"
+    pchsource "Project1/pch.cpp"
+
     targetdir ("bin/" .. "%{cfg.buildcfg}")
     objdir ("bin-int/" .. "%{cfg.buildcfg}")
 
@@ -19,13 +22,25 @@ project "Project1"
         "Project1/**.hlsl"
     }
 
+    excludes {
+        "Project1/ThirdParty/**"
+    }
+
     filter "files:Project1/**.hlsl"
         buildaction "None"
+
+    filter "files:Project1/ImGui/**"
+        enablepch "Off"
 
     filter {}
 
     includedirs {
-        "Project1"
+        "Project1",
+        "Project1/ThirdParty/DirectXTex"
+    }
+
+    links {
+        "DirectXTex"
     }
 
     postbuildcommands {
@@ -35,7 +50,9 @@ project "Project1"
     filter "configurations:Debug"
         defines { "DEBUG" }
         symbols "On"
+        libdirs { "Project1/ThirdParty/DirectXTex" }
 
     filter "configurations:Release"
         defines { "NDEBUG" }
         optimize "On"
+        libdirs { "Project1/ThirdParty/DirectXTex" }

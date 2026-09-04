@@ -1,33 +1,34 @@
 #pragma once
-#include <d3d11.h>
-#include <vector>
-#include <cmath>
-#include <DirectXMath.h>
+
 #include "Renderer.h"
 #include "enums.h"
-#include "Vector.h"
+#include "FVector.h"
 
 class UObject
 {
 public:
 	UObject()
 	{
-		++IDMax;
-		ID = IDMax;
+		++UIDMax;
+		UID = UIDMax;
 	}
 	virtual ~UObject() {}
-	int GetID() const { return ID; }
+	int GetID() const { return UID; }
 
-	virtual void Pressed(FVector _Location) {}
-	virtual void Clicked() {}
-	virtual void Released(FVector _Location) {}
-	void Destroy();
 
+	virtual void Update(float deltatime);
+	virtual void Render() {}
+
+	virtual void Destroy();
 	virtual void Tick(float deltaTime) {}
-
+	
+	void Active() { bIsActive = true; }
+	void DeActive() { bIsActive = false; }
+	bool const GetIsActive() { return bIsActive; }
 private:
-	inline static int IDMax = 0;
-	int ID = 0;
+	inline static int UIDMax = 0;
+	int UID = 0;
+	bool bIsActive = true;
 };
 
 class AActor : public UObject
@@ -35,7 +36,8 @@ class AActor : public UObject
 public:
 	AActor() {}
 	virtual ~AActor() {}
-	virtual void Draw(URenderer& renderer);
+	virtual void Draw(Renderer& renderer);
+	virtual void Render() override { Draw(Renderer::GetInstance()); }
 
 	void SetLocation(const FVector& loc) { Location = loc; }
 	void SetRotation(const float _Rotation) { Rotation = _Rotation; }
@@ -46,9 +48,13 @@ public:
 	FVector GetScale() const { return Scale; }
 	FVector GetLocation() const { return Location; }
 
+	virtual void Pressed(FVector _Location) {}
+	virtual void Released(FVector _Location) {}
+
+
 	void SetImage(const wchar_t* uri)
 	{
-		Bitmap = URenderer::GetInstance().LoadBitmapFromFile(uri);
+		Bitmap = Renderer::GetInstance().LoadBitmapFromFile(uri);
 	}
 
 	void SetBitmap(ID2D1Bitmap* bmp)
@@ -108,7 +114,7 @@ public:
 	}
 
 	bool bEditing = false;
-	bool bUseGravity = true;
+	bool bUseGravity = false;
 
 protected:
 	FVector Velocity;

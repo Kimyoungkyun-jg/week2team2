@@ -1,6 +1,5 @@
-#include <cmath>
-
-#include "Vector.h"
+#include "pch.h"
+#include "FVector.h"
 
 FVector::FVector(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
 
