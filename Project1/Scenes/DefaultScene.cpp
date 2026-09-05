@@ -53,14 +53,16 @@ void DefaultScene::Render()
 	ImGui::Text("Forward: (%.2f, %.2f, %.2f)", camFwd.x, camFwd.y, camFwd.z);
 
 	ImGui::Separator();
-
 	
-	if (ImGui::IsMouseClicked(0)) {
+	if (ImGui::IsMouseClicked(1)) {
 		ray = PickingManager::GetInstance().ScreenToWorldRay(ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y,
 			Renderer::GetInstance().ViewportInfo.Width, Renderer::GetInstance().ViewportInfo.Height);
-
-		
+		UObject * pickedObj = PickingManager::GetInstance().Pick(ray);
+		if (pickedObj) {
+			OutputDebugStringA("hit!");
+		}
 	}
+
 	// ----------------------------------
 	//			테스트용 코드!!!
 	// ----------------------------------

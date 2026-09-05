@@ -18,11 +18,11 @@ public:
 
 	FRay ScreenToWorldRay(float mouseX, float mouseY, float screenW, float screenH) const;
 
-	AActor* Pick(const FRay& ray, const FVector& center, float radius, float& outDistance) const;
+	UObject* Pick(const FRay& ray) const;
+
+	bool RayIntersectBox(const FRay& ray, const FVector& center, const FVector& scale, float& outDistance) const;
 
 private:
 	PickingManager() {};
-
-	bool * RayIntersectsSphere(const FRay& ray, const FVector& center, float radius, float& outDistance) const;
 };
 
