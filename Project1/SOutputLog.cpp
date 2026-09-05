@@ -31,16 +31,40 @@ void SOutputLog::Render()
     }
 
     // 상단 버튼
-    ImGui::Button("Add Debug Text");
+    if (ImGui::Button("Add Debug Text"))
+    {
+        OutputLog->Serialize("Debug Text");
+    }
+
     ImGui::SameLine();
 
-    ImGui::Button("Add Debug Error");
+    if (ImGui::Button("Add Debug Error"))
+    {
+        OutputLog->Serialize("[Error] Debug Error");
+    }
+
     ImGui::SameLine();
 
-    ImGui::Button("Clear");
+    if (ImGui::Button("Clear"))
+    {
+        OutputLog->Clear();
+    }
+
     ImGui::SameLine();
 
-    ImGui::Button("Copy");
+
+    if (ImGui::Button("Copy"))
+    {
+        std::string AllLogs;
+
+        for (const std::string& Log : OutputLog->GetLogs())
+        {
+            AllLogs += Log;
+            AllLogs += '\n';
+        }
+
+        ImGui::SetClipboardText(AllLogs.c_str());
+    }
 
     ImGui::Separator();
 
@@ -50,7 +74,7 @@ void SOutputLog::Render()
     ImGui::Button("Options");
     ImGui::SameLine();
 
-    Filter.Draw("Filter (\"incl,-excl\") (\"error\")", 300.0f);
+    Filter.Draw("Filter (\"incl,-excl\") (\"error\")", 200.0f);
 
     ImGui::Separator();
 

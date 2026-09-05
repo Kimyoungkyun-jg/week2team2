@@ -2,10 +2,14 @@
 
 #include "FVertexSimple.h"
 #include "Renderer.h"
+#include "FOutputLog.h"
+#include "SOutputLog.h"
 
 class App
 {
 private:
+	FOutputLog OutputLog;
+	SOutputLog OutputLogWindow{ &OutputLog };
 	HWND m_mainWindow = nullptr;
 
 	void Initwindow(HINSTANCE hInstance);

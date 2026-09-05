@@ -8,7 +8,7 @@ class FOutputLog : public FOutputDevice
 public:
     void Serialize(const std::string& Message) override;
     const std::vector<std::string>& GetLogs() const;
-    void Clear();;
+    void Clear();
 
 private:
     std::vector<std::string> Logs;

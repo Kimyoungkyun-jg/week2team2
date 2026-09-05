@@ -41,6 +41,8 @@ App::~App()
 
 void App::Init(HINSTANCE hInstance)
 {
+	
+
 	Initwindow(hInstance);
 
 	Renderer& renderer = Renderer::GetInstance();
@@ -51,6 +53,10 @@ void App::Init(HINSTANCE hInstance)
 	renderer.CreateVertexBufferInfos();
 
 	InitImgui();
+	
+	OutputLog.Serialize("Hello World 2025");
+	OutputLog.Serialize("[Warning] Test Warning");
+	OutputLog.Serialize("[Error] Test Error");
 
 	SCENE.AddScene("Default", new DefaultScene());
 	SCENE.ChangeScene("Default");
@@ -118,14 +124,8 @@ void App::Render()
 	ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
 
 	ImGui::Begin("Engine Main Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-
-
-	FOutputLog OutputLog;
-	SOutputLog OutputLogWindow{ &OutputLog };
+	
 	OutputLogWindow.Render();
-	OutputLog.Serialize("Hello World 2025");
-	OutputLog.Serialize("[Warning] Test Warning");
-	OutputLog.Serialize("[Error] Test Error");
 
 	ImGui::Text("DirectX 11 & ImGui Active!");
 	ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
