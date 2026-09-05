@@ -4,6 +4,18 @@
 #include "Transform.h"
 
 
+Camera::Camera()
+{
+	transform.SetLocation(FVector(0.0f, 0.0f, -3.0f));
+
+	vpBuffer = new MatrixBuffer();
+}
+
+Camera::~Camera()
+{
+	delete vpBuffer;
+}
+
 void Camera::Rotate(float deltaYaw, float deltaPitch)
 {
 	float deltaYawRad = deltaYaw * (Global::PI / 180.0f);
@@ -54,3 +66,9 @@ void Camera::Update()
 		Rotate(delta.x * 0.2f, delta.y * 0.2f);
 	}
 }
+
+void Camera::SetVPBuffer()
+{
+	vpBuffer->SetVSBuffer(1);
+}
+

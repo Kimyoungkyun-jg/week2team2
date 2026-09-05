@@ -34,7 +34,7 @@ public:
 
 
 	//메모리 관리
-	uint32 TotalAllocationBytes;
-	uint32 TotalAllocationCount;
+	uint32 TotalAllocationBytes = 0;
+	uint32 TotalAllocationCount = 0;
 
 };

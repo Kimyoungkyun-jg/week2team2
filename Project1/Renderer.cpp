@@ -219,49 +219,7 @@ void Renderer::ReleaseShader()
 	}
 }
 
-void Renderer::CreateConstantBuffer()
-{
-	D3D11_BUFFER_DESC constantbufferdesc = {};
-	constantbufferdesc.ByteWidth = sizeof(FConstants) + 0xf & 0xfffffff0;
-	constantbufferdesc.Usage = D3D11_USAGE_DYNAMIC;
-	constantbufferdesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	constantbufferdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
-	Device->CreateBuffer(&constantbufferdesc, nullptr, &ConstantBuffer);
-
-	constants.WVP = FMatrix::Identity();
-}
-
-void Renderer::ReleaseConstantBuffer()
-{
-	if (ConstantBuffer)
-	{
-		ConstantBuffer->Release();
-		ConstantBuffer = nullptr;
-	}
-}
-
-void Renderer::CreateFrameConstantBuffer()
-{
-	D3D11_BUFFER_DESC frameConstantbufferdesc = {};
-	frameConstantbufferdesc.ByteWidth = sizeof(FFrameConstants) + 0xf & 0xfffffff0;
-	frameConstantbufferdesc.Usage = D3D11_USAGE_DYNAMIC;
-	frameConstantbufferdesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	frameConstantbufferdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-
-	Device->CreateBuffer(&frameConstantbufferdesc, nullptr, &FrameConstantBuffer);
-
-	
-}
-
-void Renderer::ReleaseFrameConstantBuffer()
-{
-	if (FrameConstantBuffer)
-	{
-		FrameConstantBuffer->Release();
-		FrameConstantBuffer = nullptr;
-	}
-}
 
 void Renderer::CreateVertexBufferInfos()
 {
@@ -339,14 +297,6 @@ void Renderer::PrepareShader()
 	DeviceContext->IASetInputLayout(SimpleInputLayout);
 
 	DeviceContext->VSSetShader(SimpleVertexShader, nullptr, 0);
-	if (ConstantBuffer)
-	{
-		DeviceContext->VSSetConstantBuffers(0, 1, &ConstantBuffer);
-	}
-	if (FrameConstantBuffer)
-	{
-		DeviceContext->VSSetConstantBuffers(1, 1, &FrameConstantBuffer);
-	}
 
 	DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
 }
@@ -354,56 +304,14 @@ void Renderer::PrepareShader()
 
 void Renderer::UpdateFrameConstant()
 {
-	frameConstants.VP = Camera::GetInstance().GetViewMatrix() * Camera::GetInstance().GetProjectionMatrix(wAspectRatio);
-	
-	D3D11_MAPPED_SUBRESOURCE msr;
-	DeviceContext->Map(FrameConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
-	FMatrix vpT = frameConstants.VP.Transpose();
-	memcpy(msr.pData, &vpT, sizeof(FMatrix));
-	DeviceContext->Unmap(FrameConstantBuffer, 0);
+	Camera::GetInstance().vpBuffer->SetMat(Camera::GetInstance().GetViewMatrix() * Camera::GetInstance().GetProjectionMatrix(wAspectRatio));
 }
 
 void Renderer::Update()
 {
-	if (ConstantBuffer)
-	{
-		D3D11_MAPPED_SUBRESOURCE constantbufferMSR;
 
-		HRESULT hr = DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &constantbufferMSR);
-		if (SUCCEEDED(hr))
-		{
-			memcpy(constantbufferMSR.pData, &constants, sizeof(FConstants));
-			DeviceContext->Unmap(ConstantBuffer, 0);
-		}
-	}
 }
 
-void Renderer::SetViewMatrix(const FMatrix& viewmat)
-{
-	viewMatrix = viewmat;
-}
-
-void Renderer::SetProjMatrix(const FMatrix& projmat)
-{
-	projMatrix = projmat;
-}
-
-void Renderer::SetWorldMatrix(const FMatrix& worldmat)
-{
-	FMatrix wvp = worldmat * viewMatrix * projMatrix;
-	constants.WVP = wvp.Transpose();
-}
-
-void Renderer::SetWVPMatrix(const FMatrix& wvpmat)
-{
-	constants.WVP = wvpmat.Transpose();
-}
-
-void Renderer::SetVSBuffer(UINT slot)
-{
-	Update();
-	DeviceContext->VSSetConstantBuffers(slot, 1, &ConstantBuffer);
-}
 
 void Renderer::CreateDepthStencil()
 {
@@ -420,11 +328,12 @@ void Renderer::CreateDepthStencil()
 	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
 	ID3D11Texture2D* depthStencilBuffer = nullptr;
-	Device->CreateTexture2D(&descDepth, nullptr, &depthStencilBuffer);
-
-	Device->CreateDepthStencilView(depthStencilBuffer, nullptr, &depthStencilView);
-
-	depthStencilBuffer->Release();
+	HRESULT hr = Device->CreateTexture2D(&descDepth, nullptr, &depthStencilBuffer);
+	if (SUCCEEDED(hr) && depthStencilBuffer)
+	{
+		Device->CreateDepthStencilView(depthStencilBuffer, nullptr, &depthStencilView);
+		depthStencilBuffer->Release();
+	}
 
 	//
 

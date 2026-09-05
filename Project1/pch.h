@@ -65,6 +65,11 @@ using namespace std;
 #define SCENE SceneManager::GetInstance()
 #define DELTA ImGui::GetIO().DeltaTime
 
+#define DEVICE Renderer::GetInstance().GetDevice()
+#define DC Renderer::GetInstance().GetDeviceContext()
+
+#define REDERER Renderer::GetInstance()
+
 #define WIN_WIDTH 1920	
 #define WIN_HEIGHT 1080
 
@@ -75,3 +80,4 @@ typedef string FString;
 //Scene Header
 #include "Scene.h"
 #include "SceneManager.h"
+

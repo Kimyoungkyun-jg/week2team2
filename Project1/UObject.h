@@ -37,13 +37,8 @@ public:
 		{
 			App::Instance->TotalAllocationBytes -= size;  // 할당 요청된 바이트 누적
 			App::Instance->TotalAllocationCount--;        // 할당 횟수 1 증가
-
-			free(ptr);
 		}
-		else
-			throw std::runtime_error("App::Instance is not initialized!");
-
-
+		free(ptr);
 	}
 
 

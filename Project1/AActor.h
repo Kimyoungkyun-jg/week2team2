@@ -3,6 +3,7 @@
 #include "UObject.h"
 #include "enums.h"
 #include "Transform.h"
+#include "GlobalBuffer.h"
 
 using namespace DirectX;
 
@@ -11,7 +12,7 @@ class AActor : public UObject
 {
 public:
 	AActor();
-	virtual ~AActor() {}
+	virtual ~AActor();
 	virtual void Render() override;
 	virtual void Update(float Deltatime) override;
 
@@ -34,9 +35,12 @@ public:
 
 	bool isInvalid = false;
 
-protected:
+public:
 	Transform transform;
 	EPrimitive Primitive = EPrimitive::Cube;
-	ID2D1Bitmap* Bitmap = nullptr;
+	
+
+	MatrixBuffer* worldBuffer;
+
 };
 
