@@ -2,6 +2,7 @@
 #include "DefaultScene.h"
 #include "Camera.h"
 #include "Renderer.h"
+#include "SaveLoadManager.h"
 
 
 DefaultScene::DefaultScene()
@@ -48,9 +49,33 @@ void DefaultScene::Render()
 		cam.SetLocation(FVector(0.0f, 0.0f, -3.0f));
 		cam.SetRotation(FVector(0.0f, 0.0f, 0.0f));
 	}
+	
 	FVector camFwd = cam.GetForward();
 	ImGui::Text("Forward: (%.2f, %.2f, %.2f)", camFwd.x, camFwd.y, camFwd.z);
+	
+	ImGui::Separator();
+	
+	/////////////////////////////
+	//////// SAVE & LOAD ////////
+	/////////////////////////////
+	
 
+	void SaveScene(const TArray<UObject*>& objects, const FString& path);
+    TArray<UObject*> LoadScene(const FString& path);
+
+	// Save 버튼
+	ImGui::TextColored(ImVec4(0.3f, 1.0f, 0.8f, 1.0f), "[ Save & Load Scene ]");
+	if (ImGui::Button("Save Scene"))
+	{
+		SaveScene("./SceneData/");
+	}
+	
+	// Load 버튼
+	if (ImGui::Button("Load Scene"))
+	{
+		LoadScene("./SceneData/");
+	}
+	
 	ImGui::Separator();
 
 	// 큐브 디버그 섹션
