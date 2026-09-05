@@ -81,7 +81,6 @@
         FVector zAxis = (target - eye).Normalized(); // 카메라의 Forward 방향
         FVector xAxis = (FVector::Cross3D(up, zAxis)).Normalized(); // 카메라의 Right 방향
         FVector yAxis = FVector::Cross3D(zAxis, xAxis); // 카메라의 Up 방향
-
         
         FMatrix result = {{ {xAxis.x, yAxis.x, zAxis.x, 0},
                             {xAxis.y, yAxis.y, zAxis.y, 0},
@@ -276,4 +275,18 @@
         result.M[3][2] = -(translation.x*InversedR.M[0][2] + translation.y*InversedR.M[1][2] + translation.z*InversedR.M[2][2]);
 
         return result;
+    }
+
+    FVector TransformDirection(const FVector& v, const FMatrix& m)
+    {
+        return FVector(v.x * m.M[0][0] + v.y * m.M[1][0] + v.z * m.M[2][0],
+            v.x * m.M[0][1] + v.y * m.M[1][1] + v.z * m.M[2][1],
+            v.x * m.M[0][2] + v.y * m.M[1][2] + v.z * m.M[2][2]);
+    }
+
+    FVector TransformPoint(const FVector& v, const FMatrix& m)
+    {
+        return FVector(v.x * m.M[0][0] + v.y * m.M[1][0] + v.z * m.M[2][0] + m.M[3][0],
+            v.x * m.M[0][1] + v.y * m.M[1][1] + v.z * m.M[2][1] + m.M[3][1],
+            v.x * m.M[0][2] + v.y * m.M[1][2] + v.z * m.M[2][2] + m.M[3][2]);
     }

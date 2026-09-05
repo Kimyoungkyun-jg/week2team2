@@ -2,6 +2,7 @@
 #include "DefaultScene.h"
 #include "Camera.h"
 #include "Renderer.h"
+#include "PickingManager.h"
 
 
 DefaultScene::DefaultScene()
@@ -54,6 +55,16 @@ void DefaultScene::Render()
 	ImGui::Text("Forward: (%.2f, %.2f, %.2f)", camFwd.x, camFwd.y, camFwd.z);
 
 	ImGui::Separator();
+	
+	if (ImGui::IsMouseClicked(0)) {
+		// pick 테스트 코드 부분입니다! F5 로 출력 확인해보세요 :)
+		ray = PickingManager::GetInstance().ScreenToWorldRay(ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y,
+			Renderer::GetInstance().ViewportInfo.Width, Renderer::GetInstance().ViewportInfo.Height);
+		UObject * pickedObj = PickingManager::GetInstance().Pick(ray);
+		if (pickedObj) {
+			OutputDebugStringA("hit!");
+		}
+	}
 
 	// 기즈모 디버그 섹션
 	ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.2f, 1.0f), "[ Gizmo Controls ]");
@@ -91,5 +102,8 @@ void DefaultScene::Render()
 			gizmo->SetRotation(rot);
 		}
 	}
+
+	
+
 	ImGui::End();
 }

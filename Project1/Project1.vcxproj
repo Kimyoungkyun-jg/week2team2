@@ -143,6 +143,7 @@
     <ClInclude Include="Containers.h" />
     <ClInclude Include="GlobalBuffer.h" />
     <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="PickingManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Project1\AActor.cpp" />
@@ -186,6 +187,7 @@
     <ClCompile Include="AGizmo.cpp" />
     <ClCompile Include="ConstBuffer.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
+    <ClCompile Include="PickingManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Project1\ShaderW0.hlsl" />
