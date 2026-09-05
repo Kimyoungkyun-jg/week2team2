@@ -14,7 +14,7 @@ FRay PickingManager::ScreenToWorldRay(float mouseX, float mouseY, float screenW,
 	float viewY = ndcY / proj.M[1][1];
 
 	FMatrix view = Camera::GetInstance().GetViewMatrix();
-	FMatrix invView = view.InverseAffine().Transpose();
+	FMatrix invView = view.InverseAffine();
 
 	// View -> World
 	FVector viewDirection(viewX, viewY, 1.0f);
