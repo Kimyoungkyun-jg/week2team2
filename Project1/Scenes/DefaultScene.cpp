@@ -54,7 +54,8 @@ void DefaultScene::Render()
 
 	ImGui::Separator();
 	
-	if (ImGui::IsMouseClicked(1)) {
+	if (ImGui::IsMouseClicked(0)) {
+		// pick 테스트 코드 부분입니다! F5 로 출력 확인해보세요 :)
 		ray = PickingManager::GetInstance().ScreenToWorldRay(ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y,
 			Renderer::GetInstance().ViewportInfo.Width, Renderer::GetInstance().ViewportInfo.Height);
 		UObject * pickedObj = PickingManager::GetInstance().Pick(ray);
@@ -62,12 +63,6 @@ void DefaultScene::Render()
 			OutputDebugStringA("hit!");
 		}
 	}
-
-	// ----------------------------------
-	//			테스트용 코드!!!
-	// ----------------------------------
-	ImGui::Text("Ray Origin: (%.2f, %.2f, %.2f)", ray.Origin.x, ray.Origin.y, ray.Origin.z);
-	ImGui::Text("Ray Dir: (%.2f, %.2f, %.2f)", ray.Direction.x, ray.Direction.y, ray.Direction.z);
 
 	// 큐브 디버그 섹션
 	ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.2f, 1.0f), "[ Cube Controls ]");

@@ -41,12 +41,7 @@ FMatrix Camera::GetViewMatrix() const
 	FVector target = eye + transform.Forward();
 	FVector up = transform.Up();
 
-	FMatrix v = FMatrix::LookAt(eye, target, up);
-	FMatrix result = v;
-	for (int i = 0; i < 3; ++i)
-		for (int j = 0; j < 3; ++j)
-			result.M[i][j] = v.M[j][i];
-	return result;
+	return FMatrix::LookAt(eye, target, up);
 }
 
 FMatrix Camera::GetProjectionMatrix(float aspectRatio) const
