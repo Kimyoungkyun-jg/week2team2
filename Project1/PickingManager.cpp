@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "PickingManager.h"
-#include "Camera.h";
+#include "Camera.h"
 
 FRay PickingManager::ScreenToWorldRay(float mouseX, float mouseY, float screenW, float screenH) const
 {

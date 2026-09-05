@@ -35,6 +35,9 @@ public:
 	const Transform& GetTransform() const { return transform; }
 	void SetTransform(const Transform& inTransform) { transform = inTransform; }
 
+	void SetColor(const FLinearColor& inColor) { Color = inColor; }
+	const FLinearColor& GetColor() const { return Color; }
+
 	// 커스텀 정점 버퍼 초기화 함수
 	void InitVertexBuffer(const void* vertices, UINT stride, UINT inNumVertices, ID3D11InputLayout* inLayout = nullptr);
 
@@ -59,6 +62,7 @@ public:
 	MatrixBuffer* worldBuffer = nullptr;
 	VertexBuffer* vertexbuffer = nullptr;
 	ID3D11InputLayout* inputLayout = nullptr;
+	FLinearColor Color = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	UINT numVertices = 0;
 };
 

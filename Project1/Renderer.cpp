@@ -3,6 +3,7 @@
 #include "Sphere.h"
 #include "Camera.h"
 #include "UObject.h"
+#include "GlobalBuffer.h"
 #include <d3dcompiler.h>
 
 #pragma comment(lib, "d3dcompiler.lib")
@@ -14,15 +15,40 @@ void Renderer::Create(HWND hWindow)
 	CreateDepthStencil();
 	CreateRasterizerState();
 	CreateShader();
+	CreateColorBuffer();
 }
 
 void Renderer::Release()
 {
+	ReleaseColorBuffer();
 	ReleaseDepthStencil();
 	ReleaseShader();
 	ReleaseRasterizerState();
 	ReleaseFrameBuffer();
 	ReleaseDeviceAndSwapChain();
+}
+
+void Renderer::CreateColorBuffer()
+{
+	CustomColorBuffer = new ::ColorBuffer();
+}
+
+void Renderer::ReleaseColorBuffer()
+{
+	if (CustomColorBuffer)
+	{
+		delete CustomColorBuffer;
+		CustomColorBuffer = nullptr;
+	}
+}
+
+void Renderer::SetCustomColor(const FLinearColor& color)
+{
+	if (CustomColorBuffer)
+	{
+		CustomColorBuffer->SetColor(color);
+		CustomColorBuffer->SetVSBuffer(2);
+	}
 }
 
 void Renderer::CreateDeviceAndSwapChain(HWND hWindow)
@@ -238,11 +264,6 @@ void Renderer::ReleaseShader()
 		SimpleVertexShader->Release();
 		SimpleVertexShader = nullptr;
 	}
-}
-
-void Renderer::CreateColorBuffer()
-{
-
 }
 
 ID3D11InputLayout* Renderer::GetInputLayout(const ClassInfo* classInfo)
