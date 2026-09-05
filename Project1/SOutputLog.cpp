@@ -97,6 +97,19 @@ void SOutputLog::Render()
         }
     }
 
+    if (ImGui::InputText(
+        "##Input",
+        InputBuffer,
+        IM_ARRAYSIZE(InputBuffer),
+        ImGuiInputTextFlags_EnterReturnsTrue))
+    {
+        if (InputBuffer[0] != '\0')
+        {
+            OutputLog->Serialize(InputBuffer);
+            InputBuffer[0] = '\0';
+        }
+    }
+
     ImGui::EndChild();
 
     ImGui::Separator();
