@@ -26,7 +26,7 @@ public:
     
     virtual void Update(float deltaTime) {}
     virtual void Render() {
-		Renderer::GetInstance().UpdateFrameConstant();
+		//Renderer::GetInstance().UpdateFrameConstant();
     };
 
     FFadeOverlay& GetFadeOverlay() { return m_fadeOverlay; }
