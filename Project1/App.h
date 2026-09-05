@@ -1,16 +1,11 @@
 #pragma once
 #include "FVertexSimple.h"
 #include "Renderer.h"
-#include "FOutputLog.h"
-#include "FConsoleCommandExecutor.h"
-#include "SOutputLog.h"
+
 
 class App
 {
 private:
-	FOutputLog OutputLog;
-	FConsoleCommandExecutor CommandExecutor{ &OutputLog };
-	SOutputLog OutputLogWindow{ &OutputLog, &CommandExecutor };
 	HWND m_mainWindow = nullptr;
 
 	void Initwindow(HINSTANCE hInstance);

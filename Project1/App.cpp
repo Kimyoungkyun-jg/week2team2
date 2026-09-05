@@ -3,8 +3,6 @@
 #include "Scenes/DefaultScene.h"
 #include "SceneManager.h"
 #include "Camera.h"
-#include "SOutputLog.h"
-#include "FConsoleCommandExecutor.h"
 
 App* App::Instance = nullptr;
 
@@ -52,14 +50,7 @@ void App::Init(HINSTANCE hInstance)
 	renderer.CreateVertexBufferInfos();
 
 	InitImgui();
-	
-	//OutputLog.Serialize("Hello World 2025");
-	//OutputLog.Serialize("[Warning] Test Warning");
-	//OutputLog.Serialize("[Error] Test Error");
 
-	FOutputLog OutputLog;
-	FConsoleCommandExecutor CommandExecutor{ &OutputLog };
-	SOutputLog OutputLogWindow{ &OutputLog, &CommandExecutor };
 
 
 	SCENE.AddScene("Default", new DefaultScene());
@@ -131,8 +122,6 @@ void App::Render()
 	ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
 
 	ImGui::Begin("Engine Main Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-	
-	OutputLogWindow.Render();
 
 	ImGui::Text("DirectX 11 & ImGui Active!");
 	ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
