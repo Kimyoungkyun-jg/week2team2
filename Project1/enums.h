@@ -1,9 +1,8 @@
 #pragma once
-#include <string>
 
 enum class EPrimitive
 {
-	Circle,
-	Rectangle
+	Sphere,
+	Cube,
+	None
 };
-

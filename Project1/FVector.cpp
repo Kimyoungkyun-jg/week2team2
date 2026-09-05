@@ -1,6 +1,5 @@
-#include <cmath>
-
-#include "Vector.h"
+#include "pch.h"
+#include "FVector.h"
 
 FVector::FVector(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
 
@@ -24,6 +23,18 @@ void FVector::Normalize()
 		z /= length;
 	}
 }
+
+FVector FVector::Normalized() const
+{
+	float length = Length();
+	if (length > 0.0f)
+	{
+		return FVector(x / length, y / length, z / length);
+	}
+	return FVector(0.0f, 0.0f, 0.0f);
+}
+
+
 
 float FVector::DotProduct(const FVector& other) const
 {

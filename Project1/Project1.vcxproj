@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -55,18 +55,22 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Project1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Project1;..\Project1\ThirdParty\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Project1\ThirdParty\DirectXTex;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ProjectReference>
     </ProjectReference>
@@ -76,10 +80,11 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Project1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Project1;..\Project1\ThirdParty\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -92,6 +97,8 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Project1\ThirdParty\DirectXTex;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ProjectReference>
     </ProjectReference>
@@ -100,7 +107,15 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Project1\AActor.h" />
+    <ClInclude Include="..\Project1\ACollider.h" />
+    <ClInclude Include="..\Project1\App.h" />
+    <ClInclude Include="..\Project1\Camera.h" />
     <ClInclude Include="..\Project1\CollisionManager.h" />
+    <ClInclude Include="..\Project1\FConstants.h" />
+    <ClInclude Include="..\Project1\FPixelConstant.h" />
+    <ClInclude Include="..\Project1\FVector.h" />
+    <ClInclude Include="..\Project1\FVertexSimple.h" />
     <ClInclude Include="..\Project1\Global.h" />
     <ClInclude Include="..\Project1\ImGui\imconfig.h" />
     <ClInclude Include="..\Project1\ImGui\imgui.h" />
@@ -110,29 +125,62 @@
     <ClInclude Include="..\Project1\ImGui\imstb_rectpack.h" />
     <ClInclude Include="..\Project1\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Project1\ImGui\imstb_truetype.h" />
+    <ClInclude Include="..\Project1\Matrix.h" />
     <ClInclude Include="..\Project1\ObjectManager.h" />
     <ClInclude Include="..\Project1\Renderer.h" />
+    <ClInclude Include="..\Project1\Scene.h" />
+    <ClInclude Include="..\Project1\SceneManager.h" />
+    <ClInclude Include="..\Project1\Scenes\DefaultScene.h" />
     <ClInclude Include="..\Project1\Sphere.h" />
     <ClInclude Include="..\Project1\TemplateLibrary.h" />
+    <ClInclude Include="..\Project1\Transform.h" />
     <ClInclude Include="..\Project1\UObject.h" />
-    <ClInclude Include="..\Project1\Vector.h" />
-    <ClInclude Include="..\Project1\VertexSimple.h" />
+    <ClInclude Include="..\Project1\UEngineStatics.h" />
     <ClInclude Include="..\Project1\enums.h" />
+    <ClInclude Include="..\Project1\pch.h" />
+    <ClInclude Include="ConstBuffer.h" />
+    <ClInclude Include="GlobalBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Project1\AActor.cpp" />
+    <ClCompile Include="..\Project1\ACollider.cpp" />
+    <ClCompile Include="..\Project1\App.cpp" />
+    <ClCompile Include="..\Project1\Camera.cpp" />
     <ClCompile Include="..\Project1\CollisionManager.cpp" />
-    <ClCompile Include="..\Project1\ImGui\imgui.cpp" />
-    <ClCompile Include="..\Project1\ImGui\imgui_demo.cpp" />
-    <ClCompile Include="..\Project1\ImGui\imgui_draw.cpp" />
-    <ClCompile Include="..\Project1\ImGui\imgui_impl_dx11.cpp" />
-    <ClCompile Include="..\Project1\ImGui\imgui_impl_win32.cpp" />
-    <ClCompile Include="..\Project1\ImGui\imgui_tables.cpp" />
-    <ClCompile Include="..\Project1\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="..\Project1\FVector.cpp" />
+    <ClCompile Include="..\Project1\ImGui\imgui.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Project1\ImGui\imgui_demo.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Project1\ImGui\imgui_draw.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Project1\ImGui\imgui_impl_dx11.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Project1\ImGui\imgui_impl_win32.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Project1\ImGui\imgui_tables.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Project1\ImGui\imgui_widgets.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Project1\Matrix.cpp" />
     <ClCompile Include="..\Project1\ObjectManager.cpp" />
     <ClCompile Include="..\Project1\Renderer.cpp" />
+    <ClCompile Include="..\Project1\Scene.cpp" />
+    <ClCompile Include="..\Project1\SceneManager.cpp" />
+    <ClCompile Include="..\Project1\Scenes\DefaultScene.cpp" />
     <ClCompile Include="..\Project1\UObject.cpp" />
-    <ClCompile Include="..\Project1\Vector.cpp" />
     <ClCompile Include="..\Project1\main.cpp" />
+    <ClCompile Include="..\Project1\pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ConstBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Project1\ShaderW0.hlsl" />

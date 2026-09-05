@@ -12,8 +12,6 @@ ipch/
 # (Generated automatically via Premake)
 # ==========================================
 *.sln
-*.vcxproj
-*.vcxproj.filters
 *.vcxproj.user
 *.vcxproj.user*
 *.vcxproj.idb

@@ -1,14 +1,13 @@
-#include <algorithm>
-
+#include "pch.h"
 #include "CollisionManager.h"
 #include "ObjectManager.h"
 
 OBB MakeOBB(const ACollider* collider)
 {
 	// Rotation은 라디안, 반시계 방향 (UObject.h)
-	float angle = collider->GetRotation();
-	float cs = std::cos(angle);
-	float sn = std::sin(angle);
+	float angle = collider->GetRotation().z;
+	float cs = cos(angle);
+	float sn = sin(angle);
 
 	OBB box;
 	box.center = collider->GetLocation();
@@ -48,8 +47,8 @@ namespace
 		for (int i = 1; i < 4; i++)
 		{
 			float d = box.vertex[i].DotProduct(dir);
-			outMin = std::fmin(outMin, d);
-			outMax = std::fmax(outMax, d);
+			outMin = fmin(outMin, d);
+			outMax = fmax(outMax, d);
 		}
 	}
 
@@ -57,18 +56,18 @@ namespace
 	FVector ToLocal(const ACollider* body, const FVector& world)
 	{
 		FVector d = world - body->GetLocation();
-		float angle = body->GetRotation();
-		float cs = std::cos(angle);
-		float sn = std::sin(angle);
+		float angle = body->GetRotation().z;
+		float cs = cos(angle);
+		float sn = sin(angle);
 
 		return FVector(d.x * cs + d.y * sn, -d.x * sn + d.y * cs, 0.0f);
 	}
 
 	FVector ToWorld(const ACollider* body, const FVector& local)
 	{
-		float angle = body->GetRotation();
-		float cs = std::cos(angle);
-		float sn = std::sin(angle);
+		float angle = body->GetRotation().z;
+		float cs = cos(angle);
+		float sn = sin(angle);
 
 		return body->GetLocation() + FVector(local.x * cs - local.y * sn, local.x * sn + local.y * cs, 0.0f);
 	}
@@ -158,7 +157,7 @@ SATResult OverlapOBB(const OBB& a, const OBB& b)
 		}
 
 		// 두 구간이 겹치는 폭
-		float overlap = std::fmin(aMax, bMax) - std::fmax(aMin, bMin);
+		float overlap = fmin(aMax, bMax) - fmax(aMin, bMin);
 
 		if (i < 2)
 		{
@@ -241,7 +240,7 @@ SATResult OverlapOBB(const OBB& a, const OBB& b)
 		}
 
 		result.points[result.pointCount].position = kept[i].position;
-		result.points[result.pointCount].penetration = std::fmax(-separation, 0.0f);
+		result.points[result.pointCount].penetration = fmax(-separation, 0.0f);
 		result.points[result.pointCount].id = kept[i].id;
 		result.pointCount++;
 	}
@@ -289,7 +288,7 @@ float CollisionManager::InvInertia(float inertia)
 namespace
 {
 	// union-find. 경로를 압축하며 뿌리를 찾는다
-	int FindRoot(std::vector<int>& parent, int i)
+	int FindRoot(vector<int>& parent, int i)
 	{
 		while (parent[i] != i)
 		{
@@ -314,7 +313,7 @@ void CollisionManager::PrimeSleep()
 	}
 }
 
-void CollisionManager::UpdateSleep(float t, const std::vector<std::pair<ACollider*, ACollider*>>& contacts)
+void CollisionManager::UpdateSleep(float t, const vector<pair<ACollider*, ACollider*>>& contacts)
 {
 	size_t n = colliders.size();
 
@@ -338,21 +337,21 @@ void CollisionManager::UpdateSleep(float t, const std::vector<std::pair<ACollide
 		}
 
 		bool bSlow = c->GetVelocity().LengthSquared() < linearSleepTolerance * linearSleepTolerance
-			&& std::fabs(c->GetAngularVelocity()) < angularSleepTolerance;
+			&& fabs(c->GetAngularVelocity()) < angularSleepTolerance;
 
 		c->SetSleepTimer(bSlow ? c->GetSleepTimer() + deltaTime : 0.0f);
 	}
 
 	// 2. 접촉으로 연결된 무리를 만든다.
 	//    정적 물체는 안 잇는다. 바닥으로 이으면 전부 한 덩어리가 돼서 아무것도 못 잠든다.
-	std::unordered_map<const ACollider*, int> indexOf;
+	unordered_map<const ACollider*, int> indexOf;
 	indexOf.reserve(n);
 	for (int i = 0; i < (int)n; i++)
 	{
 		indexOf[colliders[i]] = i;
 	}
 
-	std::vector<int> parent(n);
+	vector<int> parent(n);
 	for (int i = 0; i < (int)n; i++)
 	{
 		parent[i] = i;
@@ -375,7 +374,7 @@ void CollisionManager::UpdateSleep(float t, const std::vector<std::pair<ACollide
 	}
 
 	// 3. 무리마다 가장 짧은 타이머를 찾는다. 그게 무리 전체의 진행도다.
-	std::unordered_map<int, float> islandTimer;
+	unordered_map<int, float> islandTimer;
 
 	for (int i = 0; i < (int)n; i++)
 	{
@@ -417,10 +416,10 @@ void CollisionManager::UpdateSleep(float t, const std::vector<std::pair<ACollide
 	}
 }
 
-std::vector<CollisionInfo> CollisionManager::CheckCollisionAll(float t)
+vector<CollisionInfo> CollisionManager::CheckCollisionAll(float t)
 {
-	std::vector<CollisionInfo> infos;
-	std::vector<std::pair<std::pair<ACollider*, ACollider*>, CollisionInfo>> abinfos;
+	vector<CollisionInfo> infos;
+	vector<pair<pair<ACollider*, ACollider*>, CollisionInfo>> abinfos;
 	size_t n = colliders.size();
 
 	for (size_t i = 0; i < n; i++)
@@ -454,7 +453,7 @@ std::vector<CollisionInfo> CollisionManager::CheckCollisionAll(float t)
 		}
 	}
 
-	std::sort(abinfos.begin(), abinfos.end(), [](const auto& a, const auto& b) {
+	sort(abinfos.begin(), abinfos.end(), [](const auto& a, const auto& b) {
 		return a.second.AverageContactPoint().y < b.second.AverageContactPoint().y;
 		});
 
@@ -486,7 +485,7 @@ std::vector<CollisionInfo> CollisionManager::CheckCollisionAll(float t)
 
 	// 수렴한 충격량을 다음 프레임에 넘긴다. 새로 만들어 교체하므로 낡은 항목은 저절로 사라진다
 	{
-		std::unordered_map<unsigned long long, CollisionInfo> currentManifolds;
+		unordered_map<unsigned long long, CollisionInfo> currentManifolds;
 		currentManifolds.reserve(abinfos.size());
 
 		for (auto& [ab, info] : abinfos)
@@ -507,7 +506,7 @@ std::vector<CollisionInfo> CollisionManager::CheckCollisionAll(float t)
 			}
 		}
 
-		previousManifolds = std::move(currentManifolds);
+		previousManifolds = move(currentManifolds);
 	}
 
 	// 디버그용 스냅샷. 충격량이 다 풀린 뒤라 normalImpulse가 최종값이다.
@@ -536,13 +535,13 @@ std::vector<CollisionInfo> CollisionManager::CheckCollisionAll(float t)
 
 		for (int i = 0; i < residual.pointCount; i++)
 		{
-			maxPenetration = std::fmax(maxPenetration, residual.points[i].penetration);
+			maxPenetration = fmax(maxPenetration, residual.points[i].penetration);
 		}
 	}
 
 	// 속도가 확정된 뒤, 파괴 전에. 파괴 뒤면 contacts가 지워진 콜라이더를 가리킨다
 	{
-		std::vector<std::pair<ACollider*, ACollider*>> contacts;
+		vector<pair<ACollider*, ACollider*>> contacts;
 		contacts.reserve(abinfos.size());
 		for (auto& [ab, info] : abinfos)
 		{
@@ -563,19 +562,19 @@ std::vector<CollisionInfo> CollisionManager::CheckCollisionAll(float t)
 // 충돌 감지
 CollisionInfo CollisionManager::CheckCollision(ACollider* a, ACollider* b)
 {
-	if (a->GetPrimitive() == EPrimitive::Circle && b->GetPrimitive() == EPrimitive::Circle)
+	if (a->GetPrimitive() == EPrimitive::Sphere && b->GetPrimitive() == EPrimitive::Sphere)
 	{
 		return CheckCollisionCircleCircle(a, b);
 	}
-	else if (a->GetPrimitive() == EPrimitive::Rectangle && b->GetPrimitive() == EPrimitive::Rectangle)
+	else if (a->GetPrimitive() == EPrimitive::Cube && b->GetPrimitive() == EPrimitive::Cube)
 	{
 		return CheckCollisionRectangleRectangle(a, b);
 	}
-	else if (a->GetPrimitive() == EPrimitive::Circle && b->GetPrimitive() == EPrimitive::Rectangle)
+	else if (a->GetPrimitive() == EPrimitive::Sphere && b->GetPrimitive() == EPrimitive::Cube)
 	{
 		return CheckCollisionCircleRectangle(a, b);
 	}
-	else if (a->GetPrimitive() == EPrimitive::Rectangle && b->GetPrimitive() == EPrimitive::Circle)
+	else if (a->GetPrimitive() == EPrimitive::Cube && b->GetPrimitive() == EPrimitive::Sphere)
 	{
 		CollisionInfo info = CheckCollisionCircleRectangle(b, a);
 
@@ -636,7 +635,7 @@ CollisionInfo CollisionManager::CheckCollisionRectangleRectangle(ACollider* a, A
 	float deepest = 0.0f;
 	for (int i = 0; i < result.pointCount; i++)
 	{
-		deepest = std::fmax(deepest, result.points[i].penetration);
+		deepest = fmax(deepest, result.points[i].penetration);
 	}
 
 	if (deepest <= 0.0001f)
@@ -671,8 +670,8 @@ CollisionInfo CollisionManager::CheckCollisionCircleRectangle(ACollider* a, ACol
 	float localY = toCenter.DotProduct(box.axis[1]);
 
 	// 사각형 안에서 원 중심과 가장 가까운 점 (로컬 좌표)
-	float clampedX = std::clamp(localX, -box.half[0], box.half[0]);
-	float clampedY = std::clamp(localY, -box.half[1], box.half[1]);
+	float clampedX = clamp(localX, -box.half[0], box.half[0]);
+	float clampedY = clamp(localY, -box.half[1], box.half[1]);
 
 	// 원이 붙은 면/모서리. clamp에 걸린 축과 부호가 곧 영역이라 굴러가도 안 바뀐다 (추적용 ID)
 	unsigned int regionId = 0;
@@ -686,8 +685,8 @@ CollisionInfo CollisionManager::CheckCollisionCircleRectangle(ACollider* a, ACol
 	{
 		// clamp에 안 걸렸다 = 중심이 사각형 안. 가장 가까운 점이 중심 자신이라 방향을
 		// 못 구하므로, 가장 얕게 빠져나갈 면으로 민다 (예전엔 여기서 버려서 벽을 통과했다)
-		float depthX = box.half[0] - std::fabs(localX);   // 좌우 면까지 남은 거리
-		float depthY = box.half[1] - std::fabs(localY);   // 위아래 면까지 남은 거리
+		float depthX = box.half[0] - fabs(localX);   // 좌우 면까지 남은 거리
+		float depthY = box.half[1] - fabs(localY);   // 위아래 면까지 남은 거리
 
 		if (depthX < depthY)
 		{
@@ -763,7 +762,7 @@ void CollisionManager::ResolvePosition(ACollider* a, ACollider* b, const Collisi
 		FVector worldB = ToWorld(b, point.localB);
 		float penetration = point.penetration - normal.DotProduct(worldA - worldB);
 
-		float correctionAmount = std::fmax(penetration - slop, 0.0f);
+		float correctionAmount = fmax(penetration - slop, 0.0f);
 		if (correctionAmount <= 0.0f)
 		{
 			continue;
@@ -786,8 +785,8 @@ void CollisionManager::ResolvePosition(ACollider* a, ACollider* b, const Collisi
 
 		a->SetLocation(a->GetLocation() + normal * (correction * invMassA));
 		b->SetLocation(b->GetLocation() - normal * (correction * invMassB));
-		a->SetRotation(a->GetRotation() + raxn * correction * invIA);
-		b->SetRotation(b->GetRotation() - rbxn * correction * invIB);
+		a->SetRotation(a->GetRotation().z + raxn * correction * invIA);
+		b->SetRotation(b->GetRotation().z - rbxn * correction * invIB);
 	}
 }
 
@@ -821,7 +820,7 @@ void CollisionManager::SolveContact(ACollider* a, ACollider* b, CollisionInfo& i
 
 		float delta = -(relativeVelocityNormal - point.velocityBias) * point.normalMass;
 		float oldImpulse = point.normalImpulse;
-		point.normalImpulse = std::fmax(oldImpulse + delta, 0.0f);
+		point.normalImpulse = fmax(oldImpulse + delta, 0.0f);
 		float applied = point.normalImpulse - oldImpulse;
 
 		a->SetVelocity(a->GetVelocity() + normal * (applied * invMassA));
@@ -843,11 +842,11 @@ void CollisionManager::SolveContact(ACollider* a, ACollider* b, CollisionInfo& i
 
 		float maxStaticFriction = point.normalImpulse * staticFriction;
 
-		if (std::fabs(newT) > maxStaticFriction)
+		if (fabs(newT) > maxStaticFriction)
 		{
 			// 정지 마찰 한계를 넘음 -> 미끄러짐, 운동 마찰로 클램프
 			float maxDynamicFriction = point.normalImpulse * dynamicFriction;
-			newT = std::clamp(newT, -maxDynamicFriction, maxDynamicFriction);
+			newT = clamp(newT, -maxDynamicFriction, maxDynamicFriction);
 		}
 		// else: 정지 마찰 범위 안 -> 그대로 적용, 즉 붙잡혀서 안 미끄러짐
 
@@ -872,7 +871,7 @@ void CollisionManager::SolveContact(ACollider* a, ACollider* b, CollisionInfo& i
 			float maxRolling = point.normalImpulse * rollingResistance;
 
 			float oldR = point.rollingImpulse;
-			point.rollingImpulse = std::clamp(oldR + deltaR, -maxRolling, maxRolling);
+			point.rollingImpulse = clamp(oldR + deltaR, -maxRolling, maxRolling);
 			float appliedR = point.rollingImpulse - oldR;
 
 			a->SetAngularVelocity(a->GetAngularVelocity() + appliedR * invIA);
@@ -887,8 +886,8 @@ void CollisionManager::InitContact(ACollider* a, ACollider* b, CollisionInfo& in
 
 	// 접선과 마찰 계수는 쌍이 정하므로 접촉점과 무관. 한 번만 구한다
 	info.tangent = FVector::Cross(normal, 1.0f);
-	info.staticFriction = std::sqrt(a->GetStaticFriction() * b->GetStaticFriction());
-	info.dynamicFriction = std::sqrt(a->GetDynamicFriction() * b->GetDynamicFriction());
+	info.staticFriction = sqrt(a->GetStaticFriction() * b->GetStaticFriction());
+	info.dynamicFriction = sqrt(a->GetDynamicFriction() * b->GetDynamicFriction());
 
 	float invMassA = InvMass(a->GetMass());
 	float invMassB = InvMass(b->GetMass());
@@ -928,8 +927,8 @@ void CollisionManager::InitContact(ACollider* a, ACollider* b, CollisionInfo& in
 
 		// 반발계수 조합은 둘 중 큰 쪽. 느린 충돌에서 0으로 죽이는 건 놓인 물체의 떨림 방지
 		const float restitutionThreshold = 1.0f; // 튜닝 값
-		float pairRestitution = std::fmax(a->GetRestitution(), b->GetRestitution());
-		float restitution = (std::fabs(relativeVelocityNormal) < restitutionThreshold) ? 0.0f : pairRestitution;
+		float pairRestitution = fmax(a->GetRestitution(), b->GetRestitution());
+		float restitution = (fabs(relativeVelocityNormal) < restitutionThreshold) ? 0.0f : pairRestitution;
 
 		// 충격량
 		float raxn = FVector::Cross(rA, normal);

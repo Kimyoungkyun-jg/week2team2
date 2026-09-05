@@ -991,8 +991,8 @@ static void DemoWindowWidgetsBasic()
         ImGui::SeparatorText("Inputs");
 
         {
-            // If you want to use InputText() with std::string or any custom dynamic string type:
-            // - For std::string: use the wrapper in misc/cpp/imgui_stdlib.h/.cpp
+            // If you want to use InputText() with string or any custom dynamic string type:
+            // - For string: use the wrapper in misc/cpp/imgui_stdlib.h/.cpp
             // - Otherwise, see the 'Dear ImGui Demo->Widgets->Text Input->Resize Callback' for using ImGuiInputTextFlags_CallbackResize.
             IMGUI_DEMO_MARKER("Widgets/Basic/InputText");
             static char str0[128] = "Hello, world!";
@@ -3818,7 +3818,7 @@ static void DemoWindowWidgetsTextFilter()
 
 static void DemoWindowWidgetsTextInput()
 {
-    // To wire InputText() with std::string or any other custom string type,
+    // To wire InputText() with string or any other custom string type,
     // see the "Text Input > Resize Callback" section of this demo, and the misc/cpp/imgui_stdlib.h file.
     if (ImGui::TreeNode("Text Input"))
     {
@@ -3827,8 +3827,8 @@ static void DemoWindowWidgetsTextInput()
         {
             IMGUI_DEMO_MARKER("Widgets/Text Input/Multi-line Text Input");
             // WE ARE USING A FIXED-SIZE BUFFER FOR SIMPLICITY HERE.
-            // If you want to use InputText() with std::string or any custom dynamic string type:
-            // - For std::string: use the wrapper in misc/cpp/imgui_stdlib.h/.cpp
+            // If you want to use InputText() with string or any custom dynamic string type:
+            // - For string: use the wrapper in misc/cpp/imgui_stdlib.h/.cpp
             // - Otherwise, see the 'Dear ImGui Demo->Widgets->Text Input->Resize Callback' for using ImGuiInputTextFlags_CallbackResize.
             static char text[1024 * 16] =
                 "/*\n"
@@ -3962,12 +3962,12 @@ static void DemoWindowWidgetsTextInput()
         if (ImGui::TreeNode("Resize Callback"))
         {
             IMGUI_DEMO_MARKER("Widgets/Text Input/Resize Callback");
-            // To wire InputText() with std::string or any other custom string type,
+            // To wire InputText() with string or any other custom string type,
             // you can use the ImGuiInputTextFlags_CallbackResize flag + create a custom ImGui::InputText() wrapper
-            // using your preferred type. See misc/cpp/imgui_stdlib.h for an implementation of this using std::string.
+            // using your preferred type. See misc/cpp/imgui_stdlib.h for an implementation of this using string.
             HelpMarker(
                 "Using ImGuiInputTextFlags_CallbackResize to wire your custom string type to InputText().\n\n"
-                "See misc/cpp/imgui_stdlib.h for an implementation of this for std::string.");
+                "See misc/cpp/imgui_stdlib.h for an implementation of this for string.");
             struct Funcs
             {
                 static int MyResizeCallback(ImGuiInputTextCallbackData* data)
@@ -5661,7 +5661,7 @@ struct MyItem
     int         Quantity;
 
     // We have a problem which is affecting _only this demo_ and should not affect your code:
-    // As we don't rely on std:: or other third-party library to compile dear imgui, we only have reliable access to qsort(),
+    // As we don't rely on  or other third-party library to compile dear imgui, we only have reliable access to qsort(),
     // however qsort doesn't allow passing user data to comparing function.
     // As a workaround, we are storing the sort specs in a static/global for the comparing function to access.
     // In your own use case you would probably pass the sort specs to your sorting/comparing functions directly and not use a global.

@@ -1184,7 +1184,7 @@ IMPLEMENTING SUPPORT for ImGuiBackendFlags_RendererHasTextures:
    - General description of the label and ID Stack system.
  Q: How can I display an image? What is ImTextureID, how does it work?
  Q: How can I use my own math types instead of ImVec2?
- Q: How can I interact with standard C++ types (such as std::string and std::vector)?
+ Q: How can I interact with standard C++ types (such as string and vector)?
  Q: How can I display custom shapes? (using low-level ImDrawList API)
  >> See https://www.dearimgui.com/faq
 
@@ -2922,7 +2922,7 @@ void ImGui::ColorConvertHSVtoRGB(float h, float s, float v, float& out_r, float&
 // Helper: Key->value storage
 //-----------------------------------------------------------------------------
 
-// std::lower_bound but without the bullshit
+// lower_bound but without the bullshit
 ImGuiStoragePair* ImLowerBound(ImGuiStoragePair* in_begin, ImGuiStoragePair* in_end, ImGuiID key)
 {
     ImGuiStoragePair* in_p = in_begin;

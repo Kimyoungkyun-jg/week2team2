@@ -1,23 +1,22 @@
 #pragma once
 
-#include <vector>
 #include "UObject.h"
 #include "CollisionManager.h"
 
 //모든 UObject를 관리하는 클래스, Main 초기에 Get 호출
-class UObjectManager
+class ObjectManager
 {
 public:
 
-	~UObjectManager()
+	~ObjectManager()
 	{
 		DestroyAllObjects();
 	}
 
-	std::vector<UObject*> AllObjects;
+	vector<UObject*> AllObjects;
 	void Destroy(UObject* Target)
 	{
-		for (int i = AllObjects.size() - 1;i >= 0; --i)
+		for (int32 i = static_cast<int32>(AllObjects.size()) - 1; i >= 0; --i)
 		{
 			if (AllObjects[i] == Target)
 			{
@@ -27,7 +26,7 @@ public:
 				}
 
 				UObject* temp = AllObjects[i];
-				std::swap(AllObjects[i], AllObjects.back());
+				swap(AllObjects[i], AllObjects.back());
 				AllObjects.pop_back();
 				
 				delete(temp);
@@ -40,7 +39,7 @@ public:
 
 	void DestroyAllObjects()
 	{
-		for (int i = AllObjects.size() - 1; i >= 0; --i)
+		for (int32 i = static_cast<int32>(AllObjects.size()) - 1; i >= 0; --i)
 		{
 			delete(AllObjects[i]);
 		}
@@ -50,7 +49,7 @@ public:
 
 	void DistroyAllActors()
 	{
-		for (int i = AllObjects.size() - 1; i >= 0; --i)
+		for (int32 i = static_cast<int32>(AllObjects.size()) - 1; i >= 0; --i)
 		{
 			if (AActor* Actor = dynamic_cast<AActor*>(AllObjects[i]))
 			{
@@ -58,13 +57,13 @@ public:
 			}
 
 			UObject* temp = AllObjects[i];
-			std::swap(AllObjects[i], AllObjects.back());
+			swap(AllObjects[i], AllObjects.back());
 			AllObjects.pop_back();
 			delete(temp);
 		}
 	}
 
-	UObject* Find(int ID)
+	UObject* Find(uint32 ID)
 	{
 		for (UObject* Obj : AllObjects)
 		{
@@ -75,14 +74,14 @@ public:
 		return nullptr;
 	}
 
-	static UObjectManager& GetInstance()
+	static ObjectManager& GetInstance()
 	{
-		static UObjectManager Manager;
+		static ObjectManager Manager;
 		return Manager;
 	}
-	UObjectManager(const UObjectManager&) = delete;
-	UObjectManager& operator=(const UObjectManager&) = delete;
+	ObjectManager(const ObjectManager&) = delete;
+	ObjectManager& operator=(const ObjectManager&) = delete;
 
 private:
-	UObjectManager(){}
+	ObjectManager(){}
 };

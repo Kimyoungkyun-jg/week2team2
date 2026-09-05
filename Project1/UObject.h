@@ -1,148 +1,58 @@
 #pragma once
-#include <d3d11.h>
-#include <vector>
-#include <cmath>
-#include <DirectXMath.h>
+
 #include "Renderer.h"
 #include "enums.h"
-#include "Vector.h"
+#include "FVector.h"
+#include "App.h"
+#include "UEngineStatics.h"
 
 class UObject
 {
 public:
-	UObject()
+	UObject() : UUID(UEngineStatics::GetUUID())
 	{
-		++IDMax;
-		ID = IDMax;
 	}
 	virtual ~UObject() {}
-	int GetID() const { return ID; }
+	uint32 GetID() const { return UUID; }
 
-	virtual void Pressed(FVector _Location) {}
-	virtual void Clicked() {}
-	virtual void Released(FVector _Location) {}
-	void Destroy();
+	void* operator new(size_t size)
+	{
+		if (App::Instance)
+		{
+			App::Instance->TotalAllocationBytes += size;  // 할당 요청된 바이트 누적
+			App::Instance->TotalAllocationCount++;        // 할당 횟수 1 증가
 
+			// 실제 OS 힙 할당 수행
+			void* ptr = malloc(size);
+			if (!ptr) throw std::bad_alloc();
+			return ptr;
+		}
+		else
+			throw std::runtime_error("App::Instance is not initialized!");
+	}
+
+	void operator delete(void* ptr, size_t size) noexcept
+	{
+		if (App::Instance)
+		{
+			App::Instance->TotalAllocationBytes -= size;  // 할당 요청된 바이트 누적
+			App::Instance->TotalAllocationCount--;        // 할당 횟수 1 증가
+		}
+		free(ptr);
+	}
+
+
+	virtual void Update(float deltatime);
+	virtual void Render() {}
+
+	virtual void Destroy();
 	virtual void Tick(float deltaTime) {}
-
+	
+	void Active() { bIsActive = true; }
+	void DeActive() { bIsActive = false; }
+	bool const GetIsActive() { return bIsActive; }
 private:
-	inline static int IDMax = 0;
-	int ID = 0;
+	uint32 UUID = 0;
+	bool bIsActive = true;
 };
 
-class AActor : public UObject
-{
-public:
-	AActor() {}
-	virtual ~AActor() {}
-	virtual void Draw(URenderer& renderer);
-
-	void SetLocation(const FVector& loc) { Location = loc; }
-	void SetRotation(const float _Rotation) { Rotation = _Rotation; }
-	void SetScale(const FVector& _Scale) { Scale = _Scale; }
-	void SetPrimitive(EPrimitive _Primitive) { Primitive = _Primitive; }
-	float GetRotation() const { return Rotation; }
-	EPrimitive GetPrimitive() const { return Primitive; }
-	FVector GetScale() const { return Scale; }
-	FVector GetLocation() const { return Location; }
-
-	void SetImage(const wchar_t* uri)
-	{
-		Bitmap = URenderer::GetInstance().LoadBitmapFromFile(uri);
-	}
-
-	void SetBitmap(ID2D1Bitmap* bmp)
-	{
-		Bitmap = bmp;
-	}
-
-	bool isInvalid = false;
-
-protected:
-	FVector Location = FVector(0, 0, 0);
-	EPrimitive Primitive = EPrimitive::Rectangle;
-	float Rotation = 0.0f;
-	FVector Scale = { 1, 1, 1 };
-	ID2D1Bitmap* Bitmap = nullptr;
-};
-
-class ACollider : public AActor
-{
-public:
-	ACollider() {}
-	virtual ~ACollider() {}
-
-	virtual void Move(float deltaTime);
-
-	FVector GetVelocity() const { return Velocity; }
-	void SetVelocity(FVector _Vel) { Velocity = _Vel; }
-
-	float GetMass() const { return Mass; }
-	void SetMass(float _Mass) { Mass = _Mass; }
-
-	float GetStaticFriction() const { return StaticFriction; }
-	void SetStaticFriction(float _f) { StaticFriction = _f; }
-
-	float GetDynamicFriction() const { return DynamicFriction; }
-	void SetDynamicFriction(float _f) { DynamicFriction = _f; }
-
-	float GetAngularVelocity() const { return AngularVelocity; }
-	void SetAngularVelocity(float value) { AngularVelocity = value; }
-
-	float GetRestitution() const { return Restitution; }
-	void SetRestitution(float _r) { Restitution = _r; }
-
-	virtual void PlaySFX() {}
-
-	bool IsSleeping() const { return bSleeping; }
-	void SetSleeping(bool value) { bSleeping = value; }
-	float GetSleepTimer() const { return SleepTimer; }
-	void SetSleepTimer(float value) { SleepTimer = value; }
-	void WakeUp() { bSleeping = false; SleepTimer = 0.0f; }
-
-	virtual void Pressed(FVector _Location) override;
-	virtual void Released(FVector _Location) override;
-	virtual float GetInertia() const
-	{
-		return Mass * (Scale.x * Scale.x + Scale.y * Scale.y) / 12.0f;
-	}
-
-	bool bEditing = false;
-	bool bUseGravity = true;
-
-protected:
-	FVector Velocity;
-	float StaticFriction = 0.5f;
-	float DynamicFriction = 0.3f;
-	float Mass = 10.0f;
-	float AngularVelocity = 0.0f;
-	float Restitution = 0.2f;
-	float LinearDamping = 0.0f;
-	float AngularDamping = 2.0f;
-	bool bSleeping = false;
-	float SleepTimer = 0.0f;
-};
-
-class ARectangle : public ACollider
-{
-public:
-	ARectangle()
-	{
-		Primitive = EPrimitive::Rectangle;
-	}
-};
-
-class ACircle : public ACollider
-{
-public:
-	ACircle()
-	{
-		Primitive = EPrimitive::Circle;
-	}
-	float GetRadius() const { return Scale.x * 0.5f; }
-	virtual float GetInertia() const override
-	{
-		float r = GetRadius();
-		return 0.5f * Mass * r * r;
-	}
-};
