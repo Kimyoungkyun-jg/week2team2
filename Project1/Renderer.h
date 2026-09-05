@@ -4,6 +4,7 @@
 #include "FVector.h"
 #include "enums.h"
 #include "FConstants.h"
+#include "FMatrix.h"
 
 
 
@@ -15,8 +16,6 @@ struct FVertexBufferInfo
 
 class Renderer
 {
-
-
 public:
 	static Renderer& GetInstance()
 	{
