@@ -1,11 +1,19 @@
 #pragma once
-#include <string>
-#include "UObject.h"
 #include "Containers.h"
+#include <functional>
+#include <unordered_map>
 
+class UObject;
+class AActor;
 class SaveLoadManager
 {
 public:
-    void SaveScene(const FString& path);
-    TArray<UObject*> LoadScene(const FString& path);
+    static void SaveScene(const FString& path);
+    static TArray<UObject*> LoadScene(const FString& path);
+
+private:
+    // location, ratation, scale, type
+    using CreatorFunc = std::function<AActor*(FVector, FVector, FVector, EPrimitive)>;
+    
+    static TMap<string, CreatorFunc>& GetActorCreatorRegistry();
 };
