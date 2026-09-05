@@ -2,17 +2,16 @@
 class VertexBuffer
 {
 public:
-    VertexBuffer(void* data, UINT stride, UINT count);
+    VertexBuffer() : buffer(nullptr), stride(0), offset(0) {}
+    VertexBuffer(const void* data, UINT stride, UINT count);
     ~VertexBuffer();
 
     void IASet(D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    void Update(const void* data, UINT count);
 
-    void Update(void* data, UINT count);
-
-private:
-    ID3D11Buffer* buffer;
-
-    UINT stride;
-    UINT offset;
+public:
+    ID3D11Buffer* buffer = nullptr;
+    UINT stride = 0;
+    UINT offset = 0;
 };
 

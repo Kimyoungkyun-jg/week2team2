@@ -66,7 +66,7 @@ public:
 	}
 
 	template<class T>
-	static inline T* SpawnActor(FVector Location, EPrimitive Primitive, FVector Scale = { 0.1, 0.1, 1 })
+	static inline T* SpawnActor(FVector Location, FVector Scale = { 0.1, 0.1, 1 })
 	{
 		static_assert(is_base_of_v<AActor, T>);
 
@@ -81,15 +81,14 @@ public:
 		SpawnedActor->SetLocation(Location);
 
 		// 모양
-		SpawnedActor->SetPrimitive(Primitive);
 		return static_cast<T*>(SpawnedActor);
 	}
 
 	template<class T>
-	static inline T* SpawnColider(FVector Location, EPrimitive Primitive, FVector Scale = { 1, 1, 1 }, float Mass = 1)
+	static inline T* SpawnColider(FVector Location, FVector Scale = { 1, 1, 1 }, float Mass = 1)
 	{
 		static_assert(is_base_of_v<ACollider, T>);
-		ACollider* Colider = SpawnActor<T>(Location, Primitive, Scale);
+		ACollider* Colider = SpawnActor<T>(Location, Scale);
 
 		Colider->SetMass(Mass);
 		CollisionManager::GetInstance().AddColider(Colider);

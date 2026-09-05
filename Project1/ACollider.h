@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AActor.h"
+#include "Sphere.h"
 
 class ACollider : public AActor
 {
@@ -68,7 +69,7 @@ class ACube : public ACollider
 public:
 	ACube()
 	{
-		Primitive = EPrimitive::Cube;
+		InitVertexBuffer(cube_vertices);
 	}
 };
 
@@ -80,6 +81,7 @@ public:
 	ACircle()
 	{
 		Primitive = EPrimitive::Sphere;
+		InitVertexBuffer(sphere_vertices);
 	}
 	float GetRadius() const { return transform.Scale.x * 0.5f; }
 	virtual float GetInertia() const override

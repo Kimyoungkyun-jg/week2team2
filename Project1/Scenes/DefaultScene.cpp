@@ -2,12 +2,15 @@
 #include "DefaultScene.h"
 #include "Camera.h"
 #include "Renderer.h"
+#include "PickingManager.h"
 #include "SaveLoadManager.h"
 
 
 DefaultScene::DefaultScene()
 {
-	cube = FObjectFactory::SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), EPrimitive::Cube, { 1.0f, 1.0f, 1.0f });
+	// 기즈모만 단독으로 스폰 (위치: 원점 0, 0, 0 / 크기: 1, 1, 1)
+	gizmo = FObjectFactory::SpawnActor<AGizmo>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
+	//cube = FObjectFactory::SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
 }
 
 DefaultScene::~DefaultScene()
@@ -55,6 +58,20 @@ void DefaultScene::Render()
 	
 	ImGui::Separator();
 	
+	if (ImGui::IsMouseClicked(0)) {
+		// pick 테스트 코드 부분입니다! F5 로 출력 확인해보세요 :)
+		ray = PickingManager::GetInstance().ScreenToWorldRay(ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y,
+			Renderer::GetInstance().ViewportInfo.Width, Renderer::GetInstance().ViewportInfo.Height);
+		UObject * pickedObj = PickingManager::GetInstance().Pick(ray);
+		if (pickedObj) {
+			OutputDebugStringA("hit!");
+		}
+	}
+
+	// 기즈모 디버그 섹션
+	ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.2f, 1.0f), "[ Gizmo Controls ]");
+	if (gizmo)
+	
 	/////////////////////////////
 	//////// SAVE & LOAD ////////
 	/////////////////////////////
@@ -82,19 +99,19 @@ void DefaultScene::Render()
 	ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.2f, 1.0f), "[ Cube Controls ]");
 	if (cube)
 	{
-		FVector loc = cube->GetLocation();
-		if (ImGui::DragFloat3("Cube Pos", &loc.x, 0.01f, -5.0f, 5.0f))
+		FVector loc = gizmo->GetLocation();
+		if (ImGui::DragFloat3("Gizmo Pos", &loc.x, 0.01f, -10.0f, 10.0f))
 		{
-			cube->SetLocation(loc);
+			gizmo->SetLocation(loc);
 		}
 
-		FVector scale = cube->GetScale();
-		if (ImGui::DragFloat3("Cube Scale", &scale.x, 0.01f, 0.01f, 5.0f))
+		FVector scale = gizmo->GetScale();
+		if (ImGui::DragFloat3("Gizmo Scale", &scale.x, 0.01f, 0.01f, 5.0f))
 		{
-			cube->SetScale(scale);
+			gizmo->SetScale(scale);
 		}
 
-		FVector rot = cube->GetRotation();
+		FVector rot = gizmo->GetRotation();
 		bool bRotChanged = false;
 		if (ImGui::DragFloat("Rotation X", &rot.x, 0.01f, -3.14f, 3.14f))
 		{
@@ -111,8 +128,11 @@ void DefaultScene::Render()
 
 		if (bRotChanged)
 		{
-			cube->SetRotation(rot);
+			gizmo->SetRotation(rot);
 		}
 	}
+
+	
+
 	ImGui::End();
 }

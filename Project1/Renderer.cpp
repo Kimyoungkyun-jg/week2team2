@@ -1,27 +1,28 @@
 #include "pch.h"
 #include "Renderer.h"
-#include "Sphere.h"	
+#include "Sphere.h"
 #include "Camera.h"
+#include "UObject.h"
+#include <d3dcompiler.h>
+
+#pragma comment(lib, "d3dcompiler.lib")
 
 void Renderer::Create(HWND hWindow)
 {
 	CreateDeviceAndSwapChain(hWindow);
 	CreateFrameBuffer();
-	CreateRasterizerState();
 	CreateDepthStencil();
-
+	CreateRasterizerState();
+	CreateShader();
 }
 
 void Renderer::Release()
 {
+	ReleaseDepthStencil();
+	ReleaseShader();
 	ReleaseRasterizerState();
-	if (DeviceContext)
-	{
-		DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
-	}
 	ReleaseFrameBuffer();
 	ReleaseDeviceAndSwapChain();
-	ReleaseDepthStencil();
 }
 
 void Renderer::CreateDeviceAndSwapChain(HWND hWindow)
@@ -31,72 +32,74 @@ void Renderer::CreateDeviceAndSwapChain(HWND hWindow)
 	DXGI_SWAP_CHAIN_DESC swapchaindesc = {};
 	swapchaindesc.BufferDesc.Width = 0;
 	swapchaindesc.BufferDesc.Height = 0;
-	swapchaindesc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	swapchaindesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapchaindesc.BufferDesc.RefreshRate.Numerator = 60;
+	swapchaindesc.BufferDesc.RefreshRate.Denominator = 1;
 	swapchaindesc.SampleDesc.Count = 1;
+	swapchaindesc.SampleDesc.Quality = 0;
 	swapchaindesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapchaindesc.BufferCount = 2;
+	swapchaindesc.BufferCount = 1;
 	swapchaindesc.OutputWindow = hWindow;
 	swapchaindesc.Windowed = TRUE;
-	swapchaindesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 
-	D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE,
-		nullptr, D3D11_CREATE_DEVICE_BGRA_SUPPORT | D3D11_CREATE_DEVICE_DEBUG,
-		featurelevels, ARRAYSIZE(featurelevels), D3D11_SDK_VERSION,
-		&swapchaindesc, &SwapChain, &Device, nullptr, &DeviceContext);
-
-	SwapChain->GetDesc(&swapchaindesc);
-	ViewportInfo = { 0.0f, 0.0f,
-		(float)swapchaindesc.BufferDesc.Width, (float)swapchaindesc.BufferDesc.Height,
-		0.0f, 1.0f };
-
-	wAspectRatio = (float)swapchaindesc.BufferDesc.Width / (float)swapchaindesc.BufferDesc.Height;
+	D3D11CreateDeviceAndSwapChain(
+		nullptr,
+		D3D_DRIVER_TYPE_HARDWARE,
+		nullptr,
+		D3D11_CREATE_DEVICE_BGRA_SUPPORT,
+		featurelevels,
+		ARRAYSIZE(featurelevels),
+		D3D11_SDK_VERSION,
+		&swapchaindesc,
+		&SwapChain,
+		&Device,
+		nullptr,
+		&DeviceContext);
 }
 
 void Renderer::ReleaseDeviceAndSwapChain()
 {
 	if (DeviceContext)
 	{
-		DeviceContext->Flush();
+		DeviceContext->Release();
+		DeviceContext = nullptr;
 	}
-
-	if (SwapChain)
-	{
-		SwapChain->Release();
-		SwapChain = nullptr;
-	}
-
 	if (Device)
 	{
 		Device->Release();
 		Device = nullptr;
 	}
-
-	if (DeviceContext)
+	if (SwapChain)
 	{
-		DeviceContext->Release();
-		DeviceContext = nullptr;
+		SwapChain->Release();
+		SwapChain = nullptr;
 	}
 }
 
 void Renderer::CreateFrameBuffer()
 {
 	SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&FrameBuffer);
-
 	Device->CreateRenderTargetView(FrameBuffer, nullptr, &FrameBufferRTV);
+
+	D3D11_TEXTURE2D_DESC framebufferdesc = {};
+	FrameBuffer->GetDesc(&framebufferdesc);
+
+	ViewportInfo = { 0, 0, (FLOAT)framebufferdesc.Width, (FLOAT)framebufferdesc.Height, 0.0f, 1.0f };
+
+	wAspectRatio = (float)framebufferdesc.Width / (float)framebufferdesc.Height;
 }
 
 void Renderer::ReleaseFrameBuffer()
 {
-	if (FrameBuffer)
-	{
-		FrameBuffer->Release();
-		FrameBuffer = nullptr;
-	}
-
 	if (FrameBufferRTV)
 	{
 		FrameBufferRTV->Release();
 		FrameBufferRTV = nullptr;
+	}
+	if (FrameBuffer)
+	{
+		FrameBuffer->Release();
+		FrameBuffer = nullptr;
 	}
 }
 
@@ -105,6 +108,8 @@ void Renderer::CreateRasterizerState()
 	D3D11_RASTERIZER_DESC rasterizerdesc = {};
 	rasterizerdesc.FillMode = D3D11_FILL_SOLID;
 	rasterizerdesc.CullMode = D3D11_CULL_NONE;
+	rasterizerdesc.FrontCounterClockwise = FALSE;
+	rasterizerdesc.DepthClipEnable = TRUE;
 
 	Device->CreateRasterizerState(&rasterizerdesc, &RasterizerState);
 }
@@ -118,83 +123,109 @@ void Renderer::ReleaseRasterizerState()
 	}
 }
 
-void Renderer::CreateShader()
+bool Renderer::CreateVertexShader(LPCWSTR path, LPCSTR entryPoint, ID3D11VertexShader** outVS, ID3DBlob** outBlob)
 {
-	ID3DBlob* vertexshaderCSO = nullptr;
-	ID3DBlob* pixelshaderCSO = nullptr;
+	ID3DBlob* vsBlob = nullptr;
 	ID3DBlob* errorBlob = nullptr;
 
-	const wchar_t* Paths = L"ShaderW0.hlsl";
-
-
-	if (!filesystem::exists(Paths))
-	{
-		return;
-	}
-
-	// Vertex Shader 컴파일
 	HRESULT hr = D3DCompileFromFile(
-		Paths, nullptr, nullptr,
-		"mainVS", "vs_5_0", 0, 0, &vertexshaderCSO, &errorBlob);
+		path, nullptr, nullptr,
+		entryPoint, "vs_5_0", 0, 0, &vsBlob, &errorBlob);
 
-	if (FAILED(hr) || !vertexshaderCSO)
+	if (FAILED(hr) || !vsBlob)
 	{
 		if (errorBlob)
 		{
 			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 			errorBlob->Release();
 		}
-		OutputDebugStringA("Failed to compile vertex shader!\n");
-		return;
+		return false;
 	}
 
-	Device->CreateVertexShader(
-		vertexshaderCSO->GetBufferPointer(),
-		vertexshaderCSO->GetBufferSize(), nullptr, &SimpleVertexShader);
+	hr = Device->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), nullptr, outVS);
 
-	// Pixel Shader 컴파일
-	hr = D3DCompileFromFile(
-		Paths, nullptr, nullptr,
-		"mainPS", "ps_5_0", 0, 0, &pixelshaderCSO, &errorBlob);
+	if (outBlob)
+	{
+		*outBlob = vsBlob;
+	}
+	else
+	{
+		vsBlob->Release();
+	}
 
-	if (FAILED(hr) || !pixelshaderCSO)
+	return SUCCEEDED(hr);
+}
+
+bool Renderer::CreatePixelShader(LPCWSTR path, LPCSTR entryPoint, ID3D11PixelShader** outPS)
+{
+	ID3DBlob* psBlob = nullptr;
+	ID3DBlob* errorBlob = nullptr;
+
+	HRESULT hr = D3DCompileFromFile(
+		path, nullptr, nullptr,
+		entryPoint, "ps_5_0", 0, 0, &psBlob, &errorBlob);
+
+	if (FAILED(hr) || !psBlob)
 	{
 		if (errorBlob)
 		{
 			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 			errorBlob->Release();
 		}
-		vertexshaderCSO->Release();
-		return;
+		return false;
 	}
 
-	Device->CreatePixelShader(
-		pixelshaderCSO->GetBufferPointer(),
-		pixelshaderCSO->GetBufferSize(), nullptr, &SimplePixelShader);
+	hr = Device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), nullptr, outPS);
+	psBlob->Release();
 
-	D3D11_INPUT_ELEMENT_DESC layout[] =
+	return SUCCEEDED(hr);
+}
+
+bool Renderer::CreateInputLayout(const D3D11_INPUT_ELEMENT_DESC* layoutDesc, UINT numElements, ID3DBlob* vsBlob, ID3D11InputLayout** outLayout)
+{
+	if (!vsBlob || !outLayout)
+		return false;
+
+	HRESULT hr = Device->CreateInputLayout(
+		layoutDesc, numElements,
+		vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(),
+		outLayout);
+
+	return SUCCEEDED(hr);
+}
+
+void Renderer::CreateShader()
+{
+	LPCWSTR shaderPath = L"ShaderW0.hlsl";
+
+	//Vertex & Pixel Shader 컴파일 및 생성
+	ID3DBlob* vsBlob = nullptr;
+	CreateVertexShader(shaderPath, "mainVS", &SimpleVertexShader, &vsBlob);
+	CreatePixelShader(shaderPath, "mainPS", &SimplePixelShader);
+
+	//정점 타입만 넘기면 FVertexTraits를 통해 자동으로 InputLayout을 생성하고 TMap에 등록
+	RegisterInputLayout<FVertexSimple>(vsBlob);
+	RegisterInputLayout<FVertexColor>(vsBlob);
+	RegisterInputLayout<FVertexUV>(vsBlob);
+
+	if (vsBlob)
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
-
-	Device->CreateInputLayout(
-		layout, ARRAYSIZE(layout), vertexshaderCSO->GetBufferPointer(),
-		vertexshaderCSO->GetBufferSize(), &SimpleInputLayout);
-
-	Stride = sizeof(FVertexSimple);
-
-	vertexshaderCSO->Release();
-	pixelshaderCSO->Release();
+		vsBlob->Release();
+	}
 }
 
 void Renderer::ReleaseShader()
 {
-	if (SimpleInputLayout)
+	for (auto& pair : InputLayoutMap)
 	{
-		SimpleInputLayout->Release();
-		SimpleInputLayout = nullptr;
+		if (pair.second)
+		{
+			pair.second->Release();
+		}
 	}
+
+	InputLayoutMap.clear();
+	SimpleInputLayout = nullptr;
 
 	if (SimplePixelShader)
 	{
@@ -209,22 +240,32 @@ void Renderer::ReleaseShader()
 	}
 }
 
-
-
-void Renderer::CreateVertexBufferInfos()
+void Renderer::CreateColorBuffer()
 {
-	UINT numVerticesCube = sizeof(cube_vertices) / sizeof(FVertexSimple);
-	UINT numVerticesSphere = sizeof(sphere_vertices) / sizeof(FVertexSimple);
 
-	ID3D11Buffer* vertexBufferCube = CreateVertexBuffer(cube_vertices, sizeof(cube_vertices));
-	ID3D11Buffer* vertexBufferSphere = CreateVertexBuffer(sphere_vertices, sizeof(sphere_vertices));
-
-	VertexBufferInfos.push_back({ vertexBufferSphere , numVerticesSphere });
-	VertexBufferInfos.push_back({ vertexBufferCube , numVerticesCube });
 }
 
+ID3D11InputLayout* Renderer::GetInputLayout(const ClassInfo* classInfo)
+{
+	if (!classInfo)
+		return SimpleInputLayout;
 
-ID3D11Buffer* Renderer::CreateVertexBuffer(FVertexSimple* vertices, UINT byteWidth)
+	return SimpleInputLayout;
+}
+
+ID3D11InputLayout* Renderer::GetInputLayout(const UObject* object)
+{
+	if (!object)
+		return SimpleInputLayout;
+
+	if (object->GetClass())
+	{
+		return GetInputLayout(object->GetClass());
+	}
+	return SimpleInputLayout;
+}
+
+ID3D11Buffer* Renderer::CreateVertexBuffer(const void* vertices, UINT byteWidth)
 {
 	D3D11_BUFFER_DESC vertexbufferdesc = {};
 	vertexbufferdesc.ByteWidth = byteWidth;
@@ -240,29 +281,9 @@ ID3D11Buffer* Renderer::CreateVertexBuffer(FVertexSimple* vertices, UINT byteWid
 	return vertexBuffer;
 }
 
-void Renderer::ReleaseVertexBuffers()
-{
-	for (FVertexBufferInfo& vi : VertexBufferInfos)
-	{
-		ReleaseVertexBuffer(vi.vertexBuffer);
-		vi.vertexBuffer = nullptr;
-	}
-	VertexBufferInfos.clear();
-}
-
-void Renderer::ReleaseVertexBuffer(ID3D11Buffer* vertexBuffer)
-{
-	if (vertexBuffer)
-	{
-		vertexBuffer->Release();
-	}
-}
-
 void Renderer::Prepare()
 {
 	DeviceContext->ClearRenderTargetView(FrameBufferRTV, ClearColor);
-
-	DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	DeviceContext->RSSetViewports(1, &ViewportInfo);
 	DeviceContext->RSSetState(RasterizerState);
@@ -280,15 +301,6 @@ void Renderer::Prepare()
 
 	UINT stencilRef = 1; // 스텐실에 기록할 기준값
 	DeviceContext->OMSetDepthStencilState(dsState, stencilRef);
-}
-
-void Renderer::PrepareShader()
-{
-	DeviceContext->IASetInputLayout(SimpleInputLayout);
-
-	DeviceContext->VSSetShader(SimpleVertexShader, nullptr, 0);
-
-	DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
 }
 
 
@@ -364,27 +376,6 @@ void Renderer::ReleaseDepthStencil()
 		depthStencilView->Release();
 		depthStencilView = nullptr;
 	}
-}
-
-void Renderer::RenderPrimitive(EPrimitive Primitive)
-{
-	UINT offset = 0;
-
-	ID3D11Buffer* pBuffer = nullptr;
-	UINT numVertices;
-	if (Primitive == EPrimitive::Sphere)
-	{ 
-		pBuffer = VertexBufferInfos[0].vertexBuffer;
-		numVertices = VertexBufferInfos[0].numVertucies;
-	}
-	else if (Primitive == EPrimitive::Cube)
-	{
-		pBuffer = VertexBufferInfos[1].vertexBuffer;
-		numVertices = VertexBufferInfos[1].numVertucies;
-	}
-
-	DeviceContext->IASetVertexBuffers(0, 1, &pBuffer, &Stride, &offset);
-	DeviceContext->Draw(numVertices, 0);
 }
 
 void Renderer::SwapBuffer()
