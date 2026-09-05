@@ -2,6 +2,7 @@
 
 #include "UObject.h"
 #include "CollisionManager.h"
+#include "string_view"
 
 //모든 UObject를 관리하는 클래스, Main 초기에 Get 호출
 class ObjectManager
@@ -11,9 +12,27 @@ public:
 	~ObjectManager()
 	{
 		DestroyAllObjects();
+		for (auto& pair : AllClassInfoMap)
+		{
+			delete pair.second;
+		}
+		AllClassInfoMap.clear();
 	}
 
-	vector<UObject*> AllObjects;
+	TArray<UObject*> AllObjects;
+	TMap<string_view, ClassInfo*> AllClassInfoMap;
+
+	ClassInfo* GetOrCreateClassInfo(string_view name, const ClassInfo* superClass = nullptr)
+	{
+		auto it = AllClassInfoMap.find(name);
+		if (it != AllClassInfoMap.end())
+			return it->second;
+
+		uint32 newID = UEngineStatics::GetUCID();
+		ClassInfo* newInfo = new ClassInfo(name, newID, superClass);
+		AllClassInfoMap[name] = newInfo;
+		return newInfo;
+	}
 	void Destroy(UObject* Target)
 	{
 		for (int32 i = static_cast<int32>(AllObjects.size()) - 1; i >= 0; --i)
@@ -82,6 +101,10 @@ public:
 	ObjectManager(const ObjectManager&) = delete;
 	ObjectManager& operator=(const ObjectManager&) = delete;
 
+
 private:
 	ObjectManager(){}
+
+
+
 };

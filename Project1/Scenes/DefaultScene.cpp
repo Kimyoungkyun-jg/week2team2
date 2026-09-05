@@ -7,7 +7,7 @@
 
 DefaultScene::DefaultScene()
 {
-	cube = SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), EPrimitive::Cube, { 1.0f, 1.0f, 1.0f });
+	cube = FObjectFactory::SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), EPrimitive::Cube, { 1.0f, 1.0f, 1.0f });
 }
 
 DefaultScene::~DefaultScene()
