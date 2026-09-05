@@ -2,7 +2,11 @@
 
 #include <DirectXMath.h>
 
+struct FFrameConstants {
+	DirectX::XMMATRIX VP;
+};
+
 struct FConstants
 {
-	DirectX::XMMATRIX WVP;
+	DirectX::XMMATRIX World;
 };
