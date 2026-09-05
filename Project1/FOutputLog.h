@@ -1,15 +1,28 @@
+#include "pch.h"
 #pragma once
 #include "FOutputDevice.h"
-#include <string>
-#include <vector>
+
+enum class ELogVerbosity
+{
+    Log,
+    Warning,
+    Error
+};
+
+struct FLogMessage
+{
+    FString Message;
+    FString Category;
+    ELogVerbosity Verbosity;
+};
 
 class FOutputLog : public FOutputDevice
 {
 public:
-    void Serialize(const std::string& Message) override;
-    const std::vector<std::string>& GetLogs() const;
+    void Serialize(const FString& Message) override;
+    const std::vector<FString>& GetLogs() const;
     void Clear();
 
 private:
-    std::vector<std::string> Logs;
+    std::vector<FString> Logs;
 };

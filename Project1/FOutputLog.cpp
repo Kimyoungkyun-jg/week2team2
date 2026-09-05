@@ -1,12 +1,12 @@
 #include "pch.h"
 #include "FOutputLog.h"
 
-void FOutputLog::Serialize(const std::string& Message)
+void FOutputLog::Serialize(const FString& Message)
 {
     Logs.push_back(Message);
 }
 
-const std::vector<std::string>& FOutputLog::GetLogs() const
+const std::vector<FString>& FOutputLog::GetLogs() const
 {
     return Logs;
 }

@@ -1,14 +1,30 @@
 #include "pch.h"
 #include "SOutputLog.h"
 #include "FOutputLog.h"
+#include "IConsoleCommandExecutor.h"
 
-SOutputLog::SOutputLog(FOutputLog* InOutputLog) : OutputLog(InOutputLog)
+SOutputLog::SOutputLog(
+    FOutputLog* InOutputLog,
+    IConsoleCommandExecutor* InCommandExecutor)
+    : OutputLog(InOutputLog)
+    , CommandExecutor(InCommandExecutor)
 {
 }
 
 void SOutputLog::Render()
 {
-    ImGui::SetNextWindowSize(ImVec2(750, 400), ImGuiCond_FirstUseEver);
+    RenderConsoleWindow();
+
+    ImGui::Begin("Output Log");
+    
+    RenderToolbar();
+    RenderFilter();
+    RenderInput();
+
+    ImGui::End();
+}
+
+void SOutputLog::RenderConsoleWindow() {
 
     ImGuiIO& io = ImGui::GetIO();
 
@@ -23,14 +39,10 @@ void SOutputLog::Render()
         ImVec2(io.DisplaySize.x, ConsoleHeight),
         ImGuiCond_Always
     );
+}
 
-    if (!ImGui::Begin("Output Log"))
-    {
-        ImGui::End();
-        return;
-    }
+void SOutputLog::RenderToolbar() {
 
-    // 상단 버튼
     if (ImGui::Button("Add Debug Text"))
     {
         OutputLog->Serialize("Debug Text");
@@ -52,12 +64,11 @@ void SOutputLog::Render()
 
     ImGui::SameLine();
 
-
     if (ImGui::Button("Copy"))
     {
-        std::string AllLogs;
+        FString AllLogs;
 
-        for (const std::string& Log : OutputLog->GetLogs())
+        for (const FString& Log : OutputLog->GetLogs())
         {
             AllLogs += Log;
             AllLogs += '\n';
@@ -68,10 +79,17 @@ void SOutputLog::Render()
 
     ImGui::Separator();
 
-    // 필터
+}
+void SOutputLog::RenderFilter() {
+  
     static ImGuiTextFilter Filter;
 
-    ImGui::Button("Options");
+    //ImGui::BeginPopup("OpenPopUp");
+
+    ImGui::Text("Options");
+
+    //ImGui::EndPopup();
+
     ImGui::SameLine();
 
     Filter.Draw("Filter (\"incl,-excl\") (\"error\")", 200.0f);
@@ -81,14 +99,14 @@ void SOutputLog::Render()
     // 로그 출력 영역
     ImGui::BeginChild(
         "ScrollingRegion",
-        ImVec2(0, -35),
+        ImVec2(0, -15),
         false,
         ImGuiWindowFlags_HorizontalScrollbar
     );
 
     if (OutputLog)
     {
-        for (const std::string& Log : OutputLog->GetLogs())
+        for (const FString& Log : OutputLog->GetLogs())
         {
             if (Filter.PassFilter(Log.c_str()))
             {
@@ -97,6 +115,14 @@ void SOutputLog::Render()
         }
     }
 
+    ImGui::EndChild();
+
+    ImGui::Separator();
+}
+
+void SOutputLog::RenderInput() {
+ 
+    ImGui::SetNextItemWidth(-100.0f);
     if (ImGui::InputText(
         "##Input",
         InputBuffer,
@@ -104,22 +130,11 @@ void SOutputLog::Render()
         ImGuiInputTextFlags_EnterReturnsTrue))
     {
         if (InputBuffer[0] != '\0')
-        {
-            OutputLog->Serialize(InputBuffer);
+            CommandExecutor->Exec(InputBuffer);
+
+            // 입력창 비우기
             InputBuffer[0] = '\0';
         }
-    }
-
-    ImGui::EndChild();
-
-    ImGui::Separator();
-
-    // 하단 입력창
-    ImGui::SetNextItemWidth(-50.0f);
-    ImGui::InputText("##Input", InputBuffer, IM_ARRAYSIZE(InputBuffer));
-
     ImGui::SameLine();
     ImGui::Text("Input");
-
-    ImGui::End();
 }

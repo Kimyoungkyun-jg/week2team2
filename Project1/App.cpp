@@ -4,6 +4,7 @@
 #include "SceneManager.h"
 #include "Camera.h"
 #include "SOutputLog.h"
+#include "FConsoleCommandExecutor.h"
 
 App* App::Instance = nullptr;
 
@@ -52,9 +53,14 @@ void App::Init(HINSTANCE hInstance)
 
 	InitImgui();
 	
-	OutputLog.Serialize("Hello World 2025");
-	OutputLog.Serialize("[Warning] Test Warning");
-	OutputLog.Serialize("[Error] Test Error");
+	//OutputLog.Serialize("Hello World 2025");
+	//OutputLog.Serialize("[Warning] Test Warning");
+	//OutputLog.Serialize("[Error] Test Error");
+
+	FOutputLog OutputLog;
+	FConsoleCommandExecutor CommandExecutor{ &OutputLog };
+	SOutputLog OutputLogWindow{ &OutputLog, &CommandExecutor };
+
 
 	SCENE.AddScene("Default", new DefaultScene());
 	SCENE.ChangeScene("Default");
@@ -132,8 +138,9 @@ void App::Render()
 	ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
 	ImGui::End();
 
+	Renderer::GetInstance().UpdateFrameConstant();
 	Camera::GetInstance().SetVPBuffer(); // 카메라 안의 view, proj
-	Renderer::GetInstance().UpdateFrameConstant(); 
+
 
 	// 씬 오브젝트 렌더링 (Renderer를 통해 Draw)
 	SCENE.Render();
