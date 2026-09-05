@@ -26,9 +26,9 @@ FRay PickingManager::ScreenToWorldRay(float mouseX, float mouseY, float screenW,
 	return FRay{ worldOrigin, worldDirection };
 }
 
-UObject* PickingManager::Pick(const FRay& ray) const
+AActor* PickingManager::Pick(const FRay& ray) const
 {
-	UObject* closest = nullptr;
+	AActor* closest = nullptr;
 	float closestDist = FLT_MAX;
 
 	for (auto object : ObjectManager::GetInstance().AllObjects) {
@@ -40,7 +40,7 @@ UObject* PickingManager::Pick(const FRay& ray) const
 			if (RayIntersectBox(ray, actor->GetLocation(), actor->GetScale(), dist)) {
 				if (dist < closestDist) {
 					closestDist = dist;
-					closest = object;
+					closest = actor;
 				}
 			}
 		}

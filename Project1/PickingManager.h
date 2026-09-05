@@ -18,7 +18,7 @@ public:
 
 	FRay ScreenToWorldRay(float mouseX, float mouseY, float screenW, float screenH) const;
 
-	UObject* Pick(const FRay& ray) const;
+	AActor* Pick(const FRay& ray) const;
 
 	bool RayIntersectBox(const FRay& ray, const FVector& center, const FVector& scale, float& outDistance) const;
 
