@@ -1,5 +1,5 @@
 #pragma once
-#include "Vector.h"
+#include "FVector.h"
 
 struct FMatrix
 {
@@ -22,6 +22,15 @@ struct FMatrix
     // 행렬곱 / 전치행렬
     FMatrix operator* (const FMatrix& other) const; 
     FMatrix Transpose() const;
+
+    // SRT 성분 추출
+    FVector ExtractScale() const;
+    FMatrix ExtractRotation() const;
+    FVector ExtractTranslation() const;
+
+    //역행렬
+    FMatrix Inverse() const;
+    FMatrix InverseAffine() const;
 
 };
 
