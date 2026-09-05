@@ -1,11 +1,15 @@
 #pragma once
 
-#include "UObject.h"
+#include "ACollider.h"
 
 class USphere : public ACollider
 {
+	DECLARE_CLASS(USphere, ACollider)
 
-
-
+public:
+	USphere()
+	{
+		Primitive = EPrimitive::Sphere;
+	}
 };
 

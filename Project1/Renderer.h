@@ -111,6 +111,6 @@ public:
 
 private:
 	void ReleaseVertexBuffer(ID3D11Buffer* vertexBuffer);
-	vector<FVertexBufferInfo> VertexBufferInfos;
+	TArray<FVertexBufferInfo> VertexBufferInfos;
 
 };
