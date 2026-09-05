@@ -13,10 +13,10 @@ public:
 		DestroyAllObjects();
 	}
 
-	std::vector<UObject*> AllObjects;
+	vector<UObject*> AllObjects;
 	void Destroy(UObject* Target)
 	{
-		for (int i = AllObjects.size() - 1;i >= 0; --i)
+		for (int32 i = static_cast<int32>(AllObjects.size()) - 1; i >= 0; --i)
 		{
 			if (AllObjects[i] == Target)
 			{
@@ -26,7 +26,7 @@ public:
 				}
 
 				UObject* temp = AllObjects[i];
-				std::swap(AllObjects[i], AllObjects.back());
+				swap(AllObjects[i], AllObjects.back());
 				AllObjects.pop_back();
 				
 				delete(temp);
@@ -39,7 +39,7 @@ public:
 
 	void DestroyAllObjects()
 	{
-		for (int i = AllObjects.size() - 1; i >= 0; --i)
+		for (int32 i = static_cast<int32>(AllObjects.size()) - 1; i >= 0; --i)
 		{
 			delete(AllObjects[i]);
 		}
@@ -49,7 +49,7 @@ public:
 
 	void DistroyAllActors()
 	{
-		for (int i = AllObjects.size() - 1; i >= 0; --i)
+		for (int32 i = static_cast<int32>(AllObjects.size()) - 1; i >= 0; --i)
 		{
 			if (AActor* Actor = dynamic_cast<AActor*>(AllObjects[i]))
 			{
@@ -57,13 +57,13 @@ public:
 			}
 
 			UObject* temp = AllObjects[i];
-			std::swap(AllObjects[i], AllObjects.back());
+			swap(AllObjects[i], AllObjects.back());
 			AllObjects.pop_back();
 			delete(temp);
 		}
 	}
 
-	UObject* Find(int ID)
+	UObject* Find(uint32 ID)
 	{
 		for (UObject* Obj : AllObjects)
 		{

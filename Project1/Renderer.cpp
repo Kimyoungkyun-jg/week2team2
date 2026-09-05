@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Renderer.h"
 #include "Sphere.h"	
+#include "Camera.h"
 
 void Renderer::Create(HWND hWindow)
 {
@@ -134,7 +135,7 @@ void Renderer::CreateShader()
 	const wchar_t* shaderPath = L"ShaderW0.hlsl";
 	for (const wchar_t* path : candidatePaths)
 	{
-		if (std::filesystem::exists(path))
+		if (filesystem::exists(path))
 		{
 			shaderPath = path;
 			break;
@@ -228,7 +229,7 @@ void Renderer::CreateConstantBuffer()
 
 	Device->CreateBuffer(&constantbufferdesc, nullptr, &ConstantBuffer);
 
-	constants.WVP = XMMatrixIdentity();
+	constants.WVP = FMatrix::Identity();
 }
 
 void Renderer::ReleaseConstantBuffer()
@@ -237,6 +238,28 @@ void Renderer::ReleaseConstantBuffer()
 	{
 		ConstantBuffer->Release();
 		ConstantBuffer = nullptr;
+	}
+}
+
+void Renderer::CreateFrameConstantBuffer()
+{
+	D3D11_BUFFER_DESC frameConstantbufferdesc = {};
+	frameConstantbufferdesc.ByteWidth = sizeof(FFrameConstants) + 0xf & 0xfffffff0;
+	frameConstantbufferdesc.Usage = D3D11_USAGE_DYNAMIC;
+	frameConstantbufferdesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	frameConstantbufferdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+	Device->CreateBuffer(&frameConstantbufferdesc, nullptr, &FrameConstantBuffer);
+
+	
+}
+
+void Renderer::ReleaseFrameConstantBuffer()
+{
+	if (FrameConstantBuffer)
+	{
+		FrameConstantBuffer->Release();
+		FrameConstantBuffer = nullptr;
 	}
 }
 
@@ -320,10 +343,25 @@ void Renderer::PrepareShader()
 	{
 		DeviceContext->VSSetConstantBuffers(0, 1, &ConstantBuffer);
 	}
+	if (FrameConstantBuffer)
+	{
+		DeviceContext->VSSetConstantBuffers(1, 1, &FrameConstantBuffer);
+	}
 
 	DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
 }
 
+
+void Renderer::UpdateFrameConstant()
+{
+	frameConstants.VP = Camera::GetInstance().GetViewMatrix() * Camera::GetInstance().GetProjectionMatrix(wAspectRatio);
+	
+	D3D11_MAPPED_SUBRESOURCE msr;
+	DeviceContext->Map(FrameConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+	FMatrix vpT = frameConstants.VP.Transpose();
+	memcpy(msr.pData, &vpT, sizeof(FMatrix));
+	DeviceContext->Unmap(FrameConstantBuffer, 0);
+}
 
 void Renderer::Update()
 {
@@ -340,25 +378,25 @@ void Renderer::Update()
 	}
 }
 
-void Renderer::SetViewMatrix(const XMMATRIX& viewmat)
+void Renderer::SetViewMatrix(const FMatrix& viewmat)
 {
 	viewMatrix = viewmat;
 }
 
-void Renderer::SetProjMatrix(const XMMATRIX& projmat)
+void Renderer::SetProjMatrix(const FMatrix& projmat)
 {
 	projMatrix = projmat;
 }
 
-void Renderer::SetWorldMatrix(const XMMATRIX& worldmat)
+void Renderer::SetWorldMatrix(const FMatrix& worldmat)
 {
-	XMMATRIX wvp = worldmat * viewMatrix * projMatrix;
-	constants.WVP = XMMatrixTranspose(wvp);
+	FMatrix wvp = worldmat * viewMatrix * projMatrix;
+	constants.WVP = wvp.Transpose();
 }
 
-void Renderer::SetWVPMatrix(const XMMATRIX& wvpmat)
+void Renderer::SetWVPMatrix(const FMatrix& wvpmat)
 {
-	constants.WVP = XMMatrixTranspose(wvpmat);
+	constants.WVP = wvpmat.Transpose();
 }
 
 void Renderer::SetVSBuffer(UINT slot)

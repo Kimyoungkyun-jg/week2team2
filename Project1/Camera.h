@@ -42,8 +42,8 @@ public:
 	float GetSpeed() const { return speed; }
 	float GetFOV() const { return fov; }
 
-	DirectX::XMMATRIX GetViewMatrix() const;
-	DirectX::XMMATRIX GetProjectionMatrix(float aspectRatio) const;
+	FMatrix GetViewMatrix() const;
+	FMatrix GetProjectionMatrix(float aspectRatio) const;
 
 	void Update();
 

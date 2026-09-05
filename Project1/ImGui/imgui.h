@@ -712,7 +712,7 @@ namespace ImGui
     IMGUI_API bool          VSliderScalar(const char* label, const ImVec2& size, ImGuiDataType data_type, void* p_data, const void* p_min, const void* p_max, const char* format = NULL, ImGuiSliderFlags flags = 0);
 
     // Widgets: Input with Keyboard
-    // - If you want to use InputText() with std::string or any custom dynamic string type, use the wrapper in misc/cpp/imgui_stdlib.h/.cpp!
+    // - If you want to use InputText() with string or any custom dynamic string type, use the wrapper in misc/cpp/imgui_stdlib.h/.cpp!
     // - Most of the ImGuiInputTextFlags flags are only useful for InputText() and not for InputFloatX, InputIntX, InputDouble etc.
     IMGUI_API bool          InputText(const char* label, char* buf, size_t buf_size, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
     IMGUI_API bool          InputTextMultiline(const char* label, char* buf, size_t buf_size, const ImVec2& size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
@@ -2202,13 +2202,13 @@ template<typename T> void IM_DELETE(T* p)   { if (p) { p->~T(); ImGui::MemFree(p
 
 //-----------------------------------------------------------------------------
 // ImVector<>
-// Lightweight std::vector<>-like class to avoid dragging dependencies (also, some implementations of STL with debug enabled are absurdly slow, we bypass it so our code runs fast in debug).
+// Lightweight vector<>-like class to avoid dragging dependencies (also, some implementations of STL with debug enabled are absurdly slow, we bypass it so our code runs fast in debug).
 //-----------------------------------------------------------------------------
 // - You generally do NOT need to care or use this ever. But we need to make it available in imgui.h because some of our public structures are relying on it.
 // - We use std-like naming convention here, which is a little unusual for this codebase.
 // - Important: clear() frees memory, resize(0) keep the allocated buffer. We use resize(0) a lot to intentionally recycle allocated buffers across frames and amortize our costs.
 // - Important: our implementation does NOT call C++ constructors/destructors, we treat everything as raw data! This is intentional but be extra mindful of that,
-//   Do NOT use this class as a std::vector replacement in your own code! Many of the structures used by dear imgui can be safely initialized by a zero-memset.
+//   Do NOT use this class as a vector replacement in your own code! Many of the structures used by dear imgui can be safely initialized by a zero-memset.
 //-----------------------------------------------------------------------------
 
 IM_MSVC_RUNTIME_CHECKS_OFF
@@ -3109,8 +3109,8 @@ struct ImGuiSelectionRequest
 //   Or you can check 'if (Contains(id)) { ... }' for each possible object if their number is not too high to iterate.
 // - USING THIS IS NOT MANDATORY. This is only a helper and not a required API.
 // To store a multi-selection, in your application you could:
-// - Use this helper as a convenience. We use our simple key->value ImGuiStorage as a std::set<ImGuiID> replacement.
-// - Use your own external storage: e.g. std::set<MyObjectId>, std::vector<MyObjectId>, interval trees, intrusively stored selection etc.
+// - Use this helper as a convenience. We use our simple key->value ImGuiStorage as a set<ImGuiID> replacement.
+// - Use your own external storage: e.g. set<MyObjectId>, vector<MyObjectId>, interval trees, intrusively stored selection etc.
 // In ImGuiSelectionBasicStorage we:
 // - always use indices in the multi-selection API (passed to SetNextItemSelectionUserData(), retrieved in ImGuiMultiSelectIO)
 // - use the AdapterIndexToStorageId() indirection layer to abstract how persistent selection data is derived from an index.
@@ -3127,7 +3127,7 @@ struct ImGuiSelectionBasicStorage
     void*           UserData;       // = NULL   // User data for use by adapter function        // e.g. selection.UserData = (void*)my_items;
     ImGuiID         (*AdapterIndexToStorageId)(ImGuiSelectionBasicStorage* self, int idx);      // e.g. selection.AdapterIndexToStorageId = [](ImGuiSelectionBasicStorage* self, int idx) { return ((MyItems**)self->UserData)[idx]->ID; };
     int             _SelectionOrder;// [Internal] Increasing counter to store selection order
-    ImGuiStorage    _Storage;       // [Internal] Selection set. Think of this as similar to e.g. std::set<ImGuiID>. Prefer not accessing directly: iterate with GetNextSelectedItem().
+    ImGuiStorage    _Storage;       // [Internal] Selection set. Think of this as similar to e.g. set<ImGuiID>. Prefer not accessing directly: iterate with GetNextSelectedItem().
 
     // Methods
     IMGUI_API ImGuiSelectionBasicStorage();

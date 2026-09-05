@@ -1,7 +1,7 @@
 #pragma once
 
 #include "FVector.h"
-#include <DirectXMath.h>
+#include "Matrix.h"
 
 class Transform
 {
@@ -10,7 +10,7 @@ public:
 		: Location(0.0f, 0.0f, 0.0f)
 		, Rotation(0.0f, 0.0f, 0.0f)
 		, Scale(1.0f, 1.0f, 1.0f)
-		, WorldMatrix(DirectX::XMMatrixIdentity())
+		, WorldMatrix(FMatrix::Identity())
 	{
 		UpdateWorldMatrix();
 	}
@@ -19,16 +19,16 @@ public:
 		: Location(InLocation)
 		, Rotation(InRotation)
 		, Scale(InScale)
-		, WorldMatrix(DirectX::XMMatrixIdentity())
+		, WorldMatrix(FMatrix::Identity())
 	{
 		UpdateWorldMatrix();
 	}
 
 	void UpdateWorldMatrix()
 	{
-		DirectX::XMMATRIX S = DirectX::XMMatrixScaling(Scale.x, Scale.y, Scale.z);
-		DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(Rotation.x, Rotation.y, Rotation.z);
-		DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(Location.x, Location.y, Location.z);
+		FMatrix S = FMatrix::Scale(Scale);
+		FMatrix R = FMatrix::RotationZ(Rotation.z) * FMatrix::RotationX(Rotation.x) * FMatrix::RotationY(Rotation.y);
+		FMatrix T = FMatrix::Translation(Location);
 
 		WorldMatrix = S * R * T;
 	}
@@ -41,32 +41,29 @@ public:
 	const FVector& GetRotation() const { return Rotation; }
 	const FVector& GetScale() const { return Scale; }
 
-	void SetWorldMatrix(const DirectX::XMMATRIX& InWorldMatrix) { WorldMatrix = InWorldMatrix; }
-	const DirectX::XMMATRIX& GetWorldMatrix() const { return WorldMatrix; }
+	void SetWorldMatrix(const FMatrix& InWorldMatrix) { WorldMatrix = InWorldMatrix; }
+	const FMatrix& GetWorldMatrix() const { return WorldMatrix; }
 
 
-	FVector Forward() const //현재 상태에서 앞
+	FVector Forward() const //현재 상태에서 앞 (+Z)
 	{
-		DirectX::XMVECTOR v = DirectX::XMVector3Normalize(DirectX::XMVector3TransformNormal(DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), WorldMatrix));
-		DirectX::XMFLOAT3 f3;
-		DirectX::XMStoreFloat3(&f3, v);
-		return FVector(f3.x, f3.y, f3.z);
+		FVector v(WorldMatrix.M[2][0], WorldMatrix.M[2][1], WorldMatrix.M[2][2]);
+		v.Normalize();
+		return v;
 	}
 
-	FVector Up() const //현재 상태에서 위
+	FVector Up() const //현재 상태에서 위 (+Y)
 	{
-		DirectX::XMVECTOR v = DirectX::XMVector3Normalize(DirectX::XMVector3TransformNormal(DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), WorldMatrix));
-		DirectX::XMFLOAT3 f3;
-		DirectX::XMStoreFloat3(&f3, v);
-		return FVector(f3.x, f3.y, f3.z);
+		FVector v(WorldMatrix.M[1][0], WorldMatrix.M[1][1], WorldMatrix.M[1][2]);
+		v.Normalize();
+		return v;
 	}
 
-	FVector Right() const//현재 상태에서 오른쪽
+	FVector Right() const//현재 상태에서 오른쪽 (+X)
 	{
-		DirectX::XMVECTOR v = DirectX::XMVector3Normalize(DirectX::XMVector3TransformNormal(DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), WorldMatrix));
-		DirectX::XMFLOAT3 f3;
-		DirectX::XMStoreFloat3(&f3, v);
-		return FVector(f3.x, f3.y, f3.z);
+		FVector v(WorldMatrix.M[0][0], WorldMatrix.M[0][1], WorldMatrix.M[0][2]);
+		v.Normalize();
+		return v;
 	}
 
 
@@ -74,7 +71,5 @@ public:
 	FVector Location;
 	FVector Rotation;
 	FVector Scale;
-	DirectX::XMMATRIX WorldMatrix;
-
-	
+	FMatrix WorldMatrix;
 };

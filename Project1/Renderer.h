@@ -46,6 +46,7 @@ public:
 
 	// CreateConstantBuffer
 	ID3D11Buffer* ConstantBuffer = nullptr;
+	ID3D11Buffer* FrameConstantBuffer = nullptr;
 
 	// Direct2D & WIC Management
 	ID2D1Factory* D2DFactory = nullptr;
@@ -65,9 +66,10 @@ public:
 	ID3D11DepthStencilState* dsState = nullptr;
 
 	FConstants constants; //매트릭스 넣어야됌
+	FFrameConstants frameConstants; //뷰,프로젝션 매트릭스 
 
-	XMMATRIX viewMatrix = DirectX::XMMatrixIdentity();
-	XMMATRIX projMatrix = DirectX::XMMatrixIdentity();
+	FMatrix viewMatrix = FMatrix::Identity();
+	FMatrix projMatrix = FMatrix::Identity();
 
 
 public:
@@ -90,6 +92,9 @@ public:
 	void CreateConstantBuffer();
 	void ReleaseConstantBuffer();
 
+	void CreateFrameConstantBuffer();
+	void ReleaseFrameConstantBuffer();
+
 	void CreateVertexBufferInfos();
 	ID3D11Buffer* CreateVertexBuffer(FVertexSimple* vertices, UINT byteWidth);
 	void ReleaseVertexBuffers();
@@ -99,13 +104,14 @@ public:
 
 	
 	void UpdateConstant(FVector Offset, FVector Scale);
+	void UpdateFrameConstant();
 	void Update();
 
 	//매트릭스 세팅
-	void SetWorldMatrix(const XMMATRIX& worldmat);
-	void SetViewMatrix(const XMMATRIX& viewmat);
-	void SetProjMatrix(const XMMATRIX& projmat);
-	void SetWVPMatrix(const XMMATRIX& wvpmat);
+	void SetWorldMatrix(const FMatrix& worldmat);
+	void SetViewMatrix(const FMatrix& viewmat);
+	void SetProjMatrix(const FMatrix& projmat);
+	void SetWVPMatrix(const FMatrix& wvpmat);
 
 	//버텍스 버퍼 세팅
 	void SetVSBuffer(UINT slot);
@@ -119,6 +125,6 @@ public:
 
 private:
 	void ReleaseVertexBuffer(ID3D11Buffer* vertexBuffer);
-	std::vector<FVertexBufferInfo> VertexBufferInfos;
+	vector<FVertexBufferInfo> VertexBufferInfos;
 
 };

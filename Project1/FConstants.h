@@ -1,8 +1,12 @@
 #pragma once
 
-#include <DirectXMath.h>
+#include "Matrix.h"
+
+struct FFrameConstants {
+	FMatrix VP;
+};
 
 struct FConstants
 {
-	DirectX::XMMATRIX WVP;
+	FMatrix WVP;
 };
