@@ -5,24 +5,26 @@
 
 AActor::AActor()
 {
+	worldBuffer = new MatrixBuffer();
+}
+
+AActor::~AActor()
+{
+	delete worldBuffer;
 }
 
 void AActor::Render()
 {
 	UObject::Render();
 
-	Renderer::GetInstance().SetWorldMatrix(transform.GetWorldMatrix());
-	Renderer::GetInstance().SetVSBuffer(0);
-	Renderer::GetInstance().RenderPrimitive(Primitive);
+	worldBuffer->SetMat(transform.WorldMat);
+	worldBuffer->SetVSBuffer(0);
+
+	REDERER.RenderPrimitive(Primitive);
 }
 
 void AActor::Update(float Deltatime)
 {
 	UObject::Update(Deltatime);
-
-	transform.UpdateWorldMatrix();
-
-
-	Renderer::GetInstance().Update();
 }
 

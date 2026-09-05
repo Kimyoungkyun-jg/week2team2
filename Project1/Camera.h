@@ -4,11 +4,8 @@
 class Camera
 {
 public:
-	Camera()
-	{
-		transform.SetLocation(FVector(0.0f, 0.0f, -3.0f));
-	}
-	~Camera() {}
+	Camera();
+	~Camera();
 
 	static Camera& GetInstance() {
 		static Camera instance;
@@ -46,7 +43,9 @@ public:
 	FMatrix GetProjectionMatrix(float aspectRatio) const;
 
 	void Update();
+	void SetVPBuffer();
 
+	MatrixBuffer* vpBuffer;
 private:
 	Transform transform;
 
@@ -54,5 +53,7 @@ private:
 	float NearZ = 0.1f;
 	float FarZ = 1000.0f;
 	float speed = 5.0f;
+
+
 };
 

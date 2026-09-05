@@ -45,8 +45,6 @@ void App::Init(HINSTANCE hInstance)
 	Renderer& renderer = Renderer::GetInstance();
 	renderer.Create(m_mainWindow);
 	renderer.CreateShader();
-	renderer.CreateConstantBuffer();
-	renderer.CreateFrameConstantBuffer();
 	renderer.CreateVertexBufferInfos();
 
 	InitImgui();
@@ -87,7 +85,15 @@ void App::InitImgui()
 
 void App::mainLoop()
 {
+	// 1. ImGui 프레임 시작 (Update에서 ImGui 입력 및 델타타임을 바로 사용할 수 있도록)
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
+	// 2. 게임 로직 업데이트
 	Update();
+
+	// 3. 렌더링
 	Render();
 }
 
@@ -106,11 +112,6 @@ void App::Render()
 	// 셰이더 및 상수 버퍼 설정
 	renderer.PrepareShader();
 
-	// ImGui 프레임 시작
-	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
-
 	// ImGui 테스트 및 데모 윈도우 (상시 출력)
 	ImGui::ShowDemoWindow();
 
@@ -120,12 +121,19 @@ void App::Render()
 	ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
 	ImGui::End();
 
+	Camera::GetInstance().SetVPBuffer(); // 카메라 안의 view, proj
+	Renderer::GetInstance().UpdateFrameConstant(); 
+
 	// 씬 오브젝트 렌더링 (Renderer를 통해 Draw)
 	SCENE.Render();
 
 	// ImGui 렌더링
 	ImGui::Render();
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	ImDrawData* drawData = ImGui::GetDrawData();
+	if (drawData)
+	{
+		ImGui_ImplDX11_RenderDrawData(drawData);
+	}
 
 	// 스왑 체인 Present
 	renderer.SwapBuffer();
@@ -133,16 +141,17 @@ void App::Render()
 
 void App::ReleaseAll()
 {
+	// 1. App::Instance가 살아있는 상태에서 모든 오브젝트 명시적 해제
+	ObjectManager::GetInstance().DestroyAllObjects();
 
-
+	// 2. ImGui 종료
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 
+	// 3. 렌더러 리소스 해제
 	Renderer& renderer = Renderer::GetInstance();
 	renderer.ReleaseVertexBuffers();
-	renderer.ReleaseFrameConstantBuffer();
-	renderer.ReleaseConstantBuffer();
 	renderer.ReleaseShader();
 	renderer.Release();
 }

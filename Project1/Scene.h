@@ -24,21 +24,33 @@ public:
     virtual void Enter() {}
     virtual void Exit() {}
     
-    virtual void Update(float deltaTime) {}
-    virtual void Render() {
-		//Renderer::GetInstance().UpdateFrameConstant();
-    };
+    virtual void Update(float deltaTime)
+    {
+        auto& objects = ObjectManager::GetInstance().AllObjects;
+        for (size_t i = 0; i < objects.size(); ++i)
+        {
+            if (objects[i] && objects[i]->GetIsActive())
+            {
+                objects[i]->Update(deltaTime);
+            }
+        }
+    }
+
+    virtual void Render()
+    {
+        auto& objects = ObjectManager::GetInstance().AllObjects;
+        for (size_t i = 0; i < objects.size(); ++i)
+        {
+            if (objects[i] && objects[i]->GetIsActive())
+            {
+                objects[i]->Render();
+            }
+        }
+    }
 
     FFadeOverlay& GetFadeOverlay() { return m_fadeOverlay; }
 
 protected:
     FFadeOverlay m_fadeOverlay;
-  
-    // 마우스 클릭 - 버튼 대응
-    //void HandleClick(float mouseX, float mouseY);
-
-
-    vector<UObject*> SceneObjects;
-
 };
 

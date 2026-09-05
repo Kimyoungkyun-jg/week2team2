@@ -10,7 +10,7 @@ public:
 		: Location(0.0f, 0.0f, 0.0f)
 		, Rotation(0.0f, 0.0f, 0.0f)
 		, Scale(1.0f, 1.0f, 1.0f)
-		, WorldMatrix(FMatrix::Identity())
+		, WorldMat(FMatrix::Identity())
 	{
 		UpdateWorldMatrix();
 	}
@@ -19,7 +19,7 @@ public:
 		: Location(InLocation)
 		, Rotation(InRotation)
 		, Scale(InScale)
-		, WorldMatrix(FMatrix::Identity())
+		, WorldMat(FMatrix::Identity())
 	{
 		UpdateWorldMatrix();
 	}
@@ -30,7 +30,7 @@ public:
 		FMatrix R = FMatrix::RotationZ(Rotation.z) * FMatrix::RotationX(Rotation.x) * FMatrix::RotationY(Rotation.y);
 		FMatrix T = FMatrix::Translation(Location);
 
-		WorldMatrix = S * R * T;
+		WorldMat = S * R * T;
 	}
 
 	void SetLocation(const FVector& InLocation) { Location = InLocation; UpdateWorldMatrix(); }
@@ -41,27 +41,27 @@ public:
 	const FVector& GetRotation() const { return Rotation; }
 	const FVector& GetScale() const { return Scale; }
 
-	void SetWorldMatrix(const FMatrix& InWorldMatrix) { WorldMatrix = InWorldMatrix; }
-	const FMatrix& GetWorldMatrix() const { return WorldMatrix; }
+	void SetWorldMatrix(const FMatrix& InWorldMatrix) { WorldMat = InWorldMatrix; }
+	const FMatrix& GetWorldMatrix() const { return WorldMat; }
 
 
 	FVector Forward() const //현재 상태에서 앞 (+Z)
 	{
-		FVector v(WorldMatrix.M[2][0], WorldMatrix.M[2][1], WorldMatrix.M[2][2]);
+		FVector v(WorldMat.M[2][0], WorldMat.M[2][1], WorldMat.M[2][2]);
 		v.Normalize();
 		return v;
 	}
 
 	FVector Up() const //현재 상태에서 위 (+Y)
 	{
-		FVector v(WorldMatrix.M[1][0], WorldMatrix.M[1][1], WorldMatrix.M[1][2]);
+		FVector v(WorldMat.M[1][0], WorldMat.M[1][1], WorldMat.M[1][2]);
 		v.Normalize();
 		return v;
 	}
 
 	FVector Right() const//현재 상태에서 오른쪽 (+X)
 	{
-		FVector v(WorldMatrix.M[0][0], WorldMatrix.M[0][1], WorldMatrix.M[0][2]);
+		FVector v(WorldMat.M[0][0], WorldMat.M[0][1], WorldMat.M[0][2]);
 		v.Normalize();
 		return v;
 	}
@@ -71,5 +71,5 @@ public:
 	FVector Location;
 	FVector Rotation;
 	FVector Scale;
-	FMatrix WorldMatrix;
+	FMatrix WorldMat;
 };

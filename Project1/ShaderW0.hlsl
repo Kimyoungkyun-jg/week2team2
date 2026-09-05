@@ -8,6 +8,7 @@ cbuffer FrameConstants : register(b1) // FFrameConstants
 };
 
 
+
 struct VS_INPUT
 {
     float4 position : POSITION;

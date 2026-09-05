@@ -7,14 +7,10 @@
 DefaultScene::DefaultScene()
 {
 	cube = SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), EPrimitive::Cube, { 1.0f, 1.0f, 1.0f });
-
-	SceneObjects.push_back(cube);
 }
 
 DefaultScene::~DefaultScene()
 {
-
-	SceneObjects.clear();
 }
 
 
@@ -24,27 +20,12 @@ void DefaultScene::Initialize()
 
 void DefaultScene::Update(float deltatime)
 {
-	if (SceneObjects.size() > 0)
-	{
-		for (auto& it : SceneObjects)
-		{
-			it->Update(deltatime);
-		}
-	}
-
+	Scene::Update(deltatime);
 }
 
 void DefaultScene::Render()
 {
 	Scene::Render();
-
-	if (SceneObjects.size() > 0)
-	{
-		for (auto& it : SceneObjects)
-		{
-			it->Render();
-		}
-	}
 
 	ImGui::SetNextWindowPos(ImVec2(20.0f, 20.0f), ImGuiCond_FirstUseEver);
 	ImGui::Begin("Scene & Camera Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
