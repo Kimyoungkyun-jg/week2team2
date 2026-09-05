@@ -46,6 +46,7 @@ void AActor::Render()
 	if (vertexbuffer != nullptr && numVertices > 0)
 	{
 		REDERER.PrepareShader(inputLayout);
+		REDERER.SetCustomColor(Color);
 		vertexbuffer->IASet();
 		REDERER.GetDeviceContext()->Draw(numVertices, 0);
 	}

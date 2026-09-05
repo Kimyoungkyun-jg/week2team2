@@ -6,7 +6,7 @@
 #include "FConstants.h"
 #include "Matrix.h"
 #include "Containers.h"
-#include <string_view>
+#include "GlobalBuffer.h"
 
 class UObject;
 struct ClassInfo;
@@ -66,6 +66,8 @@ public:
 	ID3D11DepthStencilView* depthStencilView = nullptr;
 	ID3D11DepthStencilState* dsState = nullptr;
 
+	// 단일 공유 컬러 버퍼 (b2 슬롯)
+	ColorBuffer* CustomColorBuffer = nullptr;
 
 	FMatrix viewMatrix = FMatrix::Identity();
 	FMatrix projMatrix = FMatrix::Identity();
@@ -93,8 +95,10 @@ public:
 	void CreateShader();
 	void ReleaseShader();
 
-	//Color관련
+	// Color 버퍼 관련
 	void CreateColorBuffer();
+	void ReleaseColorBuffer();
+	void SetCustomColor(const struct FLinearColor& color);
 
 
 

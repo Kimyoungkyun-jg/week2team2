@@ -57,6 +57,7 @@ private:
 	EGizmoMode Mode = EGizmoMode::Translation;
 	EGizmoAxis SelectedAxis = EGizmoAxis::None;
 
+	ColorBuffer* colorBuffer = nullptr;
 	float GizmoScale = 1.0f;
 };
 

@@ -57,8 +57,15 @@ void AGizmo::RenderAxis(const FMatrix& localRotation, EGizmoAxis axisType)
 
 	FMatrix axisWorld = localRotation * S * T;
 
+	FLinearColor axisColor = FLinearColor::White;
+	if (axisType == EGizmoAxis::X) axisColor = FLinearColor::Red;
+	else if (axisType == EGizmoAxis::Y) axisColor = FLinearColor::Green;
+	else if (axisType == EGizmoAxis::Z) axisColor = FLinearColor::Blue;
+
 	worldBuffer->SetMat(axisWorld);
 	worldBuffer->SetVSBuffer(0);
+
+	REDERER.SetCustomColor(axisColor);
 
 	DC->Draw(numVertices, 0);
 }
