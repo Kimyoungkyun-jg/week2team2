@@ -81,11 +81,10 @@
         FVector zAxis = (target - eye).Normalized(); // 카메라의 Forward 방향
         FVector xAxis = (FVector::Cross3D(up, zAxis)).Normalized(); // 카메라의 Right 방향
         FVector yAxis = FVector::Cross3D(zAxis, xAxis); // 카메라의 Up 방향
-
         
-        FMatrix result = {{ {xAxis.x, xAxis.y, xAxis.z, 0},
-                            {yAxis.x, yAxis.y, yAxis.z, 0},
-                            {zAxis.x, zAxis.y, zAxis.z, 0},
+        FMatrix result = {{ {xAxis.x, yAxis.x, zAxis.x, 0},
+                            {xAxis.y, yAxis.y, zAxis.y, 0},
+                            {xAxis.z, yAxis.z, zAxis.z, 0},
                             {-(xAxis.DotProduct(eye)), -(yAxis.DotProduct(eye)), -(zAxis.DotProduct(eye)), 1} }};
 
         return result;
