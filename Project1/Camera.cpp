@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Camera.h"
 #include "Global.h"
+#include "Transform.h"
+
 
 void Camera::Rotate(float deltaYaw, float deltaPitch)
 {
