@@ -19,8 +19,8 @@ public:
 		AllClassInfoMap.clear();
 	}
 
-	vector<UObject*> AllObjects;
-	unordered_map<string_view, ClassInfo*> AllClassInfoMap;
+	TArray<UObject*> AllObjects;
+	TMap<string_view, ClassInfo*> AllClassInfoMap;
 
 	ClassInfo* GetOrCreateClassInfo(string_view name, const ClassInfo* superClass = nullptr)
 	{

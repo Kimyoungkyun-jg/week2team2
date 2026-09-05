@@ -77,6 +77,8 @@ typedef int int32;
 typedef unsigned int uint32;
 typedef string FString;
 
+#include "Containers.h"
+
 //Scene Header
 #include "Scene.h"
 #include "SceneManager.h"

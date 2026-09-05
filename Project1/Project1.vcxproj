@@ -139,6 +139,7 @@
     <ClInclude Include="..\Project1\enums.h" />
     <ClInclude Include="..\Project1\pch.h" />
     <ClInclude Include="ConstBuffer.h" />
+    <ClInclude Include="Containers.h" />
     <ClInclude Include="GlobalBuffer.h" />
     <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>

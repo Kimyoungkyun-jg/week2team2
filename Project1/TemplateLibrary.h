@@ -97,10 +97,10 @@ public:
 		return static_cast<T*>(Colider);
 	}
 
-	static inline bool TraceSphere(FVector Location, float Radius, vector<ACollider*>& Result)
+	static inline bool TraceSphere(FVector Location, float Radius, TArray<ACollider*>& Result)
 	{
 		bool bFound = false;
-		vector<ACollider*> Colliders = CollisionManager::GetInstance().colliders;
+		TArray<ACollider*> Colliders = CollisionManager::GetInstance().colliders;
 		for (ACollider* c : Colliders)
 		{
 			if ((c->GetLocation() - Location).LengthSquared() <= Radius * Radius)
