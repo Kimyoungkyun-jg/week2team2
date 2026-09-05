@@ -92,9 +92,7 @@ void App::mainLoop()
 
 void App::Update()
 {
-
 	Camera::GetInstance().Update();
-
 	SCENE.Update(DELTA);
 }
 

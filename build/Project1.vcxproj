@@ -136,6 +136,7 @@
     <ClInclude Include="..\Project1\TemplateLibrary.h" />
     <ClInclude Include="..\Project1\Transform.h" />
     <ClInclude Include="..\Project1\UObject.h" />
+    <ClInclude Include="..\Project1\UEngineStatics.h" />
     <ClInclude Include="..\Project1\enums.h" />
     <ClInclude Include="..\Project1\pch.h" />
   </ItemGroup>

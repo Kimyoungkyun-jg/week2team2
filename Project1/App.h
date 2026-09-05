@@ -27,4 +27,10 @@ public:
 	HWND GetMainWindow() const { return m_mainWindow; }
 	ID3D11Device* GetDevice() const { return Renderer::GetInstance().Device; }
 	ID3D11DeviceContext* GetDeviceContext() const { return Renderer::GetInstance().DeviceContext; }
+
+
+	//메모리 관리
+	uint32 TotalAllocationBytes;
+	uint32 TotalAllocationCount;
+
 };

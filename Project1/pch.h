@@ -70,7 +70,7 @@ using namespace std;
 
 typedef int int32;
 typedef unsigned int uint32;
-typedef 
+typedef string FString;
 
 //Scene Header
 #include "Scene.h"
