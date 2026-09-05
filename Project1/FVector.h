@@ -32,7 +32,8 @@ struct FVector
 
 	float LengthSquared() const;
 	float Length() const;
-	void Normalize();
+	void Normalize();			// 자기 자신 정규화
+	FVector Normalized() const; 	// 정규화 후 행렬 반환
 	float DotProduct(const FVector& other) const;
 
 	static float Cross(FVector a, FVector b) // Z-성분
@@ -40,6 +41,7 @@ struct FVector
 		return a.x * b.y - a.y * b.x;
 	}
 
+	// 3D 외적
 	static FVector Cross3D(const FVector& a, const FVector& b)
 	{
 		return FVector(
