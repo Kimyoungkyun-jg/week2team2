@@ -46,6 +46,7 @@ void App::Init(HINSTANCE hInstance)
 	renderer.Create(m_mainWindow);
 	renderer.CreateShader();
 	renderer.CreateConstantBuffer();
+	renderer.CreateFrameConstantBuffer();
 	renderer.CreateVertexBufferInfos();
 
 	InitImgui();
@@ -140,6 +141,7 @@ void App::ReleaseAll()
 
 	Renderer& renderer = Renderer::GetInstance();
 	renderer.ReleaseVertexBuffers();
+	renderer.ReleaseFrameConstantBuffer();
 	renderer.ReleaseConstantBuffer();
 	renderer.ReleaseShader();
 	renderer.Release();

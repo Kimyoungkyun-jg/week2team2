@@ -48,6 +48,7 @@ public:
 
 	// CreateConstantBuffer
 	ID3D11Buffer* ConstantBuffer = nullptr;
+	ID3D11Buffer* FrameConstantBuffer = nullptr;
 
 	// Direct2D & WIC Management
 	ID2D1Factory* D2DFactory = nullptr;
@@ -67,6 +68,7 @@ public:
 	ID3D11DepthStencilState* dsState = nullptr;
 
 	FConstants constants; //매트릭스 넣어야됌
+	FFrameConstants frameConstants; //뷰,프로젝션 매트릭스 
 
 	FMatrix viewMatrix = FMatrix::Identity();
 	FMatrix projMatrix = FMatrix::Identity();
@@ -92,6 +94,9 @@ public:
 	void CreateConstantBuffer();
 	void ReleaseConstantBuffer();
 
+	void CreateFrameConstantBuffer();
+	void ReleaseFrameConstantBuffer();
+
 	void CreateVertexBufferInfos();
 	ID3D11Buffer* CreateVertexBuffer(FVertexSimple* vertices, UINT byteWidth);
 	void ReleaseVertexBuffers();
@@ -101,6 +106,7 @@ public:
 
 	
 	void UpdateConstant(FVector Offset, FVector Scale);
+	void UpdateFrameConstant();
 	void Update();
 
 	//매트릭스 세팅

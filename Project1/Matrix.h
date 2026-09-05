@@ -26,6 +26,15 @@ struct FMatrix
     // 원소 접근자
     float& operator()(uint32 row, uint32 col) { return M[row][col]; }
     const float& operator()(uint32 row, uint32 col) const { return M[row][col]; }
+    // SRT 성분 추출
+    FVector ExtractScale() const;
+    FMatrix ExtractRotation() const;
+    FVector ExtractTranslation() const;
+
+    //역행렬
+    FMatrix Inverse() const;
+    FMatrix InverseAffine() const;
+
 };
 
 

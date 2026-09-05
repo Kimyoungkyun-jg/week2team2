@@ -36,9 +36,7 @@ void DefaultScene::Update(float deltatime)
 
 void DefaultScene::Render()
 {
-	// 1. 카메라의 뷰 및 투영 행렬을 렌더러에 1회 전달
-	Renderer::GetInstance().SetViewMatrix(Camera::GetInstance().GetViewMatrix());
-	Renderer::GetInstance().SetProjMatrix(Camera::GetInstance().GetProjectionMatrix(Renderer::GetInstance().GetAspectRatio()));
+	Scene::Render();
 
 	if (SceneObjects.size() > 0)
 	{

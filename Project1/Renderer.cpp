@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Renderer.h"
 #include "Sphere.h"	
+#include "Camera.h"
 
 void Renderer::Create(HWND hWindow)
 {
@@ -240,6 +241,28 @@ void Renderer::ReleaseConstantBuffer()
 	}
 }
 
+void Renderer::CreateFrameConstantBuffer()
+{
+	D3D11_BUFFER_DESC frameConstantbufferdesc = {};
+	frameConstantbufferdesc.ByteWidth = sizeof(FFrameConstants) + 0xf & 0xfffffff0;
+	frameConstantbufferdesc.Usage = D3D11_USAGE_DYNAMIC;
+	frameConstantbufferdesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	frameConstantbufferdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+	Device->CreateBuffer(&frameConstantbufferdesc, nullptr, &FrameConstantBuffer);
+
+	
+}
+
+void Renderer::ReleaseFrameConstantBuffer()
+{
+	if (FrameConstantBuffer)
+	{
+		FrameConstantBuffer->Release();
+		FrameConstantBuffer = nullptr;
+	}
+}
+
 void Renderer::CreateVertexBufferInfos()
 {
 	UINT numVerticesCube = sizeof(cube_vertices) / sizeof(FVertexSimple);
@@ -320,10 +343,25 @@ void Renderer::PrepareShader()
 	{
 		DeviceContext->VSSetConstantBuffers(0, 1, &ConstantBuffer);
 	}
+	if (FrameConstantBuffer)
+	{
+		DeviceContext->VSSetConstantBuffers(1, 1, &FrameConstantBuffer);
+	}
 
 	DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
 }
 
+
+void Renderer::UpdateFrameConstant()
+{
+	frameConstants.VP = Camera::GetInstance().GetViewMatrix() * Camera::GetInstance().GetProjectionMatrix(wAspectRatio);
+	
+	D3D11_MAPPED_SUBRESOURCE msr;
+	DeviceContext->Map(FrameConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+	XMMATRIX vpT = XMMatrixTranspose(frameConstants.VP);
+	memcpy(msr.pData, &vpT, sizeof(XMMATRIX));
+	DeviceContext->Unmap(FrameConstantBuffer, 0);
+}
 
 void Renderer::Update()
 {

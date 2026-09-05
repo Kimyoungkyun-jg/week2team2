@@ -26,8 +26,7 @@ public:
     
     virtual void Update(float deltaTime) {}
     virtual void Render() {
-        Renderer::GetInstance().SetViewMatrix(Camera::GetInstance().GetViewMatrix());
-        Renderer::GetInstance().SetProjMatrix(Camera::GetInstance().GetProjectionMatrix(Renderer::GetInstance().GetAspectRatio()));
+		Renderer::GetInstance().UpdateFrameConstant();
     };
 
     FFadeOverlay& GetFadeOverlay() { return m_fadeOverlay; }
