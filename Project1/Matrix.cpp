@@ -277,3 +277,17 @@
 
         return result;
     }
+
+    FVector TransformDirection(const FVector& v, const FMatrix& m)
+    {
+        return FVector(v.x * m.M[0][0] + v.y * m.M[1][0] + v.z * m.M[2][0],
+            v.x * m.M[0][1] + v.y * m.M[1][1] + v.z * m.M[2][1],
+            v.x * m.M[0][2] + v.y * m.M[1][2] + v.z * m.M[2][2]);
+    }
+
+    FVector TransformPoint(const FVector& v, const FMatrix& m)
+    {
+        return FVector(v.x * m.M[0][0] + v.y * m.M[1][0] + v.z * m.M[2][0] + m.M[3][0],
+            v.x * m.M[0][1] + v.y * m.M[1][1] + v.z * m.M[2][1] + m.M[3][1],
+            v.x * m.M[0][2] + v.y * m.M[1][2] + v.z * m.M[2][2] + m.M[3][2]);
+    }

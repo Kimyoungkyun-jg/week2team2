@@ -1,6 +1,7 @@
 #pragma once
 #include "Scene.h"
 #include "ACollider.h"
+#include "PickingManager.h"
 
 class DefaultScene : public Scene
 {
@@ -16,6 +17,6 @@ public:
 
 
 
-	
+	FRay ray;
 };
 

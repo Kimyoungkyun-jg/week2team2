@@ -2,6 +2,7 @@
 #include "DefaultScene.h"
 #include "Camera.h"
 #include "Renderer.h"
+#include "PickingManager.h"
 
 
 DefaultScene::DefaultScene()
@@ -53,6 +54,19 @@ void DefaultScene::Render()
 
 	ImGui::Separator();
 
+	
+	if (ImGui::IsMouseClicked(0)) {
+		ray = PickingManager::GetInstance().ScreenToWorldRay(ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y,
+			Renderer::GetInstance().ViewportInfo.Width, Renderer::GetInstance().ViewportInfo.Height);
+
+		
+	}
+	// ----------------------------------
+	//			테스트용 코드!!!
+	// ----------------------------------
+	ImGui::Text("Ray Origin: (%.2f, %.2f, %.2f)", ray.Origin.x, ray.Origin.y, ray.Origin.z);
+	ImGui::Text("Ray Dir: (%.2f, %.2f, %.2f)", ray.Direction.x, ray.Direction.y, ray.Direction.z);
+
 	// 큐브 디버그 섹션
 	ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.2f, 1.0f), "[ Cube Controls ]");
 	if (cube)
@@ -89,5 +103,8 @@ void DefaultScene::Render()
 			cube->SetRotation(rot);
 		}
 	}
+
+	
+
 	ImGui::End();
 }

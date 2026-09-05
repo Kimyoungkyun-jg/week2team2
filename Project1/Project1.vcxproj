@@ -140,6 +140,7 @@
     <ClInclude Include="..\Project1\pch.h" />
     <ClInclude Include="ConstBuffer.h" />
     <ClInclude Include="GlobalBuffer.h" />
+    <ClInclude Include="PickingManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Project1\AActor.cpp" />
@@ -181,6 +182,7 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ConstBuffer.cpp" />
+    <ClCompile Include="PickingManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Project1\ShaderW0.hlsl" />
