@@ -112,17 +112,17 @@ void App::Render()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	// ImGui 테스트 및 데모 윈도우 (상시 출력)
-	ImGui::ShowDemoWindow();
+	//// ImGui 테스트 및 데모 윈도우 (상시 출력)
+	//ImGui::ShowDemoWindow();
 
-	ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
-	ImGui::Begin("Engine Main Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-	ImGui::Text("DirectX 11 & ImGui Active!");
-	ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
-	ImGui::End();
+	//ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
+	//ImGui::Begin("Engine Main Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+	//ImGui::Text("DirectX 11 & ImGui Active!");
+	//ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
+	//ImGui::End();
 
-	// 씬 오브젝트 렌더링 (Renderer를 통해 Draw)
-	SCENE.Render();
+	//// 씬 오브젝트 렌더링 (Renderer를 통해 Draw)
+	//SCENE.Render();
 
 	// ImGui 렌더링
 	ImGui::Render();

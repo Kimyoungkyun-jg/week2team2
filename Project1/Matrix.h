@@ -1,5 +1,6 @@
 #pragma once
-#include "Vector.h"
+#include "pch.h"
+#include "FVector.h"
 
 struct FMatrix
 {
@@ -24,17 +25,3 @@ struct FMatrix
     FMatrix Transpose() const;
 
 };
-
-
-/*
-struct FMatrix
-{
-	double M[4][4] = { {1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1} };
-    
-    public:
-	FMatrix() = default;
-    
-    public:
-	static FMatrix Identity;
-};
-*/

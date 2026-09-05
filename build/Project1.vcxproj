@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -112,9 +112,7 @@
     <ClInclude Include="..\Project1\Camera.h" />
     <ClInclude Include="..\Project1\CollisionManager.h" />
     <ClInclude Include="..\Project1\D3D11Util.h" />
-    <ClInclude Include="..\Project1\EditorConsole.h" />
     <ClInclude Include="..\Project1\FConstants.h" />
-    <ClInclude Include="..\Project1\FMatrix.h" />
     <ClInclude Include="..\Project1\FPixelConstant.h" />
     <ClInclude Include="..\Project1\FVector.h" />
     <ClInclude Include="..\Project1\FVertexSimple.h" />
@@ -127,6 +125,7 @@
     <ClInclude Include="..\Project1\ImGui\imstb_rectpack.h" />
     <ClInclude Include="..\Project1\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Project1\ImGui\imstb_truetype.h" />
+    <ClInclude Include="..\Project1\Matrix.h" />
     <ClInclude Include="..\Project1\ObjectManager.h" />
     <ClInclude Include="..\Project1\Renderer.h" />
     <ClInclude Include="..\Project1\Scene.h" />
@@ -146,8 +145,6 @@
     <ClCompile Include="..\Project1\Camera.cpp" />
     <ClCompile Include="..\Project1\CollisionManager.cpp" />
     <ClCompile Include="..\Project1\D3D11Util.cpp" />
-    <ClCompile Include="..\Project1\EditorConsole.cpp" />
-    <ClCompile Include="..\Project1\FMatrix.cpp" />
     <ClCompile Include="..\Project1\FVector.cpp" />
     <ClCompile Include="..\Project1\ImGui\imgui.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -170,6 +167,7 @@
     <ClCompile Include="..\Project1\ImGui\imgui_widgets.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\Project1\Matrix.cpp" />
     <ClCompile Include="..\Project1\ObjectManager.cpp" />
     <ClCompile Include="..\Project1\Renderer.cpp" />
     <ClCompile Include="..\Project1\Scene.cpp" />

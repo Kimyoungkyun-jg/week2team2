@@ -22,16 +22,6 @@ project "Project1"
         "Project1/**.hlsl"
     }
 
-vpaths {
-    ["Source Files"] = { "Project1/*.cpp" },
-    ["Header Files"] = { "Project1/*.h", "Project1/*.hpp" },
-
-    ["ImGui/Source Files"] = { "Project1/ImGui/**.cpp" },
-    ["ImGui/Header Files"] = { "Project1/ImGui/**.h", "Project1/ImGui/**.hpp" },
-
-    ["Shader Files"] = { "Project1/**.hlsl" }
-}
-
     excludes {
         "Project1/ThirdParty/**"
     }
