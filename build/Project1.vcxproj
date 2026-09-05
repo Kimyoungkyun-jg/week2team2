@@ -64,6 +64,8 @@
       <Optimization>Disabled</Optimization>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
+      <AdditionalOptions>/utp-8 %(AdditionalOptions)</AdditionalOptions>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -113,6 +115,7 @@
     <ClInclude Include="..\Project1\CollisionManager.h" />
     <ClInclude Include="..\Project1\D3D11Util.h" />
     <ClInclude Include="..\Project1\FConstants.h" />
+    <ClInclude Include="..\Project1\FOutputLog.h" />
     <ClInclude Include="..\Project1\FPixelConstant.h" />
     <ClInclude Include="..\Project1\FVector.h" />
     <ClInclude Include="..\Project1\FVertexSimple.h" />
@@ -128,6 +131,7 @@
     <ClInclude Include="..\Project1\Matrix.h" />
     <ClInclude Include="..\Project1\ObjectManager.h" />
     <ClInclude Include="..\Project1\Renderer.h" />
+    <ClInclude Include="..\Project1\SOutputLog.h" />
     <ClInclude Include="..\Project1\Scene.h" />
     <ClInclude Include="..\Project1\SceneManager.h" />
     <ClInclude Include="..\Project1\Scenes\DefaultScene.h" />
@@ -145,6 +149,8 @@
     <ClCompile Include="..\Project1\Camera.cpp" />
     <ClCompile Include="..\Project1\CollisionManager.cpp" />
     <ClCompile Include="..\Project1\D3D11Util.cpp" />
+    <ClCompile Include="..\Project1\FOutputDevice.h" />
+    <ClCompile Include="..\Project1\FOutputLog.cpp" />
     <ClCompile Include="..\Project1\FVector.cpp" />
     <ClCompile Include="..\Project1\ImGui\imgui.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -170,6 +176,7 @@
     <ClCompile Include="..\Project1\Matrix.cpp" />
     <ClCompile Include="..\Project1\ObjectManager.cpp" />
     <ClCompile Include="..\Project1\Renderer.cpp" />
+    <ClCompile Include="..\Project1\SOutputLog.cpp" />
     <ClCompile Include="..\Project1\Scene.cpp" />
     <ClCompile Include="..\Project1\SceneManager.cpp" />
     <ClCompile Include="..\Project1\Scenes\DefaultScene.cpp" />

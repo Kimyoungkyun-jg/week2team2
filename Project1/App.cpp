@@ -3,6 +3,7 @@
 #include "Scenes/DefaultScene.h"
 #include "SceneManager.h"
 #include "Camera.h"
+#include "SOutputLog.h"
 
 App* App::Instance = nullptr;
 
@@ -107,28 +108,39 @@ void App::Render()
 	// 셰이더 및 상수 버퍼 설정
 	renderer.PrepareShader();
 
-	// ImGui 프레임 시작
+	//// ImGui 프레임 시작
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	//// ImGui 테스트 및 데모 윈도우 (상시 출력)
-	//ImGui::ShowDemoWindow();
+	// ImGui 테스트 및 데모 윈도우 (상시 출력)
+	ImGui::ShowDemoWindow();
 
-	//ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
-	//ImGui::Begin("Engine Main Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-	//ImGui::Text("DirectX 11 & ImGui Active!");
-	//ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
-	//ImGui::End();
+	ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
 
-	//// 씬 오브젝트 렌더링 (Renderer를 통해 Draw)
-	//SCENE.Render();
+	ImGui::Begin("Engine Main Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
-	// ImGui 렌더링
+
+	FOutputLog OutputLog;
+	SOutputLog OutputLogWindow{ &OutputLog };
+	OutputLogWindow.Render();
+	OutputLog.Serialize("Hello World 2025");
+	OutputLog.Serialize("[Warning] Test Warning");
+	OutputLog.Serialize("[Error] Test Error");
+
+	ImGui::Text("DirectX 11 & ImGui Active!");
+	ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
+	ImGui::End();
+
+	////// 씬 오브젝트 렌더링 (Renderer를 통해 Draw)
+	SCENE.Render();
+
+
+	//// ImGui 렌더링
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
-	// 스왑 체인 Present
+	//// 스왑 체인 Present
 	renderer.SwapBuffer();
 }
 
