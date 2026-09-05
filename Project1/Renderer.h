@@ -5,8 +5,11 @@
 #include "enums.h"
 #include "FConstants.h"
 #include "Matrix.h"
+#include "Containers.h"
+#include <string_view>
 
-
+class UObject;
+struct ClassInfo;
 
 struct FVertexBufferInfo
 {
@@ -56,7 +59,6 @@ public:
 	// values
 	D3D11_VIEWPORT ViewportInfo;
 	FLOAT ClearColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f };
-	unsigned int Stride;
 	float wAspectRatio;
 	float GetAspectRatio() { return wAspectRatio; }
 
@@ -83,23 +85,84 @@ public:
 	void CreateRasterizerState();
 	void ReleaseRasterizerState();
 
+	// CreateShader 헬퍼 함수들
+	bool CreateVertexShader(LPCWSTR path, LPCSTR entryPoint, ID3D11VertexShader** outVS, ID3DBlob** outBlob = nullptr);
+	bool CreatePixelShader(LPCWSTR path, LPCSTR entryPoint, ID3D11PixelShader** outPS);
+	bool CreateInputLayout(const D3D11_INPUT_ELEMENT_DESC* layoutDesc, UINT numElements, ID3DBlob* vsBlob, ID3D11InputLayout** outLayout);
+
 	void CreateShader();
 	void ReleaseShader();
 
+	//Color관련
+	void CreateColorBuffer();
 
-	void CreateVertexBufferInfos();
-	ID3D11Buffer* CreateVertexBuffer(FVertexSimple* vertices, UINT byteWidth);
-	void ReleaseVertexBuffers();
+
+
+	ID3D11Buffer* CreateVertexBuffer(const void* vertices, UINT byteWidth);
 
 	void Prepare();
-	void PrepareShader();
 
+	// InputLayout 포인터(또는 기본 레이아웃)로 셰이더 및 파이프라인 세팅
+	void PrepareShader(ID3D11InputLayout* layout = nullptr)
+	{
+		ID3D11InputLayout* targetLayout = layout ? layout : SimpleInputLayout;
+		if (CurrentInputLayout != targetLayout)
+		{
+			CurrentInputLayout = targetLayout;
+			DeviceContext->IASetInputLayout(targetLayout);
+		}
+		DeviceContext->VSSetShader(SimpleVertexShader, nullptr, 0);
+		DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
+	}
+
+	// [핵심] 타입만 넘기면 FVertexTraits를 통해 자동으로 InputLayout을 생성하고 TMap에 등록하는 템플릿 함수
+	template<typename VertexType>
+	ID3D11InputLayout* RegisterInputLayout(ID3DBlob* vsBlob)
+	{
+		if (!vsBlob)
+			return nullptr;
+
+		const void* typeKey = &typeid(VertexType);
+		auto it = InputLayoutMap.find(typeKey);
+		if (it != InputLayoutMap.end())
+			return it->second;
+
+		ID3D11InputLayout* layout = nullptr;
+		HRESULT hr = Device->CreateInputLayout(
+			FVertexLayouts<VertexType>::Layout,
+			FVertexLayouts<VertexType>::NumElements,
+			vsBlob->GetBufferPointer(),
+			vsBlob->GetBufferSize(),
+			&layout);
+
+		if (SUCCEEDED(hr) && layout)
+		{
+			InputLayoutMap[typeKey] = layout;
+			if (!SimpleInputLayout)
+			{
+				SimpleInputLayout = layout;
+			}
+		}
+		return layout;
+	}
+
+	// 타입으로 InputLayout 조회
+	template<typename VertexType>
+	ID3D11InputLayout* GetInputLayout()
+	{
+		const void* typeKey = &typeid(VertexType);
+		auto it = InputLayoutMap.find(typeKey);
+		if (it != InputLayoutMap.end())
+			return it->second;
+		return SimpleInputLayout;
+	}
+
+	ID3D11InputLayout* GetInputLayout(const ClassInfo* classInfo);
+	ID3D11InputLayout* GetInputLayout(const UObject* object);
 	
 	void UpdateConstant(FVector Offset, FVector Scale);
 	void UpdateFrameConstant();
 	void Update();
-
-	
 
 	//버텍스 버퍼 세팅
 	void SetVSBuffer(UINT slot);
@@ -108,11 +171,16 @@ public:
 	void CreateDepthStencil();
 	void ReleaseDepthStencil();
 
-	void RenderPrimitive(EPrimitive Primitive);
 	void SwapBuffer();
 
 private:
-	void ReleaseVertexBuffer(ID3D11Buffer* vertexBuffer);
-	TArray<FVertexBufferInfo> VertexBufferInfos;
+	// 타입 식별자 (const void*) 기반 InputLayout TMap
+	TMap<const void*, ID3D11InputLayout*> InputLayoutMap;
 
+	// 현재 파이프라인에 바인딩된 InputLayout 캐시 (중복 상태 전환 방지)
+	ID3D11InputLayout* CurrentInputLayout = nullptr;
+
+	ID3D11Buffer* ColorBuffer = nullptr;
+
+	
 };

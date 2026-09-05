@@ -138,6 +138,7 @@
     <ClInclude Include="..\Project1\UEngineStatics.h" />
     <ClInclude Include="..\Project1\enums.h" />
     <ClInclude Include="..\Project1\pch.h" />
+    <ClInclude Include="AGizmo.h" />
     <ClInclude Include="ConstBuffer.h" />
     <ClInclude Include="Containers.h" />
     <ClInclude Include="GlobalBuffer.h" />
@@ -182,6 +183,7 @@
     <ClCompile Include="..\Project1\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="AGizmo.cpp" />
     <ClCompile Include="ConstBuffer.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
