@@ -358,8 +358,8 @@ void Renderer::UpdateFrameConstant()
 	
 	D3D11_MAPPED_SUBRESOURCE msr;
 	DeviceContext->Map(FrameConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
-	XMMATRIX vpT = XMMatrixTranspose(frameConstants.VP);
-	memcpy(msr.pData, &vpT, sizeof(XMMATRIX));
+	FMatrix vpT = frameConstants.VP.Transpose();
+	memcpy(msr.pData, &vpT, sizeof(FMatrix));
 	DeviceContext->Unmap(FrameConstantBuffer, 0);
 }
 

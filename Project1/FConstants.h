@@ -3,11 +3,10 @@
 #include "Matrix.h"
 
 struct FFrameConstants {
-	DirectX::XMMATRIX VP;
+	FMatrix VP;
 };
 
 struct FConstants
 {
-	DirectX::XMMATRIX World;
 	FMatrix WVP;
 };
