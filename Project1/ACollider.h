@@ -4,6 +4,8 @@
 
 class ACollider : public AActor
 {
+	DECLARE_CLASS(ACollider, AActor)
+
 public:
 	ACollider() {}
 	virtual ~ACollider() {}
@@ -61,6 +63,8 @@ protected:
 
 class ACube : public ACollider
 {
+	DECLARE_CLASS(ACube, ACollider)
+
 public:
 	ACube()
 	{
@@ -70,6 +74,8 @@ public:
 
 class ACircle : public ACollider
 {
+	DECLARE_CLASS(ACircle, ACollider)
+
 public:
 	ACircle()
 	{

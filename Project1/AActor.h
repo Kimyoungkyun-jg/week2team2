@@ -10,6 +10,8 @@ using namespace DirectX;
 
 class AActor : public UObject
 {
+	DECLARE_CLASS(AActor, UObject)
+
 public:
 	AActor();
 	virtual ~AActor();

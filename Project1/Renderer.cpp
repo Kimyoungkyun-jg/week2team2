@@ -124,27 +124,17 @@ void Renderer::CreateShader()
 	ID3DBlob* pixelshaderCSO = nullptr;
 	ID3DBlob* errorBlob = nullptr;
 
-	const wchar_t* candidatePaths[] = {
-		L"ShaderW0.hlsl",
-		L"Project1/ShaderW0.hlsl",
-		L"../Project1/ShaderW0.hlsl",
-		L"bin/Debug/ShaderW0.hlsl",
-		L"../bin/Debug/ShaderW0.hlsl"
-	};
+	const wchar_t* Paths = L"ShaderW0.hlsl";
 
-	const wchar_t* shaderPath = L"ShaderW0.hlsl";
-	for (const wchar_t* path : candidatePaths)
+
+	if (!filesystem::exists(Paths))
 	{
-		if (filesystem::exists(path))
-		{
-			shaderPath = path;
-			break;
-		}
+		return;
 	}
 
 	// Vertex Shader 컴파일
 	HRESULT hr = D3DCompileFromFile(
-		shaderPath, nullptr, nullptr,
+		Paths, nullptr, nullptr,
 		"mainVS", "vs_5_0", 0, 0, &vertexshaderCSO, &errorBlob);
 
 	if (FAILED(hr) || !vertexshaderCSO)
@@ -164,7 +154,7 @@ void Renderer::CreateShader()
 
 	// Pixel Shader 컴파일
 	hr = D3DCompileFromFile(
-		shaderPath, nullptr, nullptr,
+		Paths, nullptr, nullptr,
 		"mainPS", "ps_5_0", 0, 0, &pixelshaderCSO, &errorBlob);
 
 	if (FAILED(hr) || !pixelshaderCSO)
