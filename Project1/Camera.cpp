@@ -21,23 +21,19 @@ void Camera::Rotate(float deltaYaw, float deltaPitch)
 	transform.SetRotation(rot);
 }
 
-DirectX::XMMATRIX Camera::GetViewMatrix() const
+FMatrix Camera::GetViewMatrix() const
 {
-	const FVector& loc = transform.GetLocation();
-	FVector fwd = transform.Forward();
+	const FVector& eye = transform.GetLocation();
+	FVector target = eye + transform.Forward();
 	FVector up = transform.Up();
 
-	DirectX::XMVECTOR eyePos = DirectX::XMVectorSet(loc.x, loc.y, loc.z, 1.0f);
-	DirectX::XMVECTOR focusPos = DirectX::XMVectorSet(loc.x + fwd.x, loc.y + fwd.y, loc.z + fwd.z, 1.0f);
-	DirectX::XMVECTOR upDir = DirectX::XMVectorSet(up.x, up.y, up.z, 0.0f);
-
-	return DirectX::XMMatrixLookAtLH(eyePos, focusPos, upDir);
+	return FMatrix::LookAt(eye, target, up);
 }
 
-DirectX::XMMATRIX Camera::GetProjectionMatrix(float aspectRatio) const
+FMatrix Camera::GetProjectionMatrix(float aspectRatio) const
 {
 	float fovRadians = fov * (Global::PI / 180.0f);
-	return DirectX::XMMatrixPerspectiveFovLH(fovRadians, aspectRatio, NearZ, FarZ);
+	return FMatrix::PerspectiveFov(fovRadians, aspectRatio, NearZ, FarZ);
 }
 
 void Camera::Update()

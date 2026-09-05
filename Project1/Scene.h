@@ -39,7 +39,7 @@ protected:
     //void HandleClick(float mouseX, float mouseY);
 
 
-    std::vector<UObject*> SceneObjects;
+    vector<UObject*> SceneObjects;
 
 };
 

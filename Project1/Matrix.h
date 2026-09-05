@@ -1,5 +1,5 @@
 #pragma once
-#include "Vector.h"
+#include "FVector.h"
 
 struct FMatrix
 {
@@ -23,6 +23,9 @@ struct FMatrix
     FMatrix operator* (const FMatrix& other) const; 
     FMatrix Transpose() const;
 
+    // 원소 접근자
+    float& operator()(uint32 row, uint32 col) { return M[row][col]; }
+    const float& operator()(uint32 row, uint32 col) const { return M[row][col]; }
 };
 
 

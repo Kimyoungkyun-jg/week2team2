@@ -26,6 +26,7 @@
 #include <DirectXCollision.h>
 
 using namespace DirectX;
+using namespace std;
 // IMGUI
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
@@ -67,6 +68,9 @@ using namespace DirectX;
 #define WIN_WIDTH 1920	
 #define WIN_HEIGHT 1080
 
+typedef int int32;
+typedef unsigned int uint32;
+typedef 
 
 //Scene Header
 #include "Scene.h"

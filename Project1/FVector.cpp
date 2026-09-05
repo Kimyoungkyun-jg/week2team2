@@ -24,6 +24,18 @@ void FVector::Normalize()
 	}
 }
 
+FVector FVector::Normalized() const
+{
+	float length = Length();
+	if (length > 0.0f)
+	{
+		return FVector(x / length, y / length, z / length);
+	}
+	return FVector(0.0f, 0.0f, 0.0f);
+}
+
+
+
 float FVector::DotProduct(const FVector& other) const
 {
 	return x * other.x + y * other.y + z * other.z;

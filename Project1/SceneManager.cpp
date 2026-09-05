@@ -18,7 +18,7 @@ void SceneManager::Initialize()
 	}
 }
 
-void SceneManager::AddScene(const std::string& name, Scene* scene)
+void SceneManager::AddScene(const string& name, Scene* scene)
 {
 	if (m_scenes.count(name) > 0)
 		return;
@@ -26,7 +26,7 @@ void SceneManager::AddScene(const std::string& name, Scene* scene)
 	m_scenes[name] = scene;
 }
 
-void SceneManager::RequestChangeScene(const std::string& name)
+void SceneManager::RequestChangeScene(const string& name)
 {
 	if (m_hasPendingSceneChange) return;
 	m_hasPendingSceneChange = true;
@@ -37,7 +37,7 @@ void SceneManager::RequestChangeScene(const std::string& name)
 	}
 }
 
-void  SceneManager::ChangeScene(const std::string& name) 
+void  SceneManager::ChangeScene(const string& name) 
 {
 	if (m_currentScene != nullptr) 
 	{
@@ -61,7 +61,7 @@ void SceneManager::Update(float deltaTime)
 	//if (m_hasPendingSceneChange && (m_currentScene == nullptr || !m_currentScene->GetFadeOverlay().IsFading()))
 	//{
 	//	m_hasPendingSceneChange = false;
-	//	std::string nextScene = m_pendingSceneName;
+	//	string nextScene = m_pendingSceneName;
 	//	ChangeScene(nextScene);
 	//	if (m_currentScene)
 	//	{

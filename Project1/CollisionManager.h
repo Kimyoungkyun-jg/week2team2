@@ -101,7 +101,7 @@ public:
 
 	float InvInertia(float mass);
 
-	std::vector<ACollider*> colliders;
+	vector<ACollider*> colliders;
 	bool bIsAllStop = false;
 
 	ACollider* TracePoint(const FVector& point)
@@ -132,7 +132,7 @@ public:
 	}
 
 	// 디버그용. 반환값 infos와 달리 데미지 판정 전의 모든 접촉을 담는다
-	std::vector<CollisionInfo> debugContacts;
+	vector<CollisionInfo> debugContacts;
 
 	// 위치 보정 후 남은 가장 깊은 겹침. slop 근처면 보정이 제 일을 다 한 것
 	float maxPenetration = 0.0f;
@@ -142,13 +142,13 @@ public:
 		colliders.push_back(col);
 	}
 
-	bool DeleteColider(int id)
+	bool DeleteColider(uint32 id)
 	{
-		for (int i = 0; i < colliders.size(); i++)
+		for (size_t i = 0; i < colliders.size(); i++)
 		{
 			if (colliders[i]->GetID() == id)
 			{
-				std::swap(colliders[i], colliders.back());
+				swap(colliders[i], colliders.back());
 				colliders.pop_back();
 				return true;
 			}
@@ -164,10 +164,10 @@ public:
 			|| (b->GetMass() > 0.0f && !b->IsSleeping());
 	}
 
-	std::vector<CollisionInfo> CheckCollisionAll(float t);
+	vector<CollisionInfo> CheckCollisionAll(float t);
 
 	// 무리(island) 단위로 재운다. 하나라도 타이머를 못 채우면 무리 전체가 깨어 있는다
-	void UpdateSleep(float t, const std::vector<std::pair<ACollider*, ACollider*>>& contacts);
+	void UpdateSleep(float t, const vector<pair<ACollider*, ACollider*>>& contacts);
 
 	// 타이머만 채워서 바로 잠들 준비를 시킨다 (맵 로드 직후용). 뜬 물체는 그대로 떨어진다
 	void PrimeSleep();
@@ -208,7 +208,7 @@ public:
 
 private:
 	// 지난 프레임의 접촉들. warm starting이 여기서 충격량을 찾아 이월한다
-	std::unordered_map<unsigned long long, CollisionInfo> previousManifolds;
+	unordered_map<unsigned long long, CollisionInfo> previousManifolds;
 
 	static unsigned long long MakePairKey(const ACollider* a, const ACollider* b);
 	const CollisionInfo* FindPreviousManifold(const ACollider* a, const ACollider* b) const;

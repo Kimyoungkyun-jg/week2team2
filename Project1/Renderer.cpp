@@ -134,7 +134,7 @@ void Renderer::CreateShader()
 	const wchar_t* shaderPath = L"ShaderW0.hlsl";
 	for (const wchar_t* path : candidatePaths)
 	{
-		if (std::filesystem::exists(path))
+		if (filesystem::exists(path))
 		{
 			shaderPath = path;
 			break;
@@ -228,7 +228,7 @@ void Renderer::CreateConstantBuffer()
 
 	Device->CreateBuffer(&constantbufferdesc, nullptr, &ConstantBuffer);
 
-	constants.WVP = XMMatrixIdentity();
+	constants.WVP = FMatrix::Identity();
 }
 
 void Renderer::ReleaseConstantBuffer()
@@ -340,25 +340,25 @@ void Renderer::Update()
 	}
 }
 
-void Renderer::SetViewMatrix(const XMMATRIX& viewmat)
+void Renderer::SetViewMatrix(const FMatrix& viewmat)
 {
 	viewMatrix = viewmat;
 }
 
-void Renderer::SetProjMatrix(const XMMATRIX& projmat)
+void Renderer::SetProjMatrix(const FMatrix& projmat)
 {
 	projMatrix = projmat;
 }
 
-void Renderer::SetWorldMatrix(const XMMATRIX& worldmat)
+void Renderer::SetWorldMatrix(const FMatrix& worldmat)
 {
-	XMMATRIX wvp = worldmat * viewMatrix * projMatrix;
-	constants.WVP = XMMatrixTranspose(wvp);
+	FMatrix wvp = worldmat * viewMatrix * projMatrix;
+	constants.WVP = wvp.Transpose();
 }
 
-void Renderer::SetWVPMatrix(const XMMATRIX& wvpmat)
+void Renderer::SetWVPMatrix(const FMatrix& wvpmat)
 {
-	constants.WVP = XMMatrixTranspose(wvpmat);
+	constants.WVP = wvpmat.Transpose();
 }
 
 void Renderer::SetVSBuffer(UINT slot)

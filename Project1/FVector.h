@@ -33,6 +33,7 @@ struct FVector
 	float LengthSquared() const;
 	float Length() const;
 	void Normalize();
+	FVector Normalized() const;
 	float DotProduct(const FVector& other) const;
 
 	static float Cross(FVector a, FVector b) // Z-성분

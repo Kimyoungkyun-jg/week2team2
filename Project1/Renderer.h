@@ -4,6 +4,7 @@
 #include "FVector.h"
 #include "enums.h"
 #include "FConstants.h"
+#include "Matrix.h"
 
 
 
@@ -67,8 +68,8 @@ public:
 
 	FConstants constants; //매트릭스 넣어야됌
 
-	XMMATRIX viewMatrix = DirectX::XMMatrixIdentity();
-	XMMATRIX projMatrix = DirectX::XMMatrixIdentity();
+	FMatrix viewMatrix = FMatrix::Identity();
+	FMatrix projMatrix = FMatrix::Identity();
 
 
 public:
@@ -103,10 +104,10 @@ public:
 	void Update();
 
 	//매트릭스 세팅
-	void SetWorldMatrix(const XMMATRIX& worldmat);
-	void SetViewMatrix(const XMMATRIX& viewmat);
-	void SetProjMatrix(const XMMATRIX& projmat);
-	void SetWVPMatrix(const XMMATRIX& wvpmat);
+	void SetWorldMatrix(const FMatrix& worldmat);
+	void SetViewMatrix(const FMatrix& viewmat);
+	void SetProjMatrix(const FMatrix& projmat);
+	void SetWVPMatrix(const FMatrix& wvpmat);
 
 	//버텍스 버퍼 세팅
 	void SetVSBuffer(UINT slot);
@@ -120,6 +121,6 @@ public:
 
 private:
 	void ReleaseVertexBuffer(ID3D11Buffer* vertexBuffer);
-	std::vector<FVertexBufferInfo> VertexBufferInfos;
+	vector<FVertexBufferInfo> VertexBufferInfos;
 
 };

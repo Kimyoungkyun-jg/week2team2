@@ -1,5 +1,6 @@
+#include "pch.h"
 #include "Matrix.h"
-#include "Vector.h"
+#include "FVector.h"
 #include <cmath>
 
     // 단위 행렬
@@ -82,10 +83,10 @@
         FVector yAxis = FVector::Cross3D(zAxis, xAxis); // 카메라의 Up 방향
 
         
-        FMatrix result = {{ {xAxis.x, xAxis.y, xAxis.x, 0},
-                            {yAxis.x, yAxis.y, yAxis.y, 0},
-                            {zAxis.x, zAxis.y, zAxis.z, 0},
-                            {-(xAxis.DotProduct(eye)), -(yAxis.DotProduct(eye)), -(zAxis.DotProduct(eye)), 1} }};
+        FMatrix result = {{ {xAxis.x, yAxis.x, zAxis.x, 0.0f},
+                            {xAxis.y, yAxis.y, zAxis.y, 0.0f},
+                            {xAxis.z, yAxis.z, zAxis.z, 0.0f},
+                            {-(xAxis.DotProduct(eye)), -(yAxis.DotProduct(eye)), -(zAxis.DotProduct(eye)), 1.0f} }};
 
         return result;
 
@@ -111,9 +112,9 @@
     FMatrix FMatrix::operator*(const FMatrix& other) const
     {
         FMatrix result = {};
-        for (int r = 0; r < 4; ++r)
-            for (int c = 0; c < 4; ++c)
-                for (int k = 0; k < 4; ++k)
+        for (uint32 r = 0; r < 4; ++r)
+            for (uint32 c = 0; c < 4; ++c)
+                for (uint32 k = 0; k < 4; ++k)
                     result.M[r][c] += M[r][k] * other.M[k][c];
         return result;
     }
@@ -122,8 +123,8 @@
     FMatrix FMatrix::Transpose() const
     {
         FMatrix result = {};
-        for (int r = 0; r < 4; ++r)
-            for (int c = 0; c < 4; ++c)
+        for (uint32 r = 0; r < 4; ++r)
+            for (uint32 c = 0; c < 4; ++c)
                 result.M[c][r] = M[r][c];
         return result;
     }

@@ -126,6 +126,7 @@
     <ClInclude Include="..\Project1\ImGui\imstb_rectpack.h" />
     <ClInclude Include="..\Project1\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Project1\ImGui\imstb_truetype.h" />
+    <ClInclude Include="..\Project1\Matrix.h" />
     <ClInclude Include="..\Project1\ObjectManager.h" />
     <ClInclude Include="..\Project1\Renderer.h" />
     <ClInclude Include="..\Project1\Scene.h" />
@@ -167,6 +168,7 @@
     <ClCompile Include="..\Project1\ImGui\imgui_widgets.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\Project1\Matrix.cpp" />
     <ClCompile Include="..\Project1\ObjectManager.cpp" />
     <ClCompile Include="..\Project1\Renderer.cpp" />
     <ClCompile Include="..\Project1\Scene.cpp" />

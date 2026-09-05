@@ -13,7 +13,7 @@ public:
 		UID = UIDMax;
 	}
 	virtual ~UObject() {}
-	int GetID() const { return UID; }
+	uint32 GetID() const { return UID; }
 
 
 	virtual void Update(float deltatime);
@@ -26,8 +26,8 @@ public:
 	void DeActive() { bIsActive = false; }
 	bool const GetIsActive() { return bIsActive; }
 private:
-	inline static int UIDMax = 0;
-	int UID = 0;
+	inline static uint32 UIDMax = 0;
+	uint32 UID = 0;
 	bool bIsActive = true;
 };
 
