@@ -68,7 +68,7 @@ using namespace std;
 #define DEVICE Renderer::GetInstance().GetDevice()
 #define DC Renderer::GetInstance().GetDeviceContext()
 
-#define REDERER Renderer::GetInstance()
+#define RENDERER Renderer::GetInstance()
 
 #define WIN_WIDTH 1920	
 #define WIN_HEIGHT 1080

@@ -45,10 +45,10 @@ void AActor::Render()
 	// 자체 버텍스 버퍼가 있으면 저장된 InputLayout으로 자동 바인딩 후 렌더링
 	if (vertexbuffer != nullptr && numVertices > 0)
 	{
-		REDERER.PrepareShader(inputLayout);
-		REDERER.SetCustomColor(Color);
+		RENDERER.PrepareShader(inputLayout);
+		RENDERER.SetCustomColor(Color);
 		vertexbuffer->IASet();
-		REDERER.GetDeviceContext()->Draw(numVertices, 0);
+		RENDERER.GetDeviceContext()->Draw(numVertices, 0);
 	}
 }
 
