@@ -76,21 +76,19 @@ void DefaultScene::Render()
 	//////// SAVE & LOAD ////////
 	/////////////////////////////
 	
-
-	void SaveScene(const TArray<UObject*>& objects, const FString& path);
-    TArray<UObject*> LoadScene(const FString& path);
-
 	// Save 버튼
 	ImGui::TextColored(ImVec4(0.3f, 1.0f, 0.8f, 1.0f), "[ Save & Load Scene ]");
 	if (ImGui::Button("Save Scene"))
 	{
-		SaveScene("./SceneData/");
+		// "./SceneData/MyScene.Scene" 으로 저장됨
+		SaveLoadManager::SaveScene("./SceneData/MyScene"); 
 	}
 	
 	// Load 버튼
 	if (ImGui::Button("Load Scene"))
 	{
-		LoadScene("./SceneData/");
+		// "./SceneData/MyScene.Scene" 에서 로드됨
+		TArray<UObject*> loadedObj = SaveLoadManager::LoadScene("./SceneData/MyScene.Scene");
 	}
 	
 	ImGui::Separator();

@@ -73,12 +73,13 @@ public:
 	}
 };
 
-class ACircle : public ACollider
+// 기존 ACircle -> 변경 ASphere
+class ASphere : public ACollider
 {
-	DECLARE_CLASS(ACircle, ACollider)
+	DECLARE_CLASS(ASphere, ACollider)
 
 public:
-	ACircle()
+	ASphere()
 	{
 		Primitive = EPrimitive::Sphere;
 		InitVertexBuffer(sphere_vertices);
