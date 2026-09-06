@@ -51,3 +51,7 @@ struct FMatrix
 	static FMatrix Identity;
 };
 */
+
+FVector TransformDirection(const FVector& v, const FMatrix& m);
+FVector TransformPoint(const FVector& v, const FMatrix& m);
+

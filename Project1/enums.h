@@ -4,6 +4,21 @@ enum class EPrimitive
 {
 	Sphere,
 	Cube,
-	Gizmo,
 	None
+};
+
+enum class EGizmoAxis
+{
+	None,
+	X,
+	Y,
+	Z,
+	All
+};
+
+enum class EGizmoMode
+{
+	Translation,
+	Rotation,
+	Scale
 };

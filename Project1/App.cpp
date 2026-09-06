@@ -47,7 +47,6 @@ void App::Init(HINSTANCE hInstance)
 	Renderer& renderer = Renderer::GetInstance();
 	renderer.Create(m_mainWindow);
 	renderer.CreateShader();
-	renderer.CreateVertexBufferInfos();
 
 	InitImgui();
 
@@ -113,8 +112,6 @@ void App::Render()
 
 	// 프레임 버퍼 클리어 및 뷰포트/래스터라이저 설정
 	renderer.Prepare();
-	// 셰이더 및 상수 버퍼 설정
-	renderer.PrepareShader();
 
 	// ImGui 테스트 및 데모 윈도우 (상시 출력)
 	ImGui::ShowDemoWindow();
@@ -159,7 +156,6 @@ void App::ReleaseAll()
 
 	// 3. 렌더러 리소스 해제
 	Renderer& renderer = Renderer::GetInstance();
-	renderer.ReleaseVertexBuffers();
 	renderer.ReleaseShader();
 	renderer.Release();
 }

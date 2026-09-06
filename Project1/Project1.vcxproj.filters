@@ -58,6 +58,7 @@
     <ClInclude Include="..\Project1\Camera.h" />
     <ClInclude Include="..\Project1\Transform.h" />
     <ClInclude Include="..\Project1\Matrix.h" />
+    <ClInclude Include="PickingManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Project1\AActor.cpp" />
@@ -98,6 +99,7 @@
     <ClCompile Include="..\Project1\pch.cpp" />
     <ClCompile Include="..\Project1\Camera.cpp" />
     <ClCompile Include="..\Project1\Matrix.cpp" />
+    <ClCompile Include="PickingManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Project1\ShaderW0.hlsl" />
