@@ -6,6 +6,8 @@
 #include "USphere.h"
 #include "UEngineStatics.h"
 #include <fstream> // file input stream
+#include <filesystem>
+
 
 // 1. vs - 솔루션탐색기 - 프로젝트 우클릭 - NuGet 패키지 관리
 // 2. nlohmann.json 검색 후 설치
@@ -14,7 +16,7 @@
 
 using json = nlohmann::json;
 
-// 타입 이름 받아서 
+// 타입 이름 String으로 받아서 Spawn
 TMap<string, SaveLoadManager::CreatorFunc>& SaveLoadManager::GetActorCreatorRegistry()
 {
     static TMap<string, CreatorFunc> registry;
@@ -48,6 +50,9 @@ void SaveLoadManager::SaveScene(const FString& path)
 {
     json sceneJson;
     json objectsJson = json::array(); // push_back으로 데이터 추가하기 위함
+
+    // DEBUG
+    OutputDebugStringA(("Current working dir: " + std::filesystem::current_path().string() + "\n").c_str());
     
     sceneJson["Version"] = 1;
     sceneJson["NextUUID"] = UEngineStatics::GetUUID();
@@ -74,7 +79,16 @@ void SaveLoadManager::SaveScene(const FString& path)
         objectsJson.push_back(objJson);
     }
 
+    sceneJson["objects"] = objectsJson;
+
     std::ofstream file(path + ".Scene"); // 파일 경로
+
+    if (!file.is_open())
+    {
+        assert(false && "Failed to Save objects!\n");
+        return;
+    }
+
     file << sceneJson.dump(4); // json 객체 -> string으로 변환 (4칸 들여쓰기)
     file.close();
 }
@@ -83,11 +97,19 @@ void SaveLoadManager::SaveScene(const FString& path)
 TArray<UObject*> SaveLoadManager::LoadScene(const FString& path)
 {
     TArray<UObject*> loadedObjects;
-    std::ifstream file(path + ".Scene");
+
+    // DEBUG
+    OutputDebugStringA(("Current working dir: " + std::filesystem::current_path().string() + "\n").c_str());
+
+    std::ifstream file(path);
 
     if (!file.is_open())
-        assert(false, "Fail to Load objects!");
+    {
+        assert(false && "Failed to Load objects!\n");
+        OutputDebugStringA(("Failed to open: " + path + "\n").c_str());  // 추가
+
         return loadedObjects; // {} 빈 배열 return
+    }
 
     json sceneJson;
     file >> sceneJson; // Load
@@ -95,7 +117,7 @@ TArray<UObject*> SaveLoadManager::LoadScene(const FString& path)
     // 함수 Load 및 람다 등록
     auto& registry = GetActorCreatorRegistry();
 
-    for (json objJson : sceneJson["objJson"]){
+    for (json objJson : sceneJson["objects"]){
 
         string Class     = objJson["Class"];  // ACube, ASphere ...
         auto it = registry.find(Class);
