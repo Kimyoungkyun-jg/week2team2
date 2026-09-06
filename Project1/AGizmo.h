@@ -3,28 +3,13 @@
 #include "AActor.h"
 #include "Sphere.h"
 
-enum class EGizmoAxis
-{
-	None,
-	X,
-	Y,
-	Z,
-	All
-};
-
-enum class EGizmoMode
-{
-	Translation,
-	Rotation,
-	Scale
-};
 
 class AGizmo : public AActor
 {
 	DECLARE_CLASS(AGizmo, AActor)
 
 public:
-	AGizmo();
+	AGizmo(EGizmoAxis Axis = EGizmoAxis::Y);
 	virtual ~AGizmo();
 
 	virtual void Render() override;
@@ -56,9 +41,8 @@ private:
 	AActor* TargetActor = nullptr;
 	EGizmoMode Mode = EGizmoMode::Translation;
 	EGizmoAxis SelectedAxis = EGizmoAxis::None;
-
-	ColorBuffer* colorBuffer = nullptr;
 	float GizmoScale = 1.0f;
+
 };
 
 

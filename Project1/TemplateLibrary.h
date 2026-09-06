@@ -51,12 +51,12 @@ public:
 		return newInfo;
 	}
 
-	template<class T>
-	static inline T* NewObject()
+	template<class T, typename... Args>
+	static inline T* NewObject(Args&&... args) //모든 매개변수를 받을 수 있는 템플릿
 	{
 		static_assert(is_base_of_v<UObject, T>);
 
-		T* Obj = new T;
+		T* Obj = new T(std::forward<Args>(args)...);
 		ObjectManager::GetInstance().AllObjects.push_back(Obj);
 
 		ClassInfo* info = GetStaticClassInfo<T>();
@@ -65,30 +65,27 @@ public:
 		return static_cast<T*>(Obj);
 	}
 
-	template<class T>
-	static inline T* SpawnActor(FVector Location, FVector Scale = { 0.1, 0.1, 1 })
+	template<class T, typename... Args>
+	static inline T* SpawnActor(FVector Location, FVector Scale = { 0.1, 0.1, 1 }, Args&&... args)
 	{
 		static_assert(is_base_of_v<AActor, T>);
 
-		AActor* SpawnedActor = NewObject<T>();
+		T* SpawnedActor = NewObject<T>(std::forward<Args>(args)...);
 
 		// 크기
-		float minRadius = 0.05f;
-		float maxRadius = 0.10f;
 		SpawnedActor->SetScale(Scale);
 
 		// 위치
 		SpawnedActor->SetLocation(Location);
 
-		// 모양
 		return static_cast<T*>(SpawnedActor);
 	}
 
-	template<class T>
-	static inline T* SpawnColider(FVector Location, FVector Scale = { 1, 1, 1 }, float Mass = 1)
+	template<class T, typename... Args>
+	static inline T* SpawnColider(FVector Location, FVector Scale = { 1, 1, 1 }, float Mass = 1, Args&&... args)
 	{
 		static_assert(is_base_of_v<ACollider, T>);
-		ACollider* Colider = SpawnActor<T>(Location, Scale);
+		T* Colider = SpawnActor<T>(Location, Scale, std::forward<Args>(args)...);
 
 		Colider->SetMass(Mass);
 		CollisionManager::GetInstance().AddColider(Colider);

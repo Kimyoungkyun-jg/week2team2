@@ -2,10 +2,11 @@
 #include "AGizmo.h"
 #include "Renderer.h"
 
-AGizmo::AGizmo()
+AGizmo::AGizmo(EGizmoAxis Axis) //기즈모는 기본이 위를 바라보는 모양
 {
 	// 기본 화살표 정점으로 버텍스 버퍼 초기화
 	InitVertexBuffer(arrow_vertices);
+	SelectedAxis = Axis;
 }
 
 AGizmo::~AGizmo()
@@ -32,42 +33,58 @@ void AGizmo::Render()
 		return;
 
 	// 저장된 InputLayout으로 셰이더 및 레이아웃 바인딩
-	REDERER.PrepareShader(inputLayout);
+	RENDERER.PrepareShader(inputLayout);
 
 	//버텍스 버퍼 바인딩
 	vertexbuffer->IASet();
 
-	//Y축 (기본 위쪽 방향 +Y)
-	FMatrix YRot = FMatrix::Identity();
-	RenderAxis(YRot, EGizmoAxis::Y);
+	switch (SelectedAxis)
+	{
+	case EGizmoAxis::None:
+		break;
+	case EGizmoAxis::X:
+		transform.SetRotation({ 0.0f,0.0f, -DirectX::XM_PIDIV2 });
+		Color = FLinearColor::Red;
+		break;
+	case EGizmoAxis::Y:
+		Color = FLinearColor::Green;
+		break;
+	case EGizmoAxis::Z:
+		transform.SetRotation({ DirectX::XM_PIDIV2 ,0.0f, 0.0f});
+		Color = FLinearColor::Blue;
+		break;
+	case EGizmoAxis::All:
+		break;
+	default:
+		break;
+	}
 
-	// 2. X축 (+X 우측 방향: Z축 기준 -90도 회전)
-	FMatrix XRot = FMatrix::RotationZ(-DirectX::XM_PIDIV2);
-	RenderAxis(XRot, EGizmoAxis::X);
+	worldBuffer->SetMat(transform.WorldMat);
+	worldBuffer->SetVSBuffer(0);
 
-	// 3. Z축 (+Z 전방 방향: X축 기준 +90도 회전)
-	FMatrix ZRot = FMatrix::RotationX(DirectX::XM_PIDIV2);
-	RenderAxis(ZRot, EGizmoAxis::Z);
+	RENDERER.SetCustomColor(Color);
+	
+	DC->Draw(numVertices, 0);
 }
 
 void AGizmo::RenderAxis(const FMatrix& localRotation, EGizmoAxis axisType)
 {
-	FMatrix S = FMatrix::Scale(transform.Scale * GizmoScale);
-	FMatrix T = FMatrix::Translation(transform.Location);
+	//FMatrix S = FMatrix::Scale(transform.Scale * GizmoScale);
+	//FMatrix T = FMatrix::Translation(transform.Location);
 
-	FMatrix axisWorld = localRotation * S * T;
+	//FMatrix axisWorld = localRotation * S * T;
 
-	FLinearColor axisColor = FLinearColor::White;
-	if (axisType == EGizmoAxis::X) axisColor = FLinearColor::Red;
-	else if (axisType == EGizmoAxis::Y) axisColor = FLinearColor::Green;
-	else if (axisType == EGizmoAxis::Z) axisColor = FLinearColor::Blue;
+	//FLinearColor axisColor = FLinearColor::White;
+	//if (axisType == EGizmoAxis::X) axisColor = FLinearColor::Red;
+	//else if (axisType == EGizmoAxis::Y) axisColor = FLinearColor::Green;
+	//else if (axisType == EGizmoAxis::Z) axisColor = FLinearColor::Blue;
 
-	worldBuffer->SetMat(axisWorld);
-	worldBuffer->SetVSBuffer(0);
+	//worldBuffer->SetMat(axisWorld);
+	//worldBuffer->SetVSBuffer(0);
 
-	REDERER.SetCustomColor(axisColor);
+	//REDERER.SetCustomColor(axisColor);
 
-	DC->Draw(numVertices, 0);
+	//DC->Draw(numVertices, 0);
 }
 
 void AGizmo::Pressed(FVector _Location)

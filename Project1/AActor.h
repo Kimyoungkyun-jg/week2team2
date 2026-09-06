@@ -45,7 +45,7 @@ public:
 	template <typename VertexType, size_t N>
 	void InitVertexBuffer(const VertexType (&vertices)[N])
 	{
-		InitVertexBuffer(vertices, sizeof(VertexType), static_cast<UINT>(N), REDERER.GetInputLayout<VertexType>());
+		InitVertexBuffer(vertices, sizeof(VertexType), static_cast<UINT>(N), RENDERER.GetInputLayout<VertexType>());
 	}
 
 	UINT GetNumVertices() const { return numVertices; }
