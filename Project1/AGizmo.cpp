@@ -11,16 +11,22 @@ AGizmoAxis::AGizmoAxis(EGizmoAxis inAxis)
 	InitVertexBuffer(arrow_vertices);
 	Primitive = EPrimitive::Gizmo;
 
+	transform.SetScale({ 0.7f, 0.7f, 0.7f });
+	transform.SetLocation({ 0.0f, 0.0f, 0.0f });
+
 	switch (Axis)
 	{
 	case EGizmoAxis::X:
 		Color = FLinearColor::Red;
+		transform.SetRotation({ 0.0f, 0.0f, -DirectX::XM_PIDIV2 });
 		break;
 	case EGizmoAxis::Y:
 		Color = FLinearColor::Green;
+		transform.SetRotation({ 0.0f, 0.0f, 0.0f });
 		break;
 	case EGizmoAxis::Z:
 		Color = FLinearColor::Blue;
+		transform.SetRotation({ DirectX::XM_PIDIV2, 0.0f, 0.0f });
 		break;
 	default:
 		Color = FLinearColor::White;
@@ -37,25 +43,30 @@ AGizmoAxis::~AGizmoAxis()
 
 void AGizmoAxis::Update(float DeltaTime, const Transform& parentTransform)
 {
-	transform.Location = parentTransform.Location;
-	transform.Scale = parentTransform.Scale;
+	//부모 스케일의 0.7 비율로 크기 동기화
+	transform.SetScale(parentTransform.Scale * 0.7f);
 
-	switch (Axis)
+	if (bIsLocal)
 	{
-	case EGizmoAxis::X:
-		transform.SetRotation({ 0.0f, 0.0f, -DirectX::XM_PIDIV2 });
-		break;
-	case EGizmoAxis::Y:
-		transform.SetRotation({ 0.0f, 0.0f, 0.0f });
-		break;
-	case EGizmoAxis::Z:
-		transform.SetRotation({ DirectX::XM_PIDIV2, 0.0f, 0.0f });
-		break;
-	default:
-		break;
+		//로컬 모드: 부모의 회전과 위치를 결합
+		transform.UpdateWorldMatrix();
+	}
+	else
+	{
+		//월드 모드: 부모의 회전은 배제하고 기본 축 방향 유지 + 부모 위치만 결합
+		FMatrix S = FMatrix::Scale(transform.Scale);
+		FMatrix R = FMatrix::RotationZ(transform.Rotation.z) * FMatrix::RotationX(transform.Rotation.x) * FMatrix::RotationY(transform.Rotation.y);
+		FMatrix localMat = S * R;
+		FMatrix parentTrans = FMatrix::Translation(parentTransform.Location);
+		transform.SetWorldMatrix(localMat * parentTrans);
 	}
 
+	worldBuffer->SetMat(transform.WorldMat);
+
 	AActor::Update(DeltaTime);
+
+
+
 
 	//마우스 호버 또는 피킹 선택 시 하이라이트 처리
 	FRay ray = PICK.ScreenToWorldRay();
@@ -79,8 +90,8 @@ void AGizmoAxis::Render()
 
 	RENDERER.PrepareShader(inputLayout);
 	vertexbuffer->IASet();
+	
 
-	worldBuffer->SetMat(transform.WorldMat);
 	worldBuffer->SetVSBuffer(0);
 
 
@@ -97,20 +108,23 @@ void AGizmoAxis::Picked()
 	if (!Targettransform) return;
 
 	//축 방향 결정
+	FVector localDir(0.0f, 0.0f, 0.0f);
 	switch (Axis)
 	{
-	case EGizmoAxis::X:
-		currentAxisDir = TransformDirection({ 1,0,0 }, Targettransform->WorldMat).Normalized();
-		break;
-	case EGizmoAxis::Y:
-		currentAxisDir = TransformDirection({ 0,1,0 }, Targettransform->WorldMat).Normalized();
-		break;
-	case EGizmoAxis::Z:
-		currentAxisDir = TransformDirection({ 0,0,1 }, Targettransform->WorldMat).Normalized();
-		break;
-	default:
-		currentAxisDir = FVector(0, 0, 0);
-		break;
+	case EGizmoAxis::X: localDir = FVector(1.0f, 0.0f, 0.0f); break;
+	case EGizmoAxis::Y: localDir = FVector(0.0f, 1.0f, 0.0f); break;
+	case EGizmoAxis::Z: localDir = FVector(0.0f, 0.0f, 1.0f); break;
+	default: break;
+	}
+
+	//로컬 모드이면 타겟의 회전을 반영하고, 월드 모드이면 월드 정방향 축 사용
+	if (bIsLocal)
+	{
+		currentAxisDir = TransformDirection(localDir, Targettransform->WorldMat).Normalized();
+	}
+	else
+	{
+		currentAxisDir = localDir;
 	}
 
 	//평면 법선 벡터 계산
@@ -208,6 +222,7 @@ void AGizmo::SetTargetActor(AActor* inTarget)
 		for (auto& it : Axes)
 		{
 			it->SetTargetActor(&inTarget->GetTransform());
+			it->SetIsLocal(bIsLocal);
 		}
 
 		transform.SetLocation(TargetActor->GetLocation());
@@ -219,16 +234,27 @@ void AGizmo::Update(float DeltaTime)
 {
 	AActor::Update(DeltaTime);
 
+	//키보드 L 누르면 bIsLocal 토글
+	if (KEY_DOWN(ImGuiKey_L))
+	{
+		bIsLocal = !bIsLocal;
+		for (auto* axis : Axes)
+		{
+			axis->SetIsLocal(bIsLocal);
+		}
+	}
+
 	// 피킹된 타겟 액터가 있을 때만 위치 동기화 및 3개 축 업데이트
 	if (TargetActor)
 	{
 		transform.SetLocation(TargetActor->GetLocation());
 		for (auto* axis : Axes)
 		{
-			axis->Update(DeltaTime, transform);
+			axis->Update(DeltaTime, TargetActor->transform);
 		}
 	}
 }
+
 
 void AGizmo::Render()
 {

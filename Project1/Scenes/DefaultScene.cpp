@@ -10,10 +10,10 @@
 DefaultScene::DefaultScene()
 {
 	cube = FObjectFactory::SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
-	cube->SetColor(FLinearColor::Blue);
+	cube->SetColor(FLinearColor::Gray);
 
 	cube2 = FObjectFactory::SpawnColider<ACube>(FVector(5.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
-	cube2->SetColor(FLinearColor::Red);
+	cube2->SetColor(FLinearColor::Cyan);
 
 	sphere = FObjectFactory::SpawnActor<ASphere>(FVector(-5.0f, 0.0f, 0.0f));
 	sphere->SetColor(FLinearColor::Green);

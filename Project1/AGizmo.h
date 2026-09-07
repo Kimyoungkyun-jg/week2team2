@@ -28,9 +28,14 @@ public:
 	void SetTargetActor(Transform* targettf)
 	{
 		Targettransform = targettf;
+		transform.SetParent(targettf, false);
 	}
 
+
 	void HighlightAxe();
+
+	void SetIsLocal(bool inIsLocal) { bIsLocal = inIsLocal; }
+	bool GetIsLocal() const { return bIsLocal; }
 
 	FLinearColor srcColor;
 
@@ -42,7 +47,9 @@ private:
 	FVector dragStartPoint;
 	FVector dragStartActorLocation;
 	bool bSelected = false;
+	bool bIsLocal = true;
 };
+
 
 // 씬에 단 하나 생성되어 피킹된 액터에 부착되는 통합 기즈모 액터
 class AGizmo : public AActor
@@ -77,13 +84,18 @@ public:
 	// 3개의 기즈모 축 객체 목록 반환
 	const TArray<AGizmoAxis*>& GetAxes() const { return Axes; }
 
+	bool GetIsLocal() const { return bIsLocal; }
+	void SetIsLocal(bool inIsLocal) { bIsLocal = inIsLocal; }
+
 private:
 	AActor* TargetActor = nullptr;
 	EGizmoMode Mode = EGizmoMode::Translation;
 	EGizmoAxis SelectedAxis = EGizmoAxis::None;
+	bool bIsLocal = true;
 
 	// 3개의 기즈모 축 액터 (X, Y, Z)
 	TArray<AGizmoAxis*> Axes;
+
 
 
 };
