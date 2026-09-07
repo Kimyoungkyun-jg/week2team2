@@ -42,11 +42,11 @@ namespace
 	// box의 네 꼭짓점을 축 dir에 투영했을 때의 [min, max] 구간
 	void ProjectOBB(const OBB& box, const FVector& dir, float& outMin, float& outMax)
 	{
-		outMin = outMax = box.vertex[0].DotProduct(dir);
+		outMin = outMax = box.vertex[0].Dot(dir);
 
 		for (int i = 1; i < 4; i++)
 		{
-			float d = box.vertex[i].DotProduct(dir);
+			float d = box.vertex[i].Dot(dir);
 			outMin = fmin(outMin, d);
 			outMax = fmax(outMax, d);
 		}
@@ -76,11 +76,11 @@ namespace
 	int BestFace(const OBB& box, const FVector& dir)
 	{
 		int best = 0;
-		float bestDot = box.normal[0].DotProduct(dir);
+		float bestDot = box.normal[0].Dot(dir);
 
 		for (int i = 1; i < 4; i++)
 		{
-			float d = box.normal[i].DotProduct(dir);
+			float d = box.normal[i].Dot(dir);
 			if (d > bestDot)
 			{
 				bestDot = d;
@@ -113,8 +113,8 @@ namespace
 		int count = 0;
 
 		// 평면 기준 부호 있는 거리. 음수면 안쪽.
-		float d0 = n.DotProduct(in[0].position) - offset;
-		float d1 = n.DotProduct(in[1].position) - offset;
+		float d0 = n.Dot(in[0].position) - offset;
+		float d1 = n.Dot(in[1].position) - offset;
 
 		if (d0 <= 0.0f) out[count++] = in[0];
 		if (d1 <= 0.0f) out[count++] = in[1];
@@ -179,7 +179,7 @@ SATResult OverlapOBB(const OBB& a, const OBB& b)
 
 	// 축의 부호는 임의라, a가 b의 반대편으로 가도록(B -> A) 맞춰준다.
 	FVector normal = axes[minIndex];
-	if ((a.center - b.center).DotProduct(normal) < 0.0f)
+	if ((a.center - b.center).Dot(normal) < 0.0f)
 	{
 		normal = normal * -1.0f;
 	}
@@ -212,7 +212,7 @@ SATResult OverlapOBB(const OBB& a, const OBB& b)
 
 	// v0 쪽 옆면. 잘려 생긴 점은 꼭짓점이 아니므로 feature 4/5를 따로 준다
 	ClipVertex clipped[2];
-	if (ClipSegment(clipped, segment, sideDir * -1.0f, -sideDir.DotProduct(v0),
+	if (ClipSegment(clipped, segment, sideDir * -1.0f, -sideDir.Dot(v0),
 		MakeContactId(referenceFace, incidentFace, 4, flip)) < 2)
 	{
 		return result;
@@ -220,7 +220,7 @@ SATResult OverlapOBB(const OBB& a, const OBB& b)
 
 	// v1 쪽 옆면
 	ClipVertex kept[2];
-	if (ClipSegment(kept, clipped, sideDir, sideDir.DotProduct(v1),
+	if (ClipSegment(kept, clipped, sideDir, sideDir.Dot(v1),
 		MakeContactId(referenceFace, incidentFace, 5, flip)) < 2)
 	{
 		return result;
@@ -229,11 +229,11 @@ SATResult OverlapOBB(const OBB& a, const OBB& b)
 	// 깊이는 점마다 따로. 좌우 깊이 차이가 블록을 눕히는 회전을 만든다.
 	// 여유를 두는 건 침투가 slop 근처에서 떨릴 때 점이 사라졌다 생겼다 하는 걸 막으려는 것
 	const float contactTolerance = 0.005f;
-	float referenceOffset = referenceNormal.DotProduct(v0);
+	float referenceOffset = referenceNormal.Dot(v0);
 
 	for (int i = 0; i < 2; i++)
 	{
-		float separation = referenceNormal.DotProduct(kept[i].position) - referenceOffset;
+		float separation = referenceNormal.Dot(kept[i].position) - referenceOffset;
 		if (separation > contactTolerance)
 		{
 			continue;
@@ -674,8 +674,8 @@ CollisionInfo CollisionManager::CheckCollisionCircleRectangle(ACollider* a, ACol
 
 	// 원 중심을 사각형의 로컬 좌표계로. 여기선 사각형이 축 정렬이라 회전을 안 따져도 된다.
 	FVector toCenter = a->GetLocation() - box.center;
-	float localX = toCenter.DotProduct(box.axis[0]);
-	float localY = toCenter.DotProduct(box.axis[1]);
+	float localX = toCenter.Dot(box.axis[0]);
+	float localY = toCenter.Dot(box.axis[1]);
 
 	// 사각형 안에서 원 중심과 가장 가까운 점 (로컬 좌표)
 	float clampedX = clamp(localX, -box.half[0], box.half[0]);
@@ -768,7 +768,7 @@ void CollisionManager::ResolvePosition(ACollider* a, ACollider* b, const Collisi
 		// 두 앵커는 감지 시점엔 같은 점이었다. 벌어진 만큼 겹침이 줄었다
 		FVector worldA = ToWorld(a, point.localA);
 		FVector worldB = ToWorld(b, point.localB);
-		float penetration = point.penetration - normal.DotProduct(worldA - worldB);
+		float penetration = point.penetration - normal.Dot(worldA - worldB);
 
 		float correctionAmount = fmax(penetration - slop, 0.0f);
 		if (correctionAmount <= 0.0f)
@@ -820,7 +820,7 @@ void CollisionManager::SolveContact(ACollider* a, ACollider* b, CollisionInfo& i
 
 		FVector relativeVelocity = (a->GetVelocity() + FVector::Cross(a->GetAngularVelocity(), rA)) -
 			(b->GetVelocity() + FVector::Cross(b->GetAngularVelocity(), rB)); // 상대 속도
-		float relativeVelocityNormal = normal.DotProduct(relativeVelocity); // 상대 속도의 충돌 방향 성분
+		float relativeVelocityNormal = normal.Dot(relativeVelocity); // 상대 속도의 충돌 방향 성분
 
 		// 충격량 적용
 		float raxn = FVector::Cross(rA, normal);
@@ -843,7 +843,7 @@ void CollisionManager::SolveContact(ACollider* a, ACollider* b, CollisionInfo& i
 		float raxt = FVector::Cross(rA, info.tangent);
 		float rbxt = FVector::Cross(rB, info.tangent);
 
-		float vt = info.tangent.DotProduct(relativeVelocityAfter);   // 음수 가능
+		float vt = info.tangent.Dot(relativeVelocityAfter);   // 음수 가능
 		float deltaT = -vt * point.tangentMass;                       // 여기도 곱셈
 		float oldT = point.tangentImpulse;
 		float newT = oldT + deltaT;
@@ -931,7 +931,7 @@ void CollisionManager::InitContact(ACollider* a, ACollider* b, CollisionInfo& in
 
 		FVector relativeVelocity = (a->GetVelocity() + FVector::Cross(a->GetAngularVelocity(), rA)) -
 			(b->GetVelocity() + FVector::Cross(b->GetAngularVelocity(), rB)); // 상대 속도
-		float relativeVelocityNormal = normal.DotProduct(relativeVelocity); // 상대 속도의 충돌 방향 성분
+		float relativeVelocityNormal = normal.Dot(relativeVelocity); // 상대 속도의 충돌 방향 성분
 
 		// 반발계수 조합은 둘 중 큰 쪽. 느린 충돌에서 0으로 죽이는 건 놓인 물체의 떨림 방지
 		const float restitutionThreshold = 1.0f; // 튜닝 값

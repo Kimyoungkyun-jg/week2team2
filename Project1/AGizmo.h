@@ -21,8 +21,21 @@ public:
 	EGizmoAxis GetAxis() const { return Axis; }
 	void Picked(); // 피킹되었을 때의 처리
 
+
+	virtual void Pressed() override;
+	virtual void Released() override;
+
+	void SetTargetActor(Transform* targettf)
+	{
+		Targettransform = targettf;
+	}
 private:
 	EGizmoAxis Axis = EGizmoAxis::None;
+	Transform* Targettransform = nullptr;
+	FVector planeNormal; 
+	FVector currentAxisDir;
+	FVector dragStartPoint;
+	FVector dragStartActorLocation;
 };
 
 // 씬에 단 하나 생성되어 피킹된 액터에 부착되는 통합 기즈모 액터
@@ -31,7 +44,7 @@ class AGizmo : public AActor
 	DECLARE_CLASS(AGizmo, AActor)
 
 public:
-	// 씬에 존재하는 유일한 기즈모 인스턴스 (어디서든 즉시 접근 가능)
+	//씬의 메인 기즈모 인스턴스
 	static inline AGizmo* MainGizmo = nullptr;
 
 	AGizmo();
@@ -50,11 +63,9 @@ public:
 	void SetSelectedAxis(EGizmoAxis inAxis) { SelectedAxis = inAxis; }
 	EGizmoAxis GetSelectedAxis() const { return SelectedAxis; }
 
-	// 광선(Ray)과 기즈모 축들 간의 피킹 검사: 가장 가까이 클릭된 축 반환
+	//광선(Ray)과 기즈모 축들 간의 피킹 검사: 가장 가까이 클릭된 축 반환
 	EGizmoAxis PickAxis(const FRay& ray, float& outDist);
 
-	virtual void Pressed(FVector _Location) override;
-	virtual void Released(FVector _Location) override;
 
 	// 3개의 기즈모 축 객체 목록 반환
 	const TArray<AGizmoAxis*>& GetAxes() const { return Axes; }

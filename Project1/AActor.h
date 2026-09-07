@@ -68,8 +68,8 @@ public:
 
 	UINT GetNumVertices() const { return numVertices; }
 
-	virtual void Pressed(FVector _Location) {}
-	virtual void Released(FVector _Location) {}
+	virtual void Pressed() {}
+	virtual void Released() {}
 
 	bool isInvalid = false;
 

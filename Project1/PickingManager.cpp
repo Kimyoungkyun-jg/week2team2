@@ -28,8 +28,17 @@ FRay PickingManager::ScreenToWorldRay(float mouseX, float mouseY, float screenW,
 	return FRay{ worldOrigin, worldDirection };
 }
 
-AActor* PickingManager::Pick(const FRay& ray) const
+FRay PickingManager::ScreenToWorldRay() const
 {
+	return ScreenToWorldRay(ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y,
+		RENDERER.ViewportInfo.Width, RENDERER.ViewportInfo.Height);
+}
+
+AActor* PickingManager::Pick()
+{
+	FRay ray = PICK.ScreenToWorldRay(ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y,
+		RENDERER.ViewportInfo.Width, RENDERER.ViewportInfo.Height);
+
 	//기즈모 축 피킹 우선 검사
 	if (AGizmo::MainGizmo && AGizmo::MainGizmo->GetTargetActor())
 	{
@@ -38,6 +47,8 @@ AActor* PickingManager::Pick(const FRay& ray) const
 			float axisDist = 0.0f;
 			if (axis->bIsPicked(ray, axisDist))
 			{
+				axis->Picked();
+				pickedObjcect = axis;
 				return axis;
 			}
 		}
@@ -56,8 +67,12 @@ AActor* PickingManager::Pick(const FRay& ray) const
 		{
 			closestDist = dist;
 			closest = actor;
+			AGizmo::MainGizmo->SetTargetActor(closest);
 		}
 	}
+
+	pickedObjcect = closest;
+
 	return closest;
 }
 
@@ -96,4 +111,32 @@ bool PickingManager::RayIntersectBox(const FRay& ray, const FVector& center, con
 
 	outDistance = tMin;
 	return true;
+}
+
+void PickingManager::Pressed()
+{
+	
+}
+
+void PickingManager::Update()
+{
+	if (MOUSE_CLICK(0))
+	{
+		Pick();
+	}
+	else if (MOUSE_PRESS(0))
+	{
+		if (pickedObjcect)
+		{
+			pickedObjcect->Pressed();
+		}
+	}
+	else if (MOUSE_UP(0))
+	{
+		if (pickedObjcect)
+		{
+			pickedObjcect->Released();
+		}
+	}
+	
 }

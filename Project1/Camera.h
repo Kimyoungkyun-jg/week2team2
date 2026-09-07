@@ -38,6 +38,13 @@ public:
 	float GetNear() const { return NearZ; }
 	float GetFar() const { return FarZ; }
 	float GetSpeed() const { return speed; }
+	void SetSpeed(float inSpeed) { speed = inSpeed; }
+	float& GetSpeedRef() { return speed; }
+
+	float GetRotationSpeed() const { return rotationSpeed; }
+	void SetRotationSpeed(float inRotSpeed) { rotationSpeed = inRotSpeed; }
+	float& GetRotationSpeedRef() { return rotationSpeed; }
+
 	float GetFOV() const { return fov; }
 
 	FMatrix GetViewMatrix() const;
@@ -53,8 +60,7 @@ private:
 	float fov = 60.0f;
 	float NearZ = 0.1f;
 	float FarZ = 1000.0f;
-	float speed = 5.0f;
-
-
+	float speed = 2.0f;
+	float rotationSpeed = 0.08f;
 };
 

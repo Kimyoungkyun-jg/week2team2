@@ -54,6 +54,11 @@ void DefaultScene::Render()
 	{
 		cam.SetRotation(camRot);
 	}
+
+	//카메라 속도 및 회전 조절
+	ImGui::SliderFloat("Move Speed", &cam.GetSpeedRef(), 0.5f, 20.0f, "%.1f");
+	ImGui::SliderFloat("Rot Speed", &cam.GetRotationSpeedRef(), 0.01f, 0.5f, "%.3f");
+
 	if (ImGui::Button("Reset Camera (0, 0, -3)"))
 	{
 		cam.SetLocation(FVector(0.0f, 0.0f, -3.0f));
@@ -65,23 +70,10 @@ void DefaultScene::Render()
 	
 	ImGui::Separator();
 	
-	if (ImGui::IsMouseClicked(0)) {
-		// pick 테스트 코드: 클릭된 액터에 기즈모 부착
-		ray = PICK.ScreenToWorldRay(ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y,
-			RENDERER.ViewportInfo.Width, RENDERER.ViewportInfo.Height);
-		AActor* pickedObj = PICK.Pick(ray);
-		if (pickedObj) {
-			FString className = pickedObj->GetClass() ? std::string(pickedObj->GetClass()->Name) : "Unknown";
-			FString msg = "Class: " + className + "\n";
-		
-			OutputDebugStringA(msg.c_str());
-			if (gizmo)
-			{
-				gizmo->SetTargetActor(pickedObj);
-			}
-		}
-	}
 	
+
+
+
 	/////////////////////////////
 	//////// SAVE & LOAD ////////
 	/////////////////////////////

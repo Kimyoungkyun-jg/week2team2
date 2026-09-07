@@ -76,18 +76,80 @@ void AGizmoAxis::Render()
 	RENDERER.SetDefaultDepthState();
 }
 
+
 void AGizmoAxis::Picked()
 {
-	// 기즈모 축이 클릭(피킹)되었을 때의 처리
+	if (!Targettransform) return;
+
+	//축 방향 결정
+	switch (Axis)
+	{
+	case EGizmoAxis::X:
+		currentAxisDir = TransformDirection({ 1,0,0 }, Targettransform->WorldMat).Normalized();
+		break;
+	case EGizmoAxis::Y:
+		currentAxisDir = TransformDirection({ 0,1,0 }, Targettransform->WorldMat).Normalized();
+		break;
+	case EGizmoAxis::Z:
+		currentAxisDir = TransformDirection({ 0,0,1 }, Targettransform->WorldMat).Normalized();
+		break;
+	default:
+		currentAxisDir = FVector(0, 0, 0);
+		break;
+	}
+
+	//평면 법선 벡터 계산
+	FVector cameraDir = CAMERA.GetForward();
+	FVector A = FVector::Cross3D(currentAxisDir, cameraDir).Normalized();
+	planeNormal = FVector::Cross3D(A, currentAxisDir).Normalized();
+
+	//드래그 시작 지점 및 타겟 초기 위치 저장
+	FRay ray = PICK.ScreenToWorldRay();
+
+	float denom = planeNormal.Dot(ray.Direction);
+	if (fabsf(denom) > 1e-6f)
+	{
+		float t = (Targettransform->GetLocation() - ray.Origin).Dot(planeNormal) / denom;
+		dragStartPoint = ray.Origin + ray.Direction * t;
+		dragStartActorLocation = Targettransform->GetLocation();
+	}
 }
+
+void AGizmoAxis::Pressed()
+{
+	if (!Targettransform) return;
+
+	FRay ray = PICK.ScreenToWorldRay();
+	float denom = planeNormal.Dot(ray.Direction);
+	if (fabsf(denom) > 1e-6f)
+	{
+		float t = (dragStartPoint - ray.Origin).Dot(planeNormal) / denom;
+		FVector currentHitPoint = ray.Origin + ray.Direction * t;
+
+		//이동량 계산 및 축 투영
+		FVector delta = currentHitPoint - dragStartPoint;
+		float moveDist = delta.Dot(currentAxisDir);
+
+		//타겟 위치 갱신 및 월드 행렬 업데이트
+		Targettransform->SetLocation(dragStartActorLocation + currentAxisDir * moveDist);
+	}
+}
+
+void AGizmoAxis::Released()
+{
+}
+
+
+
 
 
 
 AGizmo::AGizmo()
 {
+	//메인 기즈모 인스턴스 등록
 	MainGizmo = this;
 
-	// 3개의 기즈모 축 액터 생성 (X, Y, Z)
+	//기즈모 축 액터 생성
 	Axes.push_back(new AGizmoAxis(EGizmoAxis::X));
 	Axes.push_back(new AGizmoAxis(EGizmoAxis::Y));
 	Axes.push_back(new AGizmoAxis(EGizmoAxis::Z));
@@ -95,6 +157,7 @@ AGizmo::AGizmo()
 
 AGizmo::~AGizmo()
 {
+	//메인 기즈모 인스턴스 해제
 	if (MainGizmo == this)
 	{
 		MainGizmo = nullptr;
@@ -112,6 +175,11 @@ void AGizmo::SetTargetActor(AActor* inTarget)
 	TargetActor = inTarget;
 	if (TargetActor)
 	{
+		for (auto& it : Axes)
+		{
+			it->SetTargetActor(&inTarget->GetTransform());
+		}
+
 		transform.SetLocation(TargetActor->GetLocation());
 		transform.Scale = TargetActor->GetScale() * 0.7f;
 	}
@@ -174,14 +242,4 @@ EGizmoAxis AGizmo::PickAxis(const FRay& ray, float& outDist)
 	}
 
 	return hitAxis;
-}
-
-void AGizmo::Pressed(FVector _Location)
-{
-	// 마우스 클릭 피킹 시 선택된 축 조작 로직
-}
-
-void AGizmo::Released(FVector _Location)
-{
-	SelectedAxis = EGizmoAxis::None;
 }
