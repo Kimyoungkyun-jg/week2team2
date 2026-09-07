@@ -4,7 +4,7 @@
 ConstBuffer::ConstBuffer(void* data, uint32 dataSize) : data(data), dataSize(dataSize)
 {
 	D3D11_BUFFER_DESC constantbufferdesc = {};
-	constantbufferdesc.ByteWidth = sizeof(FConstants) + 0xf & 0xfffffff0;
+	constantbufferdesc.ByteWidth = (dataSize + 0xf) & 0xfffffff0;
 	constantbufferdesc.Usage = D3D11_USAGE_DYNAMIC;
 	constantbufferdesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	constantbufferdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -29,3 +29,10 @@ void ConstBuffer::SetVSBuffer(UINT slot)
 	Update();
 	DC->VSSetConstantBuffers(slot, 1, &buffer);
 }
+
+void ConstBuffer::SetPSBuffer(UINT slot)
+{
+	Update();
+	DC->PSSetConstantBuffers(slot, 1, &buffer);
+}
+

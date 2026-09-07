@@ -3,6 +3,8 @@
 #include "Scenes/DefaultScene.h"
 #include "SceneManager.h"
 #include "Camera.h"
+#include "ConsoleWindow.h"
+
 
 App* App::Instance = nullptr;
 
@@ -45,6 +47,7 @@ void App::Init(HINSTANCE hInstance)
 	Renderer& renderer = Renderer::GetInstance();
 	renderer.Create(m_mainWindow);
 	renderer.CreateShader();
+
 
 	InitImgui();
 
@@ -94,6 +97,7 @@ void App::mainLoop()
 
 	// 3. 렌더링
 	Render();
+	
 }
 
 void App::Update()
@@ -113,27 +117,32 @@ void App::Render()
 	ImGui::ShowDemoWindow();
 
 	ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
+
 	ImGui::Begin("Engine Main Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+
 	ImGui::Text("DirectX 11 & ImGui Active!");
 	ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
 	ImGui::End();
+
+	ConsoleWindow::GetInstance().DrawConsole();
 
 	Renderer::GetInstance().UpdateFrameConstant();
 	Camera::GetInstance().SetVPBuffer(); // 카메라 안의 view, proj
 
 
-	// 씬 오브젝트 렌더링 (Renderer를 통해 Draw)
+	//// 씬 오브젝트 렌더링 (Renderer를 통해 Draw)
 	SCENE.Render();
 
-	// ImGui 렌더링
+	////// ImGui 렌더링
 	ImGui::Render();
+
 	ImDrawData* drawData = ImGui::GetDrawData();
 	if (drawData)
 	{
 		ImGui_ImplDX11_RenderDrawData(drawData);
 	}
 
-	// 스왑 체인 Present
+	//// 스왑 체인 Present
 	renderer.SwapBuffer();
 }
 
@@ -152,4 +161,3 @@ void App::ReleaseAll()
 	renderer.ReleaseShader();
 	renderer.Release();
 }
-

@@ -3,7 +3,6 @@
 #include "FVector.h"
 #include <cmath>
 
-    // 단위 행렬
     FMatrix FMatrix::Identity()
     {
         FMatrix result = {{ {1,0,0,0},
@@ -13,7 +12,6 @@
         return result;
     }
 
-    // (t.x, t.y, t.z) 만큼 이동
     FMatrix FMatrix::Translation(const FVector& t)
     {
         FMatrix result = Identity();
@@ -23,7 +21,6 @@
         return result;
     }
 
-    // (s.x, s.y, s.z) 배만큼 Scaling
     FMatrix FMatrix::Scale(const FVector& s)
     {
         FMatrix result = {{ {s.x, 0, 0, 0},
@@ -33,7 +30,6 @@
         return result;
     };
     
-    // 왼손 좌표계 기준 회전 행렬 (x축)
     FMatrix FMatrix::RotationX(float radians)
     {
         float s = sinf(radians);
@@ -47,7 +43,6 @@
 
     }
 
-    // 왼손 좌표계 기준 회전 행렬 (y축)
     FMatrix FMatrix::RotationY(float radians)
     {
         float s = sinf(radians);
@@ -61,7 +56,6 @@
         
     }         
     
-    // 왼손 좌표계 기준 회전 행렬 (z축)
     FMatrix FMatrix::RotationZ(float radians)
     {
         float s = sinf(radians);
@@ -75,7 +69,6 @@
 
     }         
 
-    // 카메라
     FMatrix FMatrix::LookAt(const FVector& eye, const FVector& target, const FVector up)
     {
         FVector zAxis = (target - eye).Normalized(); // 카메라의 Forward 방향
@@ -91,7 +84,6 @@
 
     }
 
-    // 투영 (DirectX 표준 Depth 0 ~ 1)
     FMatrix FMatrix::PerspectiveFov(float fovY, float aspectRatio, float nearZ, float farZ)
     {
         float yScale = 1.0f / tanf(fovY/2.0f);
@@ -107,7 +99,6 @@
         return result;
     }
 
-    // 행렬곱
     FMatrix FMatrix::operator*(const FMatrix& other) const
     {
         FMatrix result = {};
@@ -118,7 +109,6 @@
         return result;
     }
     
-    // 전치행렬
     FMatrix FMatrix::Transpose() const
     {
         FMatrix result = {};

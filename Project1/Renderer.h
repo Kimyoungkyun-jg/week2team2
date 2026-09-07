@@ -19,8 +19,6 @@ struct FVertexBufferInfo
 
 class Renderer
 {
-
-
 public:
 	static Renderer& GetInstance()
 	{
@@ -127,6 +125,7 @@ public:
 		//기본 상태: 커스텀 컬러 버퍼 미사용(정점 컬러 우선)
 		SetCustomColor({ 0.0f, 0.0f, 0.0f, 0.0f });
 	}
+
 
 	// [핵심] 타입만 넘기면 FVertexTraits를 통해 자동으로 InputLayout을 생성하고 TMap에 등록하는 템플릿 함수
 	template<typename VertexType>

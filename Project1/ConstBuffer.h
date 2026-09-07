@@ -10,6 +10,7 @@ protected:
 
 public:
     void SetVSBuffer(UINT slot);
+    void SetPSBuffer(UINT slot);
 
 private:
     ID3D11Buffer* buffer;
