@@ -91,7 +91,7 @@ public:
 			LocalVertices.push_back(FVector(vertices[i].x, vertices[i].y, vertices[i].z));
 		}
 	}
-
+	
 
 	bool bIsPicked(const FRay& worldRay, float& outDistance);
 	bool bIsPicked(const FRay& worldRay)

@@ -2,6 +2,7 @@
 
 #include "AActor.h"
 #include "Sphere.h"
+#include "CircleGenerator.h"
 
 class ACollider : public AActor
 {
@@ -129,7 +130,23 @@ class ARectangle : public ACollider
 	ARectangle()
 	{
 		InitVertexBuffer(rectangle_vertices);
-		Primitive = EPrimitive::Triangle;
+		Primitive = EPrimitive::Rectangle;
 	}
 };
 
+/////////////////////////
+/////// Circle ///////
+/////////////////////////
+
+class ACircle : public ACollider
+{
+	DECLARE_CLASS(ACircle, ACollider)
+	
+	public:
+	ACircle()
+	{
+		TArray<FVertexColor> circle_vertices = CircleGenerator::MakeCircle(32, 1.0f, 1.0f, 0.0f, 1.0f);
+		InitVertexBuffer(circle_vertices);
+		Primitive = EPrimitive::Circle;
+	}
+};
