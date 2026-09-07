@@ -76,42 +76,6 @@ AActor* PickingManager::Pick()
 	return closest;
 }
 
-bool PickingManager::RayIntersectBox(const FRay& ray, const FVector& center, const FVector& scale, float& outDistance) const
-{
-	FVector minBox = center - scale * 0.5f;
-	FVector maxBox = center + scale * 0.5f;
-
-	float tMin = -FLT_MAX, tMax = FLT_MAX;
-
-	if (fabsf(ray.Direction.x) > 1e-6f) {
-		float t1 = (minBox.x - ray.Origin.x) / ray.Direction.x;
-		float t2 = (maxBox.x - ray.Origin.x) / ray.Direction.x;
-		if (t1 > t2) swap(t1, t2);
-		tMin = max(tMin, t1);
-		tMax = min(tMax, t2);
-	}
-	if (fabsf(ray.Direction.y) > 1e-6f) {
-		float t1 = (minBox.y - ray.Origin.y) / ray.Direction.y;
-		float t2 = (maxBox.y - ray.Origin.y) / ray.Direction.y;
-		if (t1 > t2) swap(t1, t2);
-		tMin = max(tMin, t1);
-		tMax = min(tMax, t2);
-	}
-	if (fabsf(ray.Direction.z) > 1e-6f) {
-		float t1 = (minBox.z - ray.Origin.z) / ray.Direction.z;
-		float t2 = (maxBox.z - ray.Origin.z) / ray.Direction.z;
-		if (t1 > t2) swap(t1, t2);
-		tMin = max(tMin, t1);
-		tMax = min(tMax, t2);
-	}
-
-	if (tMin > tMax || tMax < 0) {
-		return false;
-	}
-
-	outDistance = tMin;
-	return true;
-}
 
 void PickingManager::Pressed()
 {
