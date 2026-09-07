@@ -62,6 +62,11 @@ using namespace std;
 #define MOUSE_DBCLICK(k) (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseDoubleClicked(k))
 #define MOUSE_UP(k) (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseReleased(k))
 
+// 마우스 좌표 매크로 (ImVec2 및 x, y 성분)
+#define MOUSE_POS (ImGui::GetIO().MousePos)
+#define MOUSE_POS_X (ImGui::GetIO().MousePos.x)
+#define MOUSE_POS_Y (ImGui::GetIO().MousePos.y)
+
 #define SCENE SceneManager::GetInstance()
 #define DELTA ImGui::GetIO().DeltaTime
 
@@ -69,6 +74,9 @@ using namespace std;
 #define DC Renderer::GetInstance().GetDeviceContext()
 
 #define RENDERER Renderer::GetInstance()
+#define CAMERA Camara::GetInstance()
+
+#define PICK PickingManager::GetInstance()
 
 #define WIN_WIDTH 1920	
 #define WIN_HEIGHT 1080
@@ -83,3 +91,7 @@ typedef string FString;
 #include "Scene.h"
 #include "SceneManager.h"
 
+//카메라
+#include "Camera.h"
+
+#include "PickingManager.h"

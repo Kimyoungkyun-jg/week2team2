@@ -79,6 +79,7 @@ public:
 	{
 		return classinfo ? classinfo->IsA(TargetClass) : false;
 	}
+
 	
 	//메모리 추적용 new, delete 오버로딩
 	void* operator new(size_t size)

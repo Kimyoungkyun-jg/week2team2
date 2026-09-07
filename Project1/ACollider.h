@@ -81,7 +81,6 @@ class ASphere : public ACollider
 public:
 	ASphere()
 	{
-		Primitive = EPrimitive::Sphere;
 		InitVertexBuffer(sphere_vertices);
 	}
 	float GetRadius() const { return transform.Scale.x * 0.5f; }
