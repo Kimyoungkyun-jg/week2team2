@@ -89,12 +89,22 @@ void UGizmo::Render()
 	worldBuffer->SetMat(transform.WorldMat);
 	worldBuffer->SetVSBuffer(0);
 
-	RENDERER.SetCustomColor(Color);
+	FLinearColor finalColor = Highlighting(Color);
+	RENDERER.SetCustomColor(finalColor);
 	
 	DC->Draw(numVertices, 0);
 
 	// 2. 기본 깊이 상태로 복원
 	RENDERER.SetDefaultDepthState();
+}
+
+FLinearColor UGizmo::Highlighting(const FLinearColor& color)
+{
+	FLinearColor result = color;
+	result.r *= 1.8f;
+	result.g *= 1.8f;
+	result.b *= 1.8f;
+	return result;
 }
 
 void UGizmo::Pressed(FVector _Location)

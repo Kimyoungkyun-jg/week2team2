@@ -32,7 +32,7 @@ AActor* PickingManager::Pick(const FRay& ray) const
 	float closestDist = FLT_MAX;
 
 	for (auto object : ObjectManager::GetInstance().AllObjects) {
-		AActor * actor = dynamic_cast<AActor*> (object);
+		AActor* actor = dynamic_cast<AActor*> (object);
 		if (actor == nullptr) continue;
 
 		if (actor->GetPrimitive() == EPrimitive::Cube) {
@@ -44,6 +44,10 @@ AActor* PickingManager::Pick(const FRay& ray) const
 				}
 			}
 		}
+
+		// ---------------------------------
+		// 기즈모인지 판별하는 코드 추가!
+		// ---------------------------------
 	}
 	return closest;
 }

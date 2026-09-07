@@ -50,6 +50,7 @@ public:
 	}
 
 	void SetVB(void* vertexData, UINT vertexStride, UINT vertexCount);
+	FLinearColor Highlighting(const FLinearColor& color);
 
 	// 마우스 인터랙션 이벤트
 	virtual void Pressed(FVector _Location);
