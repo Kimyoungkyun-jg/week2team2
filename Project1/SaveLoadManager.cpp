@@ -29,7 +29,7 @@ TMap<string, SaveLoadManager::CreatorFunc>& SaveLoadManager::GetActorCreatorRegi
     if (registry.empty())
     {
         // "ACube" -> 상자 생성
-        registry["Cube"] = [](FVector loc, FVector rot, FVector sc, EPrimitive prim) -> AActor *
+        registry["Cube"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
         {
             AActor* actor = FObjectFactory::SpawnColider<ACube>(loc, sc);
             actor->SetRotation(rot);
@@ -37,7 +37,7 @@ TMap<string, SaveLoadManager::CreatorFunc>& SaveLoadManager::GetActorCreatorRegi
         };
         
         // "ASphere" -> 구 생성
-        registry["Sphere"] = [](FVector loc, FVector rot, FVector sc, EPrimitive prim) -> AActor *
+        registry["Sphere"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
         {
             AActor* actor = FObjectFactory::SpawnColider<ASphere>(loc, sc);
             actor->SetRotation(rot);
@@ -162,7 +162,7 @@ TArray<UObject*> SaveLoadManager::LoadScene(const FString& path)
     // 함수 Load 및 람다 등록
     auto& registry = GetActorCreatorRegistry();
 
-    for (json objJson : sceneJson["objects"]){
+    for (json objJson : sceneJson["Primitives"]){
 
         string Class     = objJson["Type"];  // Cube, Sphere ...
         auto it = registry.find(Class);
@@ -181,9 +181,9 @@ TArray<UObject*> SaveLoadManager::LoadScene(const FString& path)
         FVector rat(rotation[0].get<float>(), rotation[1].get<float>(), rotation[2].get<float>());
         FVector sc(scale[0].get<float>(), scale[1].get<float>(), scale[2].get<float>());
         
-        EPrimitive prim = static_cast<EPrimitive>(objJson["Type"].get<int>());
+        // EPrimitive prim = static_cast<EPrimitive>(objJson["Type"].get<int>());
 
-        AActor* actor = it->second(loc, rat, sc, prim);
+        AActor* actor = it->second(loc, rat, sc);
         loadedObjects.push_back(actor);
 
     }

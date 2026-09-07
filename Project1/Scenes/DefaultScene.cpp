@@ -89,6 +89,10 @@ void DefaultScene::Render()
 	{
 		// "./SceneData/MyScene.Scene" 에서 로드됨
 		TArray<UObject*> loadedObj = SaveLoadManager::LoadScene("./SceneData/MyScene.Scene");
+
+		// 기존 cube는 이미 삭제됐으므로 일단 무효화
+		cube = nullptr;  
+
 	}
 	
 	ImGui::Separator();
