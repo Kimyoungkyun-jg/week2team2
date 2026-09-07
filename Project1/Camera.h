@@ -53,7 +53,7 @@ public:
 	void Update();
 	void SetVPBuffer();
 
-	MatrixBuffer* vpBuffer;
+	CameraBuffer* vpBuffer;
 private:
 	Transform transform;
 

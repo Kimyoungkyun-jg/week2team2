@@ -42,12 +42,14 @@ void Renderer::ReleaseColorBuffer()
 	}
 }
 
-void Renderer::SetCustomColor(const FLinearColor& color = {0,0,0,0})
+void Renderer::SetCustomColor(const FLinearColor& color)
+
 {
 	if (CustomColorBuffer)
 	{
 		CustomColorBuffer->SetColor(color);
 		CustomColorBuffer->SetVSBuffer(2);
+		CustomColorBuffer->SetPSBuffer(2);
 	}
 }
 
@@ -328,8 +330,10 @@ void Renderer::Prepare()
 
 void Renderer::UpdateFrameConstant()
 {
-	Camera::GetInstance().vpBuffer->SetMat(Camera::GetInstance().GetViewMatrix() * Camera::GetInstance().GetProjectionMatrix(wAspectRatio));
+	Camera& cam = Camera::GetInstance();
+	cam.vpBuffer->SetMat(cam.GetViewMatrix() * cam.GetProjectionMatrix(wAspectRatio), cam.GetLocation());
 }
+
 
 void Renderer::Update()
 {

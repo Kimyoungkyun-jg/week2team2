@@ -10,8 +10,9 @@ Camera::Camera()
 	transform.SetLocation(FVector(3.336f, 3.282f, -4.715f));
 	transform.SetRotation(FVector(0.391f, -0.468f, 0.0f));
 
-	vpBuffer = new MatrixBuffer();
+	vpBuffer = new CameraBuffer();
 }
+
 
 Camera::~Camera()
 {
@@ -73,5 +74,7 @@ void Camera::Update()
 void Camera::SetVPBuffer()
 {
 	vpBuffer->SetVSBuffer(1);
+	vpBuffer->SetPSBuffer(1);
 }
+
 

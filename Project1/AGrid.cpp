@@ -30,15 +30,15 @@ void AGrid::CreateLineVertices()
 	//X축 방향 평행선
 	for (int z = -halfH; z <= halfH; z++)
 	{
-		vertices.emplace_back((float)-halfW, 0.0f, (float)z, 0.5f, 0.5f, 0.5f, 1.0f);
-		vertices.emplace_back((float)+halfW, 0.0f, (float)z, 0.5f, 0.5f, 0.5f, 1.0f);
+		vertices.emplace_back((float)-halfW, 0.0f, (float)z, 0.65f, 0.65f, 0.65f, 1.0f);
+		vertices.emplace_back((float)+halfW, 0.0f, (float)z, 0.65f, 0.65f, 0.65f, 1.0f);
 	}
 
 	//Z축 방향 평행선
 	for (int x = -halfW; x <= halfW; x++)
 	{
-		vertices.emplace_back((float)x, 0.0f, (float)-halfH, 0.5f, 0.5f, 0.5f, 1.0f);
-		vertices.emplace_back((float)x, 0.0f, (float)+halfH, 0.5f, 0.5f, 0.5f, 1.0f);
+		vertices.emplace_back((float)x, 0.0f, (float)-halfH, 0.65f, 0.65f, 0.65f, 1.0f);
+		vertices.emplace_back((float)x, 0.0f, (float)+halfH, 0.65f, 0.65f, 0.65f, 1.0f);
 	}
 }
 
@@ -54,7 +54,7 @@ void AGrid::CreateTriangleVertices()
 	{
 		for (int x = -halfW; x < halfW; x++)
 		{
-			float c = ((x + z) % 2 == 0) ? 0.45f : 0.38f;
+			float c = ((x + z) % 2 == 0) ? 0.68f : 0.58f;
 
 			float fx = (float)x;
 			float fz = (float)z;
@@ -79,6 +79,8 @@ void AGrid::Render()
 	SetWorldBuffer();
 
 	RENDERER.PrepareShader(inputLayout);
+	RENDERER.SetCustomColor({ 0.0f, 0.0f, 0.0f, 0.0f });
+
 	if (GridType == EGridType::Line)
 	{
 		vertexbuffer->IASet(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
@@ -89,3 +91,4 @@ void AGrid::Render()
 	}
 	DC->Draw(numVertices, 0);
 }
+

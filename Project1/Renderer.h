@@ -128,6 +128,7 @@ public:
 		SetCustomColor({ 0.0f, 0.0f, 0.0f, 0.0f });
 	}
 
+
 	// [핵심] 타입만 넘기면 FVertexTraits를 통해 자동으로 InputLayout을 생성하고 TMap에 등록하는 템플릿 함수
 	template<typename VertexType>
 	ID3D11InputLayout* RegisterInputLayout(ID3DBlob* vsBlob)

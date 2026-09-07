@@ -47,3 +47,43 @@ public:
     }
 };
 
+class CameraBuffer : public ConstBuffer
+{
+public:
+    struct Data
+    {
+        FMatrix matrix;
+        FVector CameraPos;
+        float pad;
+    };
+
+private:
+    Data data;
+
+public:
+    CameraBuffer() : ConstBuffer(&data, sizeof(Data))
+    {
+        data.matrix = FMatrix::Identity();
+        data.CameraPos = FVector(0.0f, 0.0f, 0.0f);
+        data.pad = 0.0f;
+    }
+
+    void SetMat(FMatrix mat, const FVector& cameraPos)
+    {
+        data.matrix = mat.Transpose();
+        data.CameraPos = cameraPos;
+    }
+
+    void SetMat(FMatrix mat)
+    {
+        data.matrix = mat.Transpose();
+    }
+
+    void SetCameraPos(const FVector& cameraPos)
+    {
+        data.CameraPos = cameraPos;
+    }
+};
+
+
+
