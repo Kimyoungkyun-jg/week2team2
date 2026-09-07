@@ -234,6 +234,7 @@ void Renderer::CreateShader()
 	RegisterInputLayout<FVertexColor>(vsBlob);
 	RegisterInputLayout<FVertexUV>(vsBlob);
 
+
 	if (vsBlob)
 	{
 		vsBlob->Release();
