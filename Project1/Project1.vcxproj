@@ -109,14 +109,18 @@
   <ItemGroup>
     <ClInclude Include="..\Project1\AActor.h" />
     <ClInclude Include="..\Project1\ACollider.h" />
+    <ClInclude Include="..\Project1\AGizmo.h" />
     <ClInclude Include="..\Project1\App.h" />
     <ClInclude Include="..\Project1\Camera.h" />
     <ClInclude Include="..\Project1\CollisionManager.h" />
+    <ClInclude Include="..\Project1\ConsoleWindow.h" />
+    <ClInclude Include="..\Project1\ConstBuffer.h" />
     <ClInclude Include="..\Project1\FConstants.h" />
     <ClInclude Include="..\Project1\FPixelConstant.h" />
     <ClInclude Include="..\Project1\FVector.h" />
     <ClInclude Include="..\Project1\FVertexSimple.h" />
     <ClInclude Include="..\Project1\Global.h" />
+    <ClInclude Include="..\Project1\GlobalBuffer.h" />
     <ClInclude Include="..\Project1\ImGui\imconfig.h" />
     <ClInclude Include="..\Project1\ImGui\imgui.h" />
     <ClInclude Include="..\Project1\ImGui\imgui_impl_dx11.h" />
@@ -127,6 +131,7 @@
     <ClInclude Include="..\Project1\ImGui\imstb_truetype.h" />
     <ClInclude Include="..\Project1\Matrix.h" />
     <ClInclude Include="..\Project1\ObjectManager.h" />
+    <ClInclude Include="..\Project1\PickingManager.h" />
     <ClInclude Include="..\Project1\Renderer.h" />
     <ClInclude Include="..\Project1\Scene.h" />
     <ClInclude Include="..\Project1\SceneManager.h" />
@@ -138,19 +143,19 @@
     <ClInclude Include="..\Project1\UEngineStatics.h" />
     <ClInclude Include="..\Project1\enums.h" />
     <ClInclude Include="..\Project1\pch.h" />
-    <ClInclude Include="AGizmo.h" />
-    <ClInclude Include="ConstBuffer.h" />
-    <ClInclude Include="Containers.h" />
-    <ClInclude Include="GlobalBuffer.h" />
-    <ClInclude Include="VertexBuffer.h" />
-    <ClInclude Include="PickingManager.h" />
+    <ClInclude Include="..\Project1\VertexBuffer.h" />
+    <ClInclude Include="ASphere.h" />
+    <ClInclude Include="FLinearColor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Project1\AActor.cpp" />
     <ClCompile Include="..\Project1\ACollider.cpp" />
+    <ClCompile Include="..\Project1\AGizmo.cpp" />
     <ClCompile Include="..\Project1\App.cpp" />
     <ClCompile Include="..\Project1\Camera.cpp" />
     <ClCompile Include="..\Project1\CollisionManager.cpp" />
+    <ClCompile Include="..\Project1\ConsoleWindow.cpp" />
+    <ClCompile Include="..\Project1\ConstBuffer.cpp" />
     <ClCompile Include="..\Project1\FVector.cpp" />
     <ClCompile Include="..\Project1\ImGui\imgui.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -175,6 +180,7 @@
     </ClCompile>
     <ClCompile Include="..\Project1\Matrix.cpp" />
     <ClCompile Include="..\Project1\ObjectManager.cpp" />
+    <ClCompile Include="..\Project1\PickingManager.cpp" />
     <ClCompile Include="..\Project1\Renderer.cpp" />
     <ClCompile Include="..\Project1\Scene.cpp" />
     <ClCompile Include="..\Project1\SceneManager.cpp" />
@@ -184,13 +190,13 @@
     <ClCompile Include="..\Project1\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="AGizmo.cpp" />
-    <ClCompile Include="ConstBuffer.cpp" />
-    <ClCompile Include="VertexBuffer.cpp" />
-    <ClCompile Include="PickingManager.cpp" />
+    <ClCompile Include="..\Project1\VertexBuffer.cpp" />
+    <ClCompile Include="ASphere.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Project1\ShaderW0.hlsl" />
+    <None Include="..\Project1\ShaderW0.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

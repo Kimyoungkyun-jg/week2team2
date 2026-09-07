@@ -3,6 +3,8 @@
 #include "Scenes/DefaultScene.h"
 #include "SceneManager.h"
 #include "Camera.h"
+#include "ConsoleWindow.h"
+
 
 App* App::Instance = nullptr;
 
@@ -40,17 +42,14 @@ App::~App()
 
 void App::Init(HINSTANCE hInstance)
 {
-	
-
 	Initwindow(hInstance);
 
 	Renderer& renderer = Renderer::GetInstance();
 	renderer.Create(m_mainWindow);
 	renderer.CreateShader();
 
+
 	InitImgui();
-
-
 
 	SCENE.AddScene("Default", new DefaultScene());
 	SCENE.ChangeScene("Default");
@@ -98,6 +97,7 @@ void App::mainLoop()
 
 	// 3. 렌더링
 	Render();
+	
 }
 
 void App::Update()
@@ -124,16 +124,18 @@ void App::Render()
 	ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
 	ImGui::End();
 
+	ConsoleWindow::GetInstance().DrawConsole();
+
 	Renderer::GetInstance().UpdateFrameConstant();
 	Camera::GetInstance().SetVPBuffer(); // 카메라 안의 view, proj
 
 
-	// 씬 오브젝트 렌더링 (Renderer를 통해 Draw)
+	//// 씬 오브젝트 렌더링 (Renderer를 통해 Draw)
 	SCENE.Render();
 
-
-	//// ImGui 렌더링
+	////// ImGui 렌더링
 	ImGui::Render();
+
 	ImDrawData* drawData = ImGui::GetDrawData();
 	if (drawData)
 	{
@@ -159,4 +161,3 @@ void App::ReleaseAll()
 	renderer.ReleaseShader();
 	renderer.Release();
 }
-

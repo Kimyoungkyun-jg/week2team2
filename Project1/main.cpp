@@ -5,6 +5,7 @@
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+
 {
 	srand(static_cast<unsigned>(time(nullptr)));
 

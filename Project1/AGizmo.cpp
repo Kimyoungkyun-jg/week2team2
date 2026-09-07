@@ -27,6 +27,8 @@ void AGizmo::Update(float DeltaTime)
 
 void AGizmo::Render()
 {
+	OutputDebugStringA("this is Gizmo");
+
 	UObject::Render();
 	// 버텍스 버퍼가 없으면 렌더링하지 않음
 	if (vertexbuffer == nullptr || numVertices == 0)

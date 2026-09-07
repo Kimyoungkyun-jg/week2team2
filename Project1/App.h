@@ -1,19 +1,20 @@
 #pragma once
 #include "FVertexSimple.h"
 #include "Renderer.h"
-
+#include "ConsoleWindow.h"
 
 class App
 {
 private:
 	HWND m_mainWindow = nullptr;
-
+	
 	void Initwindow(HINSTANCE hInstance);
+
 	void InitImgui();
 
 	void Update();
 	void Render();
-
+	
 public:
 	App();
 	~App();

@@ -7,6 +7,9 @@
     <Filter Include="Scenes">
       <UniqueIdentifier>{86EEB3D0-7290-DEA6-5B4B-F2FA478C65F7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GConsole">
+      <UniqueIdentifier>{33c6b220-ba76-45b0-b7f3-09cd225a1ddb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Project1\AActor.h" />
@@ -58,7 +61,16 @@
     <ClInclude Include="..\Project1\Camera.h" />
     <ClInclude Include="..\Project1\Transform.h" />
     <ClInclude Include="..\Project1\Matrix.h" />
-    <ClInclude Include="PickingManager.h" />
+    <ClInclude Include="..\Project1\ConstBuffer.h" />
+    <ClInclude Include="..\Project1\GlobalBuffer.h" />
+    <ClInclude Include="..\Project1\VertexBuffer.h" />
+    <ClInclude Include="..\Project1\AGizmo.h" />
+    <ClInclude Include="..\Project1\PickingManager.h" />
+    <ClInclude Include="..\Project1\ConsoleWindow.h">
+      <Filter>GConsole</Filter>
+    </ClInclude>
+    <ClInclude Include="ASphere.h" />
+    <ClInclude Include="FLinearColor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Project1\AActor.cpp" />
@@ -99,7 +111,14 @@
     <ClCompile Include="..\Project1\pch.cpp" />
     <ClCompile Include="..\Project1\Camera.cpp" />
     <ClCompile Include="..\Project1\Matrix.cpp" />
-    <ClCompile Include="PickingManager.cpp" />
+    <ClCompile Include="..\Project1\ConstBuffer.cpp" />
+    <ClCompile Include="..\Project1\VertexBuffer.cpp" />
+    <ClCompile Include="..\Project1\AGizmo.cpp" />
+    <ClCompile Include="..\Project1\PickingManager.cpp" />
+    <ClCompile Include="..\Project1\ConsoleWindow.cpp">
+      <Filter>GConsole</Filter>
+    </ClCompile>
+    <ClCompile Include="ASphere.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Project1\ShaderW0.hlsl" />

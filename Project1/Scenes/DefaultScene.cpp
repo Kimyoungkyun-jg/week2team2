@@ -8,8 +8,11 @@
 DefaultScene::DefaultScene()
 {
 	// 기즈모만 단독으로 스폰 (위치: 원점 0, 0, 0 / 크기: 1, 1, 1)
-	gizmo = FObjectFactory::SpawnActor<AGizmo>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
+	//gizmo = FObjectFactory::SpawnActor<AGizmo>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
 	//cube = FObjectFactory::SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
+
+	ASphere* test = FObjectFactory::SpawnActor<ASphere>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
+	test->SetColor(FLinearColor::White);
 }
 
 DefaultScene::~DefaultScene()
@@ -102,8 +105,6 @@ void DefaultScene::Render()
 			gizmo->SetRotation(rot);
 		}
 	}
-
-	
 
 	ImGui::End();
 }
