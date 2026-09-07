@@ -2,7 +2,7 @@
 #include "AActor.h"
 #include "Renderer.h"
 #include "PickingManager.h"
-
+#include "Intersection.h"
 
 AActor::AActor()
 {
@@ -50,21 +50,15 @@ bool AActor::bIsPicked(const FRay& worldRay, float& outDistance)
 		FVector localDir = TransformDirection(worldRay.Direction, invWorld);
 		localDir.Normalize();
 
-		XMVECTOR rayOrigin = localOrigin.ToXMVECTOR();
-		XMVECTOR rayDir = localDir.ToXMVECTOR();
-
 		float closestDist = FLT_MAX;
 		bool bHit = false;
 
 		//삼각형 충돌 검사
 		for (size_t i = 0; i + 2 < LocalVertices.size(); i += 3)
 		{
-			XMVECTOR p0 = LocalVertices[i].ToXMVECTOR();
-			XMVECTOR p1 = LocalVertices[i + 1].ToXMVECTOR();
-			XMVECTOR p2 = LocalVertices[i + 2].ToXMVECTOR();
 
 			float dist = 0.0f;
-			if (DirectX::TriangleTests::Intersects(rayOrigin, rayDir, p0, p1, p2, dist))
+			if (RayIntersectTriangle(localOrigin, localDir, LocalVertices[i], LocalVertices[i+1], LocalVertices[i+2], dist))
 			{
 				if (dist > 0.0f && dist < closestDist)
 				{
