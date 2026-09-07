@@ -74,7 +74,7 @@ using namespace std;
 #define DC Renderer::GetInstance().GetDeviceContext()
 
 #define RENDERER Renderer::GetInstance()
-#define CAMERA Camara::GetInstance()
+#define CAMERA Camera::GetInstance()
 
 #define PICK PickingManager::GetInstance()
 

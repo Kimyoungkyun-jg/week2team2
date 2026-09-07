@@ -12,11 +12,15 @@ DefaultScene::DefaultScene()
 	cube = FObjectFactory::SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
 	cube->SetColor(FLinearColor::Blue);
 
-	cube2 = FObjectFactory::SpawnColider<ACube>(FVector(10.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
+	cube2 = FObjectFactory::SpawnColider<ACube>(FVector(5.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
 	cube2->SetColor(FLinearColor::Red);
 
-	sphere = FObjectFactory::SpawnActor<ASphere>(FVector(-10.0f, 0.0f, 0.0f));
+	sphere = FObjectFactory::SpawnActor<ASphere>(FVector(-5.0f, 0.0f, 0.0f));
 	sphere->SetColor(FLinearColor::Green);
+
+	worldAxises = FObjectFactory::SpawnActor<AWorldAxises>();
+
+	grid = FObjectFactory::SpawnActor<AGrid>(EGridType::Triangle);
 
 	gizmo = FObjectFactory::SpawnActor<AGizmo>();
 }
@@ -55,10 +59,15 @@ void DefaultScene::Render()
 	{
 		cam.SetRotation(camRot);
 	}
-	if (ImGui::Button("Reset Camera (0, 0, -3)"))
+
+	//카메라 속도 및 회전 조절
+	ImGui::SliderFloat("Move Speed", &cam.GetSpeedRef(), 0.5f, 20.0f, "%.1f");
+	ImGui::SliderFloat("Rot Speed", &cam.GetRotationSpeedRef(), 0.01f, 0.5f, "%.3f");
+
+	if (ImGui::Button("Reset Camera"))
 	{
-		cam.SetLocation(FVector(0.0f, 0.0f, -3.0f));
-		cam.SetRotation(FVector(0.0f, 0.0f, 0.0f));
+		cam.SetLocation(FVector(3.336f, 3.282f, -4.715f));
+		cam.SetRotation(FVector(0.391f, -0.468f, 0.0f));
 	}
 	
 	FVector camFwd = cam.GetForward();
@@ -66,26 +75,13 @@ void DefaultScene::Render()
 	
 	ImGui::Separator();
 	
-	if (ImGui::IsMouseClicked(0)) {
-		// pick 테스트 코드: 클릭된 액터에 기즈모 부착
-		ray = PICK.ScreenToWorldRay(ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y,
-			RENDERER.ViewportInfo.Width, RENDERER.ViewportInfo.Height);
-		AActor* pickedObj = PICK.Pick(ray);
-		if (pickedObj) {
-			FString className = pickedObj->GetClass() ? std::string(pickedObj->GetClass()->Name) : "Unknown";
-			FString msg = "Class: " + className + "\n";
-		
-			OutputDebugStringA(msg.c_str());
-			if (gizmo)
-			{
-				gizmo->SetTargetActor(pickedObj);
-			}
-		}
-	}
 	
-	/////////////////////////////////////
-	//////// Spawn & SAVE & LOAD ////////
-	/////////////////////////////////////
+
+
+
+	/////////////////////////////
+	//////// SAVE & LOAD ////////
+	/////////////////////////////
 	
 	// Spawn 버튼
 	ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.8f, 1.0f), "[ Spawn Primitives ]");

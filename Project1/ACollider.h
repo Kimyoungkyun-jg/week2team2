@@ -39,8 +39,8 @@ public:
 	void SetSleepTimer(float value) { SleepTimer = value; }
 	void WakeUp() { bSleeping = false; SleepTimer = 0.0f; }
 
-	virtual void Pressed(FVector _Location) override;
-	virtual void Released(FVector _Location) override;
+	virtual void Pressed() override;
+	virtual void Released() override;
 	virtual float GetInertia() const
 	{
 		return Mass * (transform.Scale.x * transform.Scale.x + transform.Scale.y * transform.Scale.y) / 12.0f;

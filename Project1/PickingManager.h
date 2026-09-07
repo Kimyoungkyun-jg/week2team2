@@ -20,10 +20,18 @@ public:
 	FRay ScreenToWorldRay(float mouseX, float mouseY, float screenW, float screenH) const;
 	FRay ScreenToWorldRay() const;
 
-	AActor* Pick(const FRay& ray) const;
+	AActor* Pick();
 
 	bool RayIntersectBox(const FRay& ray, const FVector& center, const FVector& scale, float& outDistance) const;
 
+	void Pressed();
+	void Released();
+
+
+	void Update();
+
+
+	AActor* pickedObjcect;
 private:
 	PickingManager() {};
 };

@@ -2,7 +2,9 @@
 #include "Scene.h"
 #include "ACollider.h"
 #include "AGizmo.h"
+#include "AWorldAxises.h"
 #include "PickingManager.h"
+#include "AGrid.h"
 
 class DefaultScene : public Scene
 {
@@ -19,7 +21,10 @@ public:
 	ASphere* sphere = nullptr;
 	AGizmo* gizmo = nullptr;
 
+	AWorldAxises* worldAxises;
 
 	FRay ray;
+
+	AGrid* grid;
 };
 

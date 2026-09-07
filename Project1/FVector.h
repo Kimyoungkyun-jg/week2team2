@@ -34,7 +34,7 @@ struct FVector
 	float Length() const;
 	void Normalize();			// 자기 자신 정규화
 	FVector Normalized() const; 	// 정규화 후 행렬 반환
-	float DotProduct(const FVector& other) const;
+	float Dot(const FVector& other) const;
 
 	static float Cross(FVector a, FVector b) // Z-성분
 	{
