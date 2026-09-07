@@ -2,13 +2,14 @@
 #include "AGizmo.h"
 #include "Renderer.h"
 #include "PickingManager.h"
+#include "ObjectManager.h"
 
 
 AGizmoAxis::AGizmoAxis(EGizmoAxis inAxis)
 	: Axis(inAxis)
 {
-	// AActor의 템플릿 InitVertexBuffer 호출 -> GPU 버퍼 생성 및 LocalVertices 자동 저장!
-	InitVertexBuffer(arrow_vertices);
+	// ObjectManager를 통해 기즈모 화살표 메시 공유 및 LocalVertices 재활용
+	SetMesh(ObjectManager::GetInstance().GetOrCreateMesh("GizmoArrow", arrow_vertices));
 	Primitive = EPrimitive::Gizmo;
 
 	transform.SetScale({ 0.7f, 0.7f, 0.7f });
@@ -38,7 +39,7 @@ AGizmoAxis::AGizmoAxis(EGizmoAxis inAxis)
 
 AGizmoAxis::~AGizmoAxis()
 {
-	//vertexbuffer와 worldBuffer는 부모인 AActor::~AActor()가 안전하게 해제함
+	// 공유 메시는 ObjectManager가 관리하며 worldBuffer는 AActor::~AActor()가 해제함
 }
 
 void AGizmoAxis::Update(float DeltaTime, const Transform& parentTransform)
@@ -82,21 +83,15 @@ void AGizmoAxis::Update(float DeltaTime, const Transform& parentTransform)
 
 void AGizmoAxis::Render()
 {
-	if (vertexbuffer == nullptr || numVertices == 0)
+	if (!mesh)
 		return;
 
 	// 깊이 판정 비활성화 (물체에 가려지지 않고 항상 최상단 렌더링)
 	RENDERER.SetGizmoDepthState();
 
-	RENDERER.PrepareShader(inputLayout);
-	vertexbuffer->IASet();
-	
-
 	worldBuffer->SetVSBuffer(0);
-
-
-	RENDERER.SetCustomColor(Color);
-	DC->Draw(numVertices, 0);
+	mesh->SetColor(Color);
+	mesh->Render();
 
 	// 기본 깊이 상태로 복원
 	RENDERER.SetDefaultDepthState();

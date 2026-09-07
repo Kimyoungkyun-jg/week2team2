@@ -9,14 +9,17 @@
 
 DefaultScene::DefaultScene()
 {
-	cube = FObjectFactory::SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
-	cube->SetColor(FLinearColor::Gray);
+	cube = FObjectFactory::SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f }, 1.0f, FLinearColor::Cyan);
 
-	cube2 = FObjectFactory::SpawnColider<ACube>(FVector(5.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
-	cube2->SetColor(FLinearColor::Cyan);
+	cube2 = FObjectFactory::SpawnColider<ACube>(FVector(5.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f }, 1.0f, FLinearColor::Magenta);
 
-	sphere = FObjectFactory::SpawnActor<ASphere>(FVector(-5.0f, 0.0f, 0.0f));
-	sphere->SetColor(FLinearColor::Green);
+
+	sphere = FObjectFactory::SpawnActor<ASphere>(
+		FVector(-5.0f, 0.0f, 0.0f),
+		FVector(1.0f, 1.0f, 1.0f),
+		FLinearColor::Red
+	);
+
 
 	worldAxises = FObjectFactory::SpawnActor<AWorldAxises>();
 

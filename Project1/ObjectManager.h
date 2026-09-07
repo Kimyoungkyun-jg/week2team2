@@ -3,6 +3,7 @@
 #include "UObject.h"
 #include "CollisionManager.h"
 #include "string_view"
+#include "Mesh.h"
 
 //모든 UObject를 관리하는 클래스, Main 초기에 Get 호출
 class ObjectManager
@@ -17,6 +18,12 @@ public:
 			delete pair.second;
 		}
 		AllClassInfoMap.clear();
+
+		for (auto& pair : AllMeshMap)
+		{
+			delete pair.second;
+		}
+		AllMeshMap.clear();
 	}
 
 	TArray<UObject*> AllObjects;
@@ -98,8 +105,60 @@ public:
 		static ObjectManager Manager;
 		return Manager;
 	}
+	
+	
+	
+
+	TMap<FString, Mesh*> AllMeshMap; 
+	//같은 메쉬는 저장해서 사용
+
+	Mesh* GetMesh(const FString& name)
+	{
+		auto it = AllMeshMap.find(name);
+		if (it != AllMeshMap.end())
+			return it->second;
+		return nullptr;
+	}
+
+	template <typename VertexType, size_t N>
+	Mesh* GetOrCreateMesh(const FString& name, const VertexType(&vertices)[N])
+	{
+		auto it = AllMeshMap.find(name);
+		if (it != AllMeshMap.end())
+			return it->second;
+
+		Mesh* newMesh = new Mesh();
+		newMesh->InitVertexBuffer(vertices);
+		AllMeshMap[name] = newMesh;
+		return newMesh;
+	}
+
+	template <typename VertexType>
+	Mesh* GetOrCreateMesh(const FString& name, const TArray<VertexType>& vertices)
+	{
+		auto it = AllMeshMap.find(name);
+		if (it != AllMeshMap.end())
+			return it->second;
+
+		Mesh* newMesh = new Mesh();
+		newMesh->InitVertexBuffer(vertices);
+		AllMeshMap[name] = newMesh;
+		return newMesh;
+	}
+
+	Mesh* RegisterMesh(const FString& name, Mesh* inMesh)
+	{
+		if (AllMeshMap.find(name) != AllMeshMap.end())
+		{
+			delete AllMeshMap[name];
+		}
+		AllMeshMap[name] = inMesh;
+		return inMesh;
+	}
+	
 	ObjectManager(const ObjectManager&) = delete;
 	ObjectManager& operator=(const ObjectManager&) = delete;
+
 
 
 private:
