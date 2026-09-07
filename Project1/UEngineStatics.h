@@ -14,7 +14,20 @@ public:
         return NextUUID.fetch_add(1);
     }
 
+    static uint32_t GetUCID()
+    {
+        // 원자적 증가 (스레드 안전)
+        return NextUCID.fetch_add(1);
+    }
+
+    // UUID 조회용
+    static uint32_t PeekUUID()
+    {
+        return NextUUID.load();
+    }
+
 private:
     // 외부 임의 접근 차단
     inline static std::atomic<uint32_t> NextUUID{ 1 };
+    inline static std::atomic<uint32_t> NextUCID{ 1 };
 };

@@ -18,15 +18,15 @@ void SceneManager::Initialize()
 	}
 }
 
-void SceneManager::AddScene(const string& name, Scene* scene)
+void SceneManager::AddScene(const FString& name, Scene* scene)
 {
-	if (m_scenes.count(name) > 0)
+	if (m_scenes.Contains(name))
 		return;
 
 	m_scenes[name] = scene;
 }
 
-void SceneManager::RequestChangeScene(const string& name)
+void SceneManager::RequestChangeScene(const FString& name)
 {
 	if (m_hasPendingSceneChange) return;
 	m_hasPendingSceneChange = true;
@@ -37,7 +37,7 @@ void SceneManager::RequestChangeScene(const string& name)
 	}
 }
 
-void  SceneManager::ChangeScene(const string& name) 
+void  SceneManager::ChangeScene(const FString& name) 
 {
 	if (m_currentScene != nullptr) 
 	{

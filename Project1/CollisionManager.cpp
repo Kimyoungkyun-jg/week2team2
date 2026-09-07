@@ -288,15 +288,23 @@ float CollisionManager::InvInertia(float inertia)
 namespace
 {
 	// union-find. 경로를 압축하며 뿌리를 찾는다
-	int FindRoot(vector<int>& parent, int i)
+	int FindRoot(TArray<int>& parent, int i)
 	{
-		while (parent[i] != i)
+		int root = i;
+		while (root != parent[root])
 		{
-			parent[i] = parent[parent[i]];
-			i = parent[i];
+			root = parent[root];
 		}
 
-		return i;
+		int curr = i;
+		while (curr != root)
+		{
+			int next = parent[curr];
+			parent[curr] = root;
+			curr = next;
+		}
+
+		return root;
 	}
 }
 
@@ -313,7 +321,7 @@ void CollisionManager::PrimeSleep()
 	}
 }
 
-void CollisionManager::UpdateSleep(float t, const vector<pair<ACollider*, ACollider*>>& contacts)
+void CollisionManager::UpdateSleep(float t, const TArray<pair<ACollider*, ACollider*>>& contacts)
 {
 	size_t n = colliders.size();
 
@@ -344,14 +352,14 @@ void CollisionManager::UpdateSleep(float t, const vector<pair<ACollider*, AColli
 
 	// 2. 접촉으로 연결된 무리를 만든다.
 	//    정적 물체는 안 잇는다. 바닥으로 이으면 전부 한 덩어리가 돼서 아무것도 못 잠든다.
-	unordered_map<const ACollider*, int> indexOf;
-	indexOf.reserve(n);
+	TMap<const ACollider*, int> indexOf;
+	indexOf.Reserve(static_cast<int>(n));
 	for (int i = 0; i < (int)n; i++)
 	{
 		indexOf[colliders[i]] = i;
 	}
 
-	vector<int> parent(n);
+	TArray<int> parent(n);
 	for (int i = 0; i < (int)n; i++)
 	{
 		parent[i] = i;
@@ -374,7 +382,7 @@ void CollisionManager::UpdateSleep(float t, const vector<pair<ACollider*, AColli
 	}
 
 	// 3. 무리마다 가장 짧은 타이머를 찾는다. 그게 무리 전체의 진행도다.
-	unordered_map<int, float> islandTimer;
+	TMap<int, float> islandTimer;
 
 	for (int i = 0; i < (int)n; i++)
 	{
@@ -416,10 +424,10 @@ void CollisionManager::UpdateSleep(float t, const vector<pair<ACollider*, AColli
 	}
 }
 
-vector<CollisionInfo> CollisionManager::CheckCollisionAll(float t)
+TArray<CollisionInfo> CollisionManager::CheckCollisionAll(float t)
 {
-	vector<CollisionInfo> infos;
-	vector<pair<pair<ACollider*, ACollider*>, CollisionInfo>> abinfos;
+	TArray<CollisionInfo> infos;
+	TArray<pair<pair<ACollider*, ACollider*>, CollisionInfo>> abinfos;
 	size_t n = colliders.size();
 
 	for (size_t i = 0; i < n; i++)
@@ -485,8 +493,8 @@ vector<CollisionInfo> CollisionManager::CheckCollisionAll(float t)
 
 	// 수렴한 충격량을 다음 프레임에 넘긴다. 새로 만들어 교체하므로 낡은 항목은 저절로 사라진다
 	{
-		unordered_map<unsigned long long, CollisionInfo> currentManifolds;
-		currentManifolds.reserve(abinfos.size());
+		TMap<unsigned long long, CollisionInfo> currentManifolds;
+		currentManifolds.Reserve(static_cast<int>(abinfos.size()));
 
 		for (auto& [ab, info] : abinfos)
 		{
@@ -541,8 +549,8 @@ vector<CollisionInfo> CollisionManager::CheckCollisionAll(float t)
 
 	// 속도가 확정된 뒤, 파괴 전에. 파괴 뒤면 contacts가 지워진 콜라이더를 가리킨다
 	{
-		vector<pair<ACollider*, ACollider*>> contacts;
-		contacts.reserve(abinfos.size());
+		TArray<pair<ACollider*, ACollider*>> contacts;
+		contacts.Reserve(static_cast<int>(abinfos.size()));
 		for (auto& [ab, info] : abinfos)
 		{
 			contacts.push_back(ab);

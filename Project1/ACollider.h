@@ -1,9 +1,12 @@
 #pragma once
 
 #include "AActor.h"
+#include "Sphere.h"
 
 class ACollider : public AActor
 {
+	DECLARE_CLASS(ACollider, AActor)
+
 public:
 	ACollider() {}
 	virtual ~ACollider() {}
@@ -61,19 +64,25 @@ protected:
 
 class ACube : public ACollider
 {
+	DECLARE_CLASS(ACube, ACollider)
+
 public:
 	ACube()
 	{
-		Primitive = EPrimitive::Cube;
+		InitVertexBuffer(cube_vertices);
 	}
 };
 
-class ACircle : public ACollider
+// 기존 ACircle -> 변경 ASphere
+class ASphere : public ACollider
 {
+	DECLARE_CLASS(ASphere, ACollider)
+
 public:
-	ACircle()
+	ASphere()
 	{
 		Primitive = EPrimitive::Sphere;
+		InitVertexBuffer(sphere_vertices);
 	}
 	float GetRadius() const { return transform.Scale.x * 0.5f; }
 	virtual float GetInertia() const override

@@ -2,11 +2,15 @@
 #include "DefaultScene.h"
 #include "Camera.h"
 #include "Renderer.h"
+#include "PickingManager.h"
+#include "SaveLoadManager.h"
 
 
 DefaultScene::DefaultScene()
 {
-	cube = SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), EPrimitive::Cube, { 1.0f, 1.0f, 1.0f });
+	// 기즈모만 단독으로 스폰 (위치: 원점 0, 0, 0 / 크기: 1, 1, 1)
+	//gizmo = new UGizmo(EGizmoAxis::Y, nullptr);
+	cube = FObjectFactory::SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
 }
 
 DefaultScene::~DefaultScene()
@@ -48,17 +52,57 @@ void DefaultScene::Render()
 		cam.SetLocation(FVector(0.0f, 0.0f, -3.0f));
 		cam.SetRotation(FVector(0.0f, 0.0f, 0.0f));
 	}
+	
 	FVector camFwd = cam.GetForward();
 	ImGui::Text("Forward: (%.2f, %.2f, %.2f)", camFwd.x, camFwd.y, camFwd.z);
+	
+	ImGui::Separator();
+	
+	if (ImGui::IsMouseClicked(0)) {
+		// pick 테스트 코드 부분입니다! F5 로 출력 확인해보세요 :)
+		ray = PickingManager::GetInstance().ScreenToWorldRay(ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y,
+			Renderer::GetInstance().ViewportInfo.Width, Renderer::GetInstance().ViewportInfo.Height);
+		UObject * pickedObj = PickingManager::GetInstance().Pick(ray);
+		if (pickedObj) {
+			OutputDebugStringA("hit!");
+		}
+	}
 
+	// 기즈모 디버그 섹션
+	ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.2f, 1.0f), "[ Gizmo Controls ]");
+	if (gizmo)
+	
+	/////////////////////////////
+	//////// SAVE & LOAD ////////
+	/////////////////////////////
+	
+	// Save 버튼
+	ImGui::TextColored(ImVec4(0.3f, 1.0f, 0.8f, 1.0f), "[ Save & Load Scene ]");
+	if (ImGui::Button("Save Scene"))
+	{
+		// "./SceneData/MyScene.Scene" 으로 저장됨
+		SaveLoadManager::SaveScene("./SceneData/MyScene"); 
+	}
+	
+	// Load 버튼
+	if (ImGui::Button("Load Scene"))
+	{
+		// "./SceneData/MyScene.Scene" 에서 로드됨
+		TArray<UObject*> loadedObj = SaveLoadManager::LoadScene("./SceneData/MyScene.Scene");
+
+		// 기존 cube는 이미 삭제됐으므로 일단 무효화
+		cube = nullptr;  
+
+	}
+	
 	ImGui::Separator();
 
-	// 큐브 디버그 섹션
+	// cube 디버그 섹션
 	ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.2f, 1.0f), "[ Cube Controls ]");
 	if (cube)
 	{
 		FVector loc = cube->GetLocation();
-		if (ImGui::DragFloat3("Cube Pos", &loc.x, 0.01f, -5.0f, 5.0f))
+		if (ImGui::DragFloat3("Cube Pos", &loc.x, 0.01f, -10.0f, 10.0f))
 		{
 			cube->SetLocation(loc);
 		}
@@ -89,5 +133,44 @@ void DefaultScene::Render()
 			cube->SetRotation(rot);
 		}
 	}
+
+	// gizmo 디버그 섹션
+	ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.2f, 1.0f), "[ Gizmo Controls ]");
+	if (gizmo)
+	{
+		FVector loc = gizmo->GetLocation();
+		if (ImGui::DragFloat3("Gizmo Pos", &loc.x, 0.01f, -10.0f, 10.0f))
+		{
+			gizmo->SetLocation(loc);
+		}
+
+		FVector scale = gizmo->GetScale();
+		if (ImGui::DragFloat3("Gizmo Scale", &scale.x, 0.01f, 0.01f, 5.0f))
+		{
+			gizmo->SetScale(scale);
+		}
+
+		FVector rot = gizmo->GetRotation();
+		bool bRotChanged = false;
+		if (ImGui::DragFloat("Rotation X", &rot.x, 0.01f, -3.14f, 3.14f))
+		{
+			bRotChanged = true;
+		}
+		if (ImGui::DragFloat("Rotation Y", &rot.y, 0.01f, -3.14f, 3.14f))
+		{
+			bRotChanged = true;
+		}
+		if (ImGui::DragFloat("Rotation Z", &rot.z, 0.01f, -3.14f, 3.14f))
+		{
+			bRotChanged = true;
+		}
+
+		if (bRotChanged)
+		{
+			gizmo->SetRotation(rot);
+		}
+	}
+
 	ImGui::End();
+
 }

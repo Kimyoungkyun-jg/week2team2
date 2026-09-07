@@ -68,7 +68,7 @@ using namespace std;
 #define DEVICE Renderer::GetInstance().GetDevice()
 #define DC Renderer::GetInstance().GetDeviceContext()
 
-#define REDERER Renderer::GetInstance()
+#define RENDERER Renderer::GetInstance()
 
 #define WIN_WIDTH 1920	
 #define WIN_HEIGHT 1080
@@ -76,6 +76,8 @@ using namespace std;
 typedef int int32;
 typedef unsigned int uint32;
 typedef string FString;
+
+#include "Containers.h"
 
 //Scene Header
 #include "Scene.h"
