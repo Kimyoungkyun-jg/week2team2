@@ -22,8 +22,6 @@ public:
 
 	AActor* Pick();
 
-	bool RayIntersectBox(const FRay& ray, const FVector& center, const FVector& scale, float& outDistance) const;
-
 	void Pressed();
 	void Released();
 

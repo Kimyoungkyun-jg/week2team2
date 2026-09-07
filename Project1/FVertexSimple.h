@@ -18,6 +18,9 @@ struct FVertexUV //20byte
 	float u, v;       // UV
 };
 
+
+
+
 // 정점 구조체별 Direct3D 11 Input Layout 메타데이터 템플릿
 template<typename T>
 struct FVertexLayouts;
