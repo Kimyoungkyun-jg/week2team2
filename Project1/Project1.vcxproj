@@ -146,6 +146,7 @@
     <ClInclude Include="AGizmo.h" />
     <ClInclude Include="AGrid.h" />
     <ClInclude Include="AWorldAxises.h" />
+    <ClInclude Include="CircleGenerator.h" />
     <ClInclude Include="ConstBuffer.h" />
     <ClInclude Include="Containers.h" />
     <ClInclude Include="Cube.h" />
@@ -203,6 +204,7 @@
     <ClCompile Include="AGizmo.cpp" />
     <ClCompile Include="AGrid.cpp" />
     <ClCompile Include="AWorldAxises.cpp" />
+    <ClCompile Include="CircleGenerator.cpp" />
     <ClCompile Include="ConstBuffer.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="Intersection.cpp" />

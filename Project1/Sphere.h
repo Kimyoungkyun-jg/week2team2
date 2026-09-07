@@ -2660,10 +2660,6 @@ inline FVertexColor rectangle_vertices[] =
     { -1.0f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f }, // Top-left (blue)
 };
 
-inline FVertexColor circle_vertices[] =
-{
-	{ }
-};
 
 const float INF_DIST = 10000.0f; // 우주 끝까지 거리
 inline FVertexColor worldAxisVertices[] =
