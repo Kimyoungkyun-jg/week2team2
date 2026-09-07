@@ -29,6 +29,11 @@ public:
 	{
 		Targettransform = targettf;
 	}
+
+	void HighlightAxe();
+
+	FLinearColor srcColor;
+
 private:
 	EGizmoAxis Axis = EGizmoAxis::None;
 	Transform* Targettransform = nullptr;
@@ -36,6 +41,7 @@ private:
 	FVector currentAxisDir;
 	FVector dragStartPoint;
 	FVector dragStartActorLocation;
+	bool bSelected = false;
 };
 
 // 씬에 단 하나 생성되어 피킹된 액터에 부착되는 통합 기즈모 액터
@@ -78,6 +84,8 @@ private:
 
 	// 3개의 기즈모 축 액터 (X, Y, Z)
 	TArray<AGizmoAxis*> Axes;
+
+
 };
 
 inline FLinearColor Highlighting(const FLinearColor& color) {
@@ -85,9 +93,10 @@ inline FLinearColor Highlighting(const FLinearColor& color) {
 
 	FLinearColor result = color;
 
-	result.r = color.r + (1.0f - color.r) * t;
-	result.g = color.g + (1.0f - color.g) * t;
-	result.b = color.b + (1.0f - color.b) * t;
+	//백화 방지 색상 상한선 제한
+	result.r = std::clamp(color.r + (1.0f - color.r) * t, 0.0f, 0.85f);
+	result.g = std::clamp(color.g + (1.0f - color.g) * t, 0.0f, 0.85f);
+	result.b = std::clamp(color.b + (1.0f - color.b) * t, 0.0f, 0.85f);
 	result.a = color.a;
 	return result;
 }

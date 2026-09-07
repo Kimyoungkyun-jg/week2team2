@@ -58,6 +58,40 @@ public:
 		}
 	}
 
+	//std::vector 정점 배열 초기화
+	template <typename VertexType>
+	void InitVertexBuffer(const std::vector<VertexType>& vertices)
+	{
+		if (vertices.empty()) return;
+
+		InitVertexBuffer(vertices.data(), sizeof(VertexType), static_cast<UINT>(vertices.size()), RENDERER.GetInputLayout<VertexType>());
+
+		LocalVertices.clear();
+		LocalVertices.reserve(vertices.size());
+
+		for (size_t i = 0; i < vertices.size(); ++i)
+		{
+			LocalVertices.push_back(FVector(vertices[i].x, vertices[i].y, vertices[i].z));
+		}
+	}
+
+	//TArray 정점 배열 초기화
+	template <typename VertexType>
+	void InitVertexBuffer(const TArray<VertexType>& vertices)
+	{
+		if (vertices.empty()) return;
+
+		InitVertexBuffer(vertices.data(), sizeof(VertexType), static_cast<UINT>(vertices.size()), RENDERER.GetInputLayout<VertexType>());
+
+		LocalVertices.clear();
+		LocalVertices.reserve(vertices.size());
+
+		for (size_t i = 0; i < vertices.size(); ++i)
+		{
+			LocalVertices.push_back(FVector(vertices[i].x, vertices[i].y, vertices[i].z));
+		}
+	}
+
 
 	bool bIsPicked(const FRay& worldRay, float& outDistance);
 	bool bIsPicked(const FRay& worldRay)
@@ -70,6 +104,8 @@ public:
 
 	virtual void Pressed() {}
 	virtual void Released() {}
+
+	void SetWorldBuffer();
 
 	bool isInvalid = false;
 

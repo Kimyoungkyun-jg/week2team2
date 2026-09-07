@@ -25,3 +25,9 @@ enum class EGizmoMode
 	Rotation,
 	Scale
 };
+
+enum class EGridType
+{
+	Line,
+	Triangle
+};

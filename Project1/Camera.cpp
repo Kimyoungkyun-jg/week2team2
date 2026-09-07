@@ -6,7 +6,9 @@
 
 Camera::Camera()
 {
-	transform.SetLocation(FVector(0.0f, 0.0f, -3.0f));
+	//기본 카메라 위치 및 회전 설정
+	transform.SetLocation(FVector(3.336f, 3.282f, -4.715f));
+	transform.SetRotation(FVector(0.391f, -0.468f, 0.0f));
 
 	vpBuffer = new MatrixBuffer();
 }

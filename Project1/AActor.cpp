@@ -80,13 +80,17 @@ bool AActor::bIsPicked(const FRay& worldRay, float& outDistance)
 	return false;
 }
 
+void AActor::SetWorldBuffer()
+{
+	worldBuffer->SetMat(transform.WorldMat);
+	worldBuffer->SetVSBuffer(0);
+}
+
 void AActor::Render()
 {
 	UObject::Render();
 
-	worldBuffer->SetMat(transform.WorldMat);
-	worldBuffer->SetVSBuffer(0);
-
+	SetWorldBuffer();
 	//버텍스 버퍼 바인딩 및 렌더링
 	if (vertexbuffer != nullptr && numVertices > 0)
 	{

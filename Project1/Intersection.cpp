@@ -12,7 +12,7 @@ bool RayIntersectTriangle(const FVector& rayOrigin, const FVector& rayDirection,
 	FVector T = rayOrigin - V0;
 
 	FVector P = FVector::Cross3D(D, E2);
-	float det = E1.DotProduct(P);
+	float det = E1.Dot(P);
 	FVector Q = FVector::Cross3D(T, E1);
 
 	if (fabs(det) < 0.000001f) {
@@ -21,13 +21,13 @@ bool RayIntersectTriangle(const FVector& rayOrigin, const FVector& rayDirection,
 	}
 
 
-	float u = T.DotProduct(P) / det;
+	float u = T.Dot(P) / det;
 	if (u < 0 || u > 1) return false;
 
-	float v = D.DotProduct(Q) / det;
+	float v = D.Dot(Q) / det;
 	if (v < 0 || u + v > 1) return false;
 
-	float t = E2.DotProduct(Q) / det;
+	float t = E2.Dot(Q) / det;
 	if (t < 0.0f) return false;
 
 	dist = t;

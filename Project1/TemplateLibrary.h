@@ -57,6 +57,7 @@ public:
 		static_assert(is_base_of_v<UObject, T>);
 
 		T* Obj = new T(std::forward<Args>(args)...);
+		Obj->SetUUID(UEngineStatics::GetUUID());
 		ObjectManager::GetInstance().AllObjects.push_back(Obj);
 
 		ClassInfo* info = GetStaticClassInfo<T>();
@@ -79,6 +80,15 @@ public:
 		SpawnedActor->SetLocation(Location);
 
 		return static_cast<T*>(SpawnedActor);
+	}
+
+	//생성자 인자만 바로 넘겨서 기본 위치에 스폰하는 오버로딩
+	template<class T, typename FirstArg, typename... RestArgs>
+	requires (!std::is_same_v<std::decay_t<FirstArg>, FVector>)
+	static inline T* SpawnActor(FirstArg&& first, RestArgs&&... rest)
+	{
+		return SpawnActor<T>(FVector(0.0f, 0.0f, 0.0f), FVector(1.0f, 1.0f, 1.0f),
+			std::forward<FirstArg>(first), std::forward<RestArgs>(rest)...);
 	}
 
 	template<class T, typename... Args>

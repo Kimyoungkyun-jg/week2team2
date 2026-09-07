@@ -12,11 +12,15 @@ DefaultScene::DefaultScene()
 	cube = FObjectFactory::SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
 	cube->SetColor(FLinearColor::Blue);
 
-	cube2 = FObjectFactory::SpawnColider<ACube>(FVector(10.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
+	cube2 = FObjectFactory::SpawnColider<ACube>(FVector(5.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
 	cube2->SetColor(FLinearColor::Red);
 
-	sphere = FObjectFactory::SpawnActor<ASphere>(FVector(-10.0f, 0.0f, 0.0f));
+	sphere = FObjectFactory::SpawnActor<ASphere>(FVector(-5.0f, 0.0f, 0.0f));
 	sphere->SetColor(FLinearColor::Green);
+
+	worldAxises = FObjectFactory::SpawnActor<AWorldAxises>();
+
+	grid = FObjectFactory::SpawnActor<AGrid>(EGridType::Triangle);
 
 	gizmo = FObjectFactory::SpawnActor<AGizmo>();
 }
@@ -60,10 +64,10 @@ void DefaultScene::Render()
 	ImGui::SliderFloat("Move Speed", &cam.GetSpeedRef(), 0.5f, 20.0f, "%.1f");
 	ImGui::SliderFloat("Rot Speed", &cam.GetRotationSpeedRef(), 0.01f, 0.5f, "%.3f");
 
-	if (ImGui::Button("Reset Camera (0, 0, -3)"))
+	if (ImGui::Button("Reset Camera"))
 	{
-		cam.SetLocation(FVector(0.0f, 0.0f, -3.0f));
-		cam.SetRotation(FVector(0.0f, 0.0f, 0.0f));
+		cam.SetLocation(FVector(3.336f, 3.282f, -4.715f));
+		cam.SetRotation(FVector(0.391f, -0.468f, 0.0f));
 	}
 	
 	FVector camFwd = cam.GetForward();

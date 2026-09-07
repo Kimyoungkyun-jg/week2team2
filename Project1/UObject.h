@@ -50,12 +50,13 @@ struct ClassInfo //클래스 정보를 담는 메타 데이터 클래스
 class UObject
 {
 public:
-	UObject() : UUID(UEngineStatics::GetUUID()){
+	UObject() : UUID(0) {
 		
 	}
 	virtual ~UObject() {}
 
 	uint32 GetID() const { return UUID; }
+	void SetUUID(uint32 inUUID) { UUID = inUUID; }
 
 	virtual string_view GetObjClassName() const { return "UObject"; } //자식들이 매크로를 통해 오버라이딩해야됨
 	virtual string_view GetSuperClassName() const { return "None"; } 

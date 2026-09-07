@@ -42,7 +42,7 @@ void Renderer::ReleaseColorBuffer()
 	}
 }
 
-void Renderer::SetCustomColor(const FLinearColor& color)
+void Renderer::SetCustomColor(const FLinearColor& color = {0,0,0,0})
 {
 	if (CustomColorBuffer)
 	{

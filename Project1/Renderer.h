@@ -58,7 +58,8 @@ public:
 
 	// values
 	D3D11_VIEWPORT ViewportInfo;
-	FLOAT ClearColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f };
+	//배경 클리어 색상
+	FLOAT ClearColor[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
 	float wAspectRatio;
 	float GetAspectRatio() { return wAspectRatio; }
 
@@ -122,6 +123,9 @@ public:
 		}
 		DeviceContext->VSSetShader(SimpleVertexShader, nullptr, 0);
 		DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
+
+		//기본 상태: 커스텀 컬러 버퍼 미사용(정점 컬러 우선)
+		SetCustomColor({ 0.0f, 0.0f, 0.0f, 0.0f });
 	}
 
 	// [핵심] 타입만 넘기면 FVertexTraits를 통해 자동으로 InputLayout을 생성하고 TMap에 등록하는 템플릿 함수

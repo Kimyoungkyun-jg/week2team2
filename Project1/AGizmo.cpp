@@ -25,6 +25,8 @@ AGizmoAxis::AGizmoAxis(EGizmoAxis inAxis)
 		Color = FLinearColor::White;
 		break;
 	}
+
+	srcColor = Color;
 }
 
 AGizmoAxis::~AGizmoAxis()
@@ -53,6 +55,17 @@ void AGizmoAxis::Update(float DeltaTime, const Transform& parentTransform)
 	}
 
 	AActor::Update(DeltaTime);
+
+	//마우스 호버 또는 피킹 선택 시 하이라이트 처리
+	FRay ray = PICK.ScreenToWorldRay();
+	if (bSelected || bIsPicked(ray))
+	{
+		HighlightAxe();
+	}
+	else
+	{
+		SetColor(srcColor);
+	}
 }
 
 void AGizmoAxis::Render()
@@ -69,8 +82,8 @@ void AGizmoAxis::Render()
 	worldBuffer->SetMat(transform.WorldMat);
 	worldBuffer->SetVSBuffer(0);
 
-	FLinearColor finalColor = Highlighting(Color);
-	RENDERER.SetCustomColor(finalColor);
+
+	RENDERER.SetCustomColor(Color);
 	DC->Draw(numVertices, 0);
 
 	// 기본 깊이 상태로 복원
@@ -114,6 +127,11 @@ void AGizmoAxis::Picked()
 		dragStartPoint = ray.Origin + ray.Direction * t;
 		dragStartActorLocation = Targettransform->GetLocation();
 	}
+
+
+	//피킹 선택 상태 활성화
+	bSelected = true;
+	HighlightAxe();
 }
 
 void AGizmoAxis::Pressed()
@@ -134,10 +152,19 @@ void AGizmoAxis::Pressed()
 		//타겟 위치 갱신 및 월드 행렬 업데이트
 		Targettransform->SetLocation(dragStartActorLocation + currentAxisDir * moveDist);
 	}
+
 }
 
 void AGizmoAxis::Released()
 {
+	//피킹 선택 상태 해제
+	bSelected = false;
+	SetColor(srcColor);
+}
+
+void AGizmoAxis::HighlightAxe()
+{
+	SetColor(Highlighting(srcColor));
 }
 
 
