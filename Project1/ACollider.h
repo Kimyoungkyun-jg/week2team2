@@ -145,8 +145,8 @@ class ACircle : public ACollider
 	public:
 	ACircle()
 	{
-		TArray<FVertexColor> circleVerts = CircleGenerator::MakeCircle(32, 1.0f, 1.0f, 0.0f, 1.0f);
-		InitVertexBuffer(rectangle_vertices);
+		TArray<FVertexColor> circle_vertices = CircleGenerator::MakeCircle(32, 1.0f, 1.0f, 0.0f, 1.0f);
+		InitVertexBuffer(circle_vertices);
 		Primitive = EPrimitive::Circle;
 	}
 };
