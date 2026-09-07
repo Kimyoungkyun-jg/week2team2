@@ -18,10 +18,13 @@ DefaultScene::DefaultScene()
 	sphere = FObjectFactory::SpawnActor<ASphere>(FVector(-5.0f, 0.0f, 0.0f));
 	sphere->SetColor(FLinearColor::Green);
 
+	// World Map Axis 생성
 	worldAxises = FObjectFactory::SpawnActor<AWorldAxises>();
 
+	// Grid 생성
 	grid = FObjectFactory::SpawnActor<AGrid>(EGridType::Triangle);
 
+	// Gizmo 생성
 	gizmo = FObjectFactory::SpawnActor<AGizmo>();
 }
 
@@ -141,14 +144,15 @@ void DefaultScene::Render()
 
 	ImGui::Separator();
 
-	// Save 버튼
+	// Collider만 삭제 (Grid, World Axis Gizmo 삭제되지 않도록)
 	ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.8f, 1.0f), "[ Save & Load Scene ]");
 	if (ImGui::Button("New Scene"))
 	{
-		ObjectManager::GetInstance().DestroyAllActors();
-
+		ObjectManager::GetInstance().DestroyAllColliders();
+		
 	}
 	
+	// Save 버튼
 	if (ImGui::Button("Save Scene"))
 	{
 		// "./SceneData/MyScene.Scene" 으로 저장됨
@@ -158,22 +162,18 @@ void DefaultScene::Render()
 	// Load 버튼
 	if (ImGui::Button("Load Scene"))
 	{
+		// World Map Axis 생성
+		worldAxises = FObjectFactory::SpawnActor<AWorldAxises>();
+
+		// Grid 생성
+		grid = FObjectFactory::SpawnActor<AGrid>(EGridType::Triangle);
+
+		// Gizmo 생성
+		gizmo = FObjectFactory::SpawnActor<AGizmo>();
+
 		// "./SceneData/MyScene.Scene" 에서 로드됨
 		TArray<UObject*> loadedObj = SaveLoadManager::LoadScene("./SceneData/MyScene.Scene");
-		
-		// 기존 cube는 이미 삭제됐으므로 일단 무효화
-		cube = nullptr;
 
-		for (UObject* obj : loadedObj)
-		{
-			// Todo: 객체 여러 개 소환되면 객체 type (Sphere, Cube 별로 Load)
-			// 현재는 객체가 하나라는 가정 하에, 혹은 여러 개 중 첫번째 것이 cube인 경우만 구현함.
-			if (ACube* c = dynamic_cast<ACube*>(obj) )
-			{
-				cube = c;
-				break;
-			}
-		}
 	}
 	
 	ImGui::Separator();

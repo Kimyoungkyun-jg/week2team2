@@ -2,7 +2,8 @@
 
 class ASphere : public AActor
 {
-	DECLARE_CLASS(ASphere, AActor);
+	// ASphere 부모 AActor -> ACollider로 변경
+	DECLARE_CLASS(ASphere, ACollider);
 
 public:
 	ASphere() {
