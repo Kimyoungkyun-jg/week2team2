@@ -1,23 +1,23 @@
 #pragma once
-#include <string>
-#include <UObject.h>
+#include "Containers.h"
+#include <functional>
+#include <unordered_map>
 
-struct ObjData
-{
-    int version;
-    int next_uuid;
-    UObject obj;
-}
-
-
+class UObject;
+class AActor;
 class SaveLoadManager
 {
 public:
-    void SaveScene(const FString& filePath);
-    void LoadScene(const FString& filePath);
+    // utility class 이므로 생성자 금지
+    SaveLoadManager() = delete;
+    ~SaveLoadManager() = delete;
+
+    static void SaveScene(const FString& path);
+    static TArray<UObject*> LoadScene(const FString& path);
 
 private:
-    std::string filePath;
-
+    // <location, ratation, scale, type> 을 인자로 받아서 AACtor*를 반환하는 공통타입 함수
+    using CreatorFunc = std::function<AActor*(FVector, FVector, FVector, EPrimitive)>;
+    static TMap<string, CreatorFunc>& GetActorCreatorRegistry();
 
 };

@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "Renderer.h"
 #include "PickingManager.h"
+#include "SaveLoadManager.h"
 
 
 DefaultScene::DefaultScene()
@@ -51,9 +52,10 @@ void DefaultScene::Render()
 		cam.SetLocation(FVector(0.0f, 0.0f, -3.0f));
 		cam.SetRotation(FVector(0.0f, 0.0f, 0.0f));
 	}
+	
 	FVector camFwd = cam.GetForward();
 	ImGui::Text("Forward: (%.2f, %.2f, %.2f)", camFwd.x, camFwd.y, camFwd.z);
-
+	
 	ImGui::Separator();
 	
 	if (ImGui::IsMouseClicked(0)) {
@@ -67,6 +69,68 @@ void DefaultScene::Render()
 	}
 
 	// 기즈모 디버그 섹션
+	ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.2f, 1.0f), "[ Gizmo Controls ]");
+	if (gizmo)
+	
+	/////////////////////////////
+	//////// SAVE & LOAD ////////
+	/////////////////////////////
+	
+	// Save 버튼
+	ImGui::TextColored(ImVec4(0.3f, 1.0f, 0.8f, 1.0f), "[ Save & Load Scene ]");
+	if (ImGui::Button("Save Scene"))
+	{
+		// "./SceneData/MyScene.Scene" 으로 저장됨
+		SaveLoadManager::SaveScene("./SceneData/MyScene"); 
+	}
+	
+	// Load 버튼
+	if (ImGui::Button("Load Scene"))
+	{
+		// "./SceneData/MyScene.Scene" 에서 로드됨
+		TArray<UObject*> loadedObj = SaveLoadManager::LoadScene("./SceneData/MyScene.Scene");
+	}
+	
+	ImGui::Separator();
+
+	// cube 디버그 섹션
+	ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.2f, 1.0f), "[ Cube Controls ]");
+	if (cube)
+	{
+		FVector loc = cube->GetLocation();
+		if (ImGui::DragFloat3("Cube Pos", &loc.x, 0.01f, -10.0f, 10.0f))
+		{
+			cube->SetLocation(loc);
+		}
+
+		FVector scale = cube->GetScale();
+		if (ImGui::DragFloat3("Cube Scale", &scale.x, 0.01f, 0.01f, 5.0f))
+		{
+			cube->SetScale(scale);
+		}
+
+		FVector rot = cube->GetRotation();
+		bool bRotChanged = false;
+		if (ImGui::DragFloat("Rotation X", &rot.x, 0.01f, -3.14f, 3.14f))
+		{
+			bRotChanged = true;
+		}
+		if (ImGui::DragFloat("Rotation Y", &rot.y, 0.01f, -3.14f, 3.14f))
+		{
+			bRotChanged = true;
+		}
+		if (ImGui::DragFloat("Rotation Z", &rot.z, 0.01f, -3.14f, 3.14f))
+		{
+			bRotChanged = true;
+		}
+
+		if (bRotChanged)
+		{
+			cube->SetRotation(rot);
+		}
+	}
+
+	// gizmo 디버그 섹션
 	ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.2f, 1.0f), "[ Gizmo Controls ]");
 	if (gizmo)
 	{

@@ -141,7 +141,11 @@
     <ClInclude Include="UGizmo.h" />
     <ClInclude Include="ConstBuffer.h" />
     <ClInclude Include="Containers.h" />
+    <ClInclude Include="Cube.h" />
+    <ClInclude Include="FLinearColor.h" />
     <ClInclude Include="GlobalBuffer.h" />
+    <ClInclude Include="SaveLoadManager.h" />
+    <ClInclude Include="USphere.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="PickingManager.h" />
   </ItemGroup>
@@ -186,13 +190,27 @@
     </ClCompile>
     <ClCompile Include="UGizmo.cpp" />
     <ClCompile Include="ConstBuffer.cpp" />
+    <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="SaveLoadManager.cpp" />
+    <ClCompile Include="USphere.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="PickingManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Project1\ShaderW0.hlsl" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CubeVertice.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets" Condition="Exists('packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>이 프로젝트는 이 컴퓨터에 없는 NuGet 패키지를 참조합니다. 해당 패키지를 다운로드하려면 NuGet 패키지 복원을 사용하십시오. 자세한 내용은 http://go.microsoft.com/fwlink/?LinkID=322105를 참조하십시오. 누락된 파일은 {0}입니다.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets'))" />
+  </Target>
 </Project>
