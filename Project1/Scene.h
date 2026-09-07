@@ -4,6 +4,7 @@
 #include "TemplateLibrary.h"
 #include "Camera.h"
 #include "Renderer.h"
+#include "PickingManager.h"
 
 struct FFadeOverlay
 {
@@ -34,6 +35,8 @@ public:
                 objects[i]->Update(deltaTime);
             }
         }
+
+        PICK.Update();//pickmanager
     }
 
     virtual void Render()

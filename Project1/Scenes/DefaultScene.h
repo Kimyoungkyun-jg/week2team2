@@ -2,8 +2,9 @@
 #include "Scene.h"
 #include "ACollider.h"
 #include "AGizmo.h"
+#include "AWorldAxises.h"
 #include "PickingManager.h"
-#include "ASphere.h"
+#include "AGrid.h"
 
 class DefaultScene : public Scene
 {
@@ -16,11 +17,14 @@ public:
 	virtual void Render() override;
 
 	ACube* cube = nullptr;
+	ACube* cube2 = nullptr;
 	ASphere* sphere = nullptr;
 	AGizmo* gizmo = nullptr;
 
-
+	AWorldAxises* worldAxises;
 
 	FRay ray;
+
+	AGrid* grid;
 };
 

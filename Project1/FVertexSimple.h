@@ -1,18 +1,18 @@
 #pragma once
 #include <d3d11.h>
 
-struct FVertexSimple
+struct FVertexSimple //12byte
 {
 	float x, y, z;    // Position
 };
 
-struct FVertexColor
+struct FVertexColor	//28byte
 {
 	float x, y, z;    // Position
 	float r, g, b, a; // Color
 };
-
-struct FVertexUV
+ 
+struct FVertexUV //20byte
 {
 	float x, y, z;    // Position
 	float u, v;       // UV

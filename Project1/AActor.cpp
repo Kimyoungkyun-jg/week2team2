@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "AActor.h"
 #include "Renderer.h"
-
+#include "PickingManager.h"
+#include "Intersection.h"
 
 AActor::AActor()
 {
@@ -11,6 +12,8 @@ AActor::AActor()
 AActor::~AActor()
 {
 	delete worldBuffer;
+	worldBuffer = nullptr;
+
 	if (vertexbuffer)
 	{
 		delete vertexbuffer;
@@ -29,20 +32,66 @@ void AActor::InitVertexBuffer(const void* vertices, UINT stride, UINT inNumVerti
 		vertexbuffer = nullptr;
 	}
 
+
 	if (vertices && inNumVertices > 0)
 	{
 		vertexbuffer = new VertexBuffer(vertices, stride, inNumVertices);
 	}
 }
 
+bool AActor::bIsPicked(const FRay& worldRay, float& outDistance)
+{
+	if (LocalVertices.size() < 3) return false;
+
+	if (vertexbuffer != nullptr && numVertices > 0)
+	{
+		FMatrix invWorld = transform.WorldMat.InverseAffine();
+		FVector localOrigin = TransformPoint(worldRay.Origin, invWorld);
+		FVector localDir = TransformDirection(worldRay.Direction, invWorld);
+		localDir.Normalize();
+
+		float closestDist = FLT_MAX;
+		bool bHit = false;
+
+		//삼각형 충돌 검사
+		for (size_t i = 0; i + 2 < LocalVertices.size(); i += 3)
+		{
+
+			float dist = 0.0f;
+			if (RayIntersectTriangle(localOrigin, localDir, LocalVertices[i], LocalVertices[i+1], LocalVertices[i+2], dist))
+			{
+				if (dist > 0.0f && dist < closestDist)
+				{
+					closestDist = dist;
+					bHit = true;
+				}
+			}
+		}
+
+		if (bHit)
+		{
+			//월드 거리 보정
+			outDistance = closestDist * transform.Scale.x;
+			return true;
+		}
+		return false;
+	}
+
+	return false;
+}
+
+void AActor::SetWorldBuffer()
+{
+	worldBuffer->SetMat(transform.WorldMat);
+	worldBuffer->SetVSBuffer(0);
+}
+
 void AActor::Render()
 {
 	UObject::Render();
 
-	worldBuffer->SetMat(transform.WorldMat);
-	worldBuffer->SetVSBuffer(0);
-
-	// 자체 버텍스 버퍼가 있으면 저장된 InputLayout으로 자동 바인딩 후 렌더링
+	SetWorldBuffer();
+	//버텍스 버퍼 바인딩 및 렌더링
 	if (vertexbuffer != nullptr && numVertices > 0)
 	{
 		OutputDebugStringA("[AActor] DRAW ENTER\n");

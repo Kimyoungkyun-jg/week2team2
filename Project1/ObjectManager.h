@@ -66,7 +66,7 @@ public:
 		AllObjects.clear();
 	}
 
-	void DistroyAllActors()
+	void DestroyAllActors()
 	{
 		for (int32 i = static_cast<int32>(AllObjects.size()) - 1; i >= 0; --i)
 		{

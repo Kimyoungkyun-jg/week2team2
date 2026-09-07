@@ -1,100 +1,275 @@
 #include "pch.h"
 #include "AGizmo.h"
 #include "Renderer.h"
+#include "PickingManager.h"
 
-AGizmo::AGizmo(EGizmoAxis Axis) //기즈모는 기본이 위를 바라보는 모양
+
+AGizmoAxis::AGizmoAxis(EGizmoAxis inAxis)
+	: Axis(inAxis)
 {
-	// 기본 화살표 정점으로 버텍스 버퍼 초기화
+	// AActor의 템플릿 InitVertexBuffer 호출 -> GPU 버퍼 생성 및 LocalVertices 자동 저장!
 	InitVertexBuffer(arrow_vertices);
-	SelectedAxis = Axis;
-}
+	Primitive = EPrimitive::Gizmo;
 
-AGizmo::~AGizmo()
-{
-}
-
-
-void AGizmo::Update(float DeltaTime)
-{
-	AActor::Update(DeltaTime);
-
-	// 타겟 액터가 존재하면 기즈모 위치를 타겟 위치로 동기화
-	if (TargetActor)
+	switch (Axis)
 	{
-		transform.SetLocation(TargetActor->GetLocation());
-	}
-}
-
-void AGizmo::Render()
-{
-	OutputDebugStringA("this is Gizmo");
-
-	UObject::Render();
-	// 버텍스 버퍼가 없으면 렌더링하지 않음
-	if (vertexbuffer == nullptr || numVertices == 0)
-		return;
-
-	// 저장된 InputLayout으로 셰이더 및 레이아웃 바인딩
-	RENDERER.PrepareShader(inputLayout);
-
-	//버텍스 버퍼 바인딩
-	vertexbuffer->IASet();
-
-	switch (SelectedAxis)
-	{
-	case EGizmoAxis::None:
-		break;
 	case EGizmoAxis::X:
-		transform.SetRotation({ 0.0f,0.0f, -DirectX::XM_PIDIV2 });
 		Color = FLinearColor::Red;
 		break;
 	case EGizmoAxis::Y:
 		Color = FLinearColor::Green;
 		break;
 	case EGizmoAxis::Z:
-		transform.SetRotation({ DirectX::XM_PIDIV2 ,0.0f, 0.0f});
 		Color = FLinearColor::Blue;
 		break;
-	case EGizmoAxis::All:
+	default:
+		Color = FLinearColor::White;
+		break;
+	}
+
+	srcColor = Color;
+}
+
+AGizmoAxis::~AGizmoAxis()
+{
+	//vertexbuffer와 worldBuffer는 부모인 AActor::~AActor()가 안전하게 해제함
+}
+
+void AGizmoAxis::Update(float DeltaTime, const Transform& parentTransform)
+{
+	transform.Location = parentTransform.Location;
+	transform.Scale = parentTransform.Scale;
+
+	switch (Axis)
+	{
+	case EGizmoAxis::X:
+		transform.SetRotation({ 0.0f, 0.0f, -DirectX::XM_PIDIV2 });
+		break;
+	case EGizmoAxis::Y:
+		transform.SetRotation({ 0.0f, 0.0f, 0.0f });
+		break;
+	case EGizmoAxis::Z:
+		transform.SetRotation({ DirectX::XM_PIDIV2, 0.0f, 0.0f });
 		break;
 	default:
 		break;
 	}
 
+	AActor::Update(DeltaTime);
+
+	//마우스 호버 또는 피킹 선택 시 하이라이트 처리
+	FRay ray = PICK.ScreenToWorldRay();
+	if (bSelected || bIsPicked(ray))
+	{
+		HighlightAxe();
+	}
+	else
+	{
+		SetColor(srcColor);
+	}
+}
+
+void AGizmoAxis::Render()
+{
+	if (vertexbuffer == nullptr || numVertices == 0)
+		return;
+
+	// 깊이 판정 비활성화 (물체에 가려지지 않고 항상 최상단 렌더링)
+	RENDERER.SetGizmoDepthState();
+
+	RENDERER.PrepareShader(inputLayout);
+	vertexbuffer->IASet();
+
 	worldBuffer->SetMat(transform.WorldMat);
 	worldBuffer->SetVSBuffer(0);
 
+
 	RENDERER.SetCustomColor(Color);
-	
 	DC->Draw(numVertices, 0);
+
+	// 기본 깊이 상태로 복원
+	RENDERER.SetDefaultDepthState();
 }
 
-void AGizmo::RenderAxis(const FMatrix& localRotation, EGizmoAxis axisType)
+
+void AGizmoAxis::Picked()
 {
-	//FMatrix S = FMatrix::Scale(transform.Scale * GizmoScale);
-	//FMatrix T = FMatrix::Translation(transform.Location);
+	if (!Targettransform) return;
 
-	//FMatrix axisWorld = localRotation * S * T;
+	//축 방향 결정
+	switch (Axis)
+	{
+	case EGizmoAxis::X:
+		currentAxisDir = TransformDirection({ 1,0,0 }, Targettransform->WorldMat).Normalized();
+		break;
+	case EGizmoAxis::Y:
+		currentAxisDir = TransformDirection({ 0,1,0 }, Targettransform->WorldMat).Normalized();
+		break;
+	case EGizmoAxis::Z:
+		currentAxisDir = TransformDirection({ 0,0,1 }, Targettransform->WorldMat).Normalized();
+		break;
+	default:
+		currentAxisDir = FVector(0, 0, 0);
+		break;
+	}
 
-	//FLinearColor axisColor = FLinearColor::White;
-	//if (axisType == EGizmoAxis::X) axisColor = FLinearColor::Red;
-	//else if (axisType == EGizmoAxis::Y) axisColor = FLinearColor::Green;
-	//else if (axisType == EGizmoAxis::Z) axisColor = FLinearColor::Blue;
+	//평면 법선 벡터 계산
+	FVector cameraDir = CAMERA.GetForward();
+	FVector A = FVector::Cross3D(currentAxisDir, cameraDir).Normalized();
+	planeNormal = FVector::Cross3D(A, currentAxisDir).Normalized();
 
-	//worldBuffer->SetMat(axisWorld);
-	//worldBuffer->SetVSBuffer(0);
+	//드래그 시작 지점 및 타겟 초기 위치 저장
+	FRay ray = PICK.ScreenToWorldRay();
 
-	//REDERER.SetCustomColor(axisColor);
+	float denom = planeNormal.Dot(ray.Direction);
+	if (fabsf(denom) > 1e-6f)
+	{
+		float t = (Targettransform->GetLocation() - ray.Origin).Dot(planeNormal) / denom;
+		dragStartPoint = ray.Origin + ray.Direction * t;
+		dragStartActorLocation = Targettransform->GetLocation();
+	}
 
-	//DC->Draw(numVertices, 0);
+
+	//피킹 선택 상태 활성화
+	bSelected = true;
+	HighlightAxe();
 }
 
-void AGizmo::Pressed(FVector _Location)
+void AGizmoAxis::Pressed()
 {
-	// 마우스 클릭 시 피킹/축 선택 처리 로직
+	if (!Targettransform) return;
+
+	FRay ray = PICK.ScreenToWorldRay();
+	float denom = planeNormal.Dot(ray.Direction);
+	if (fabsf(denom) > 1e-6f)
+	{
+		float t = (dragStartPoint - ray.Origin).Dot(planeNormal) / denom;
+		FVector currentHitPoint = ray.Origin + ray.Direction * t;
+
+		//이동량 계산 및 축 투영
+		FVector delta = currentHitPoint - dragStartPoint;
+		float moveDist = delta.Dot(currentAxisDir);
+
+		//타겟 위치 갱신 및 월드 행렬 업데이트
+		Targettransform->SetLocation(dragStartActorLocation + currentAxisDir * moveDist);
+	}
+
 }
 
-void AGizmo::Released(FVector _Location)
+void AGizmoAxis::Released()
 {
-	SelectedAxis = EGizmoAxis::None;
+	//피킹 선택 상태 해제
+	bSelected = false;
+	SetColor(srcColor);
+}
+
+void AGizmoAxis::HighlightAxe()
+{
+	SetColor(Highlighting(srcColor));
+}
+
+
+
+
+
+
+AGizmo::AGizmo()
+{
+	//메인 기즈모 인스턴스 등록
+	MainGizmo = this;
+	Primitive = EPrimitive::Gizmo;
+
+	//기즈모 축 액터 생성
+	Axes.push_back(new AGizmoAxis(EGizmoAxis::X));
+	Axes.push_back(new AGizmoAxis(EGizmoAxis::Y));
+	Axes.push_back(new AGizmoAxis(EGizmoAxis::Z));
+}
+
+AGizmo::~AGizmo()
+{
+	//메인 기즈모 인스턴스 해제
+	if (MainGizmo == this)
+	{
+		MainGizmo = nullptr;
+	}
+
+	for (auto* axis : Axes)
+	{
+		delete axis;
+	}
+	Axes.clear();
+}
+
+void AGizmo::SetTargetActor(AActor* inTarget)
+{
+	TargetActor = inTarget;
+	if (TargetActor)
+	{
+		for (auto& it : Axes)
+		{
+			it->SetTargetActor(&inTarget->GetTransform());
+		}
+
+		transform.SetLocation(TargetActor->GetLocation());
+		transform.Scale = TargetActor->GetScale() * 0.7f;
+	}
+}
+
+void AGizmo::Update(float DeltaTime)
+{
+	AActor::Update(DeltaTime);
+
+	// 피킹된 타겟 액터가 있을 때만 위치 동기화 및 3개 축 업데이트
+	if (TargetActor)
+	{
+		transform.SetLocation(TargetActor->GetLocation());
+		for (auto* axis : Axes)
+		{
+			axis->Update(DeltaTime, transform);
+		}
+	}
+}
+
+void AGizmo::Render()
+{
+	//타겟 액터 없을 시 스킵
+	if (!TargetActor)
+		return;
+
+	//기즈모 축 렌더링
+	for (auto* axis : Axes)
+	{
+		axis->Render();
+	}
+}
+
+EGizmoAxis AGizmo::PickAxis(const FRay& ray, float& outDist)
+{
+	if (!TargetActor)
+		return EGizmoAxis::None;
+
+	EGizmoAxis hitAxis = EGizmoAxis::None;
+	float closestDist = FLT_MAX;
+
+	//축 피킹 검사
+	for (auto* axis : Axes)
+	{
+		float dist = 0.0f;
+		if (axis->bIsPicked(ray, dist))
+		{
+			if (dist > 0.0f && dist < closestDist)
+			{
+				closestDist = dist;
+				hitAxis = axis->GetAxis();
+			}
+		}
+	}
+
+	if (hitAxis != EGizmoAxis::None)
+	{
+		outDist = closestDist;
+		SelectedAxis = hitAxis;
+	}
+
+	return hitAxis;
 }
