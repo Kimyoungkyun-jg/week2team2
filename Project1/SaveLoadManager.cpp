@@ -8,13 +8,17 @@
 #include <fstream> // file input stream
 #include <filesystem>
 
+// Version 상수 처리 
+constexpr int CURRENT_SCENE_VERSION = 1;
+
 
 // 1. vs - 솔루션탐색기 - 프로젝트 우클릭 - NuGet 패키지 관리
 // 2. nlohmann.json 검색 후 설치
 // 추후 json.hpp 파일을 다운로드 후 ThirdParty 폴더에 업로드해 놓을 예정 (설치 불필요하도록)
 #include <nlohmann/json.hpp>
 
-using json = nlohmann::json;
+// 알파벳 순서가 아닌 input 순서로 push하기 위함
+using json = nlohmann::ordered_json;
 
 // 타입 이름 String으로 받아서 Spawn
 TMap<string, SaveLoadManager::CreatorFunc>& SaveLoadManager::GetActorCreatorRegistry()
@@ -25,7 +29,7 @@ TMap<string, SaveLoadManager::CreatorFunc>& SaveLoadManager::GetActorCreatorRegi
     if (registry.empty())
     {
         // "ACube" -> 상자 생성
-        registry["ACube"] = [](FVector loc, FVector rot, FVector sc, EPrimitive prim) -> AActor *
+        registry["Cube"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
         {
             AActor* actor = FObjectFactory::SpawnColider<ACube>(loc, sc);
             actor->SetRotation(rot);
@@ -33,7 +37,7 @@ TMap<string, SaveLoadManager::CreatorFunc>& SaveLoadManager::GetActorCreatorRegi
         };
         
         // "ASphere" -> 구 생성
-        registry["ASphere"] = [](FVector loc, FVector rot, FVector sc, EPrimitive prim) -> AActor *
+        registry["Sphere"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
         {
             AActor* actor = FObjectFactory::SpawnColider<ASphere>(loc, sc);
             actor->SetRotation(rot);
@@ -44,18 +48,35 @@ TMap<string, SaveLoadManager::CreatorFunc>& SaveLoadManager::GetActorCreatorRegi
     return registry;
 }
 
+// EPrimitive (0, 1 ...) -> Str (Sphere, Cube ...)
+string SaveLoadManager::EPrimitiveToStr(EPrimitive prim)
+{
+    switch (prim)
+    {
+        case EPrimitive::Cube : return "Cube";
+        case EPrimitive::Sphere : return "Sphere";
+        default : return "None";
+    }
+}
+
+////////////////////////////
+/////////// SAVE ///////////
+////////////////////////////
 
 // 데이터 저장 - 직렬화(객체 -> json)
 void SaveLoadManager::SaveScene(const FString& path)
 {
     json sceneJson;
-    json objectsJson = json::array(); // push_back으로 데이터 추가하기 위함
 
-    // DEBUG
-    OutputDebugStringA(("Current working dir: " + std::filesystem::current_path().string() + "\n").c_str());
+    sceneJson["Version"] = CURRENT_SCENE_VERSION;
+    sceneJson["NextUUID"] = UEngineStatics::PeekUUID() - 1;
     
-    sceneJson["Version"] = 1;
-    sceneJson["NextUUID"] = UEngineStatics::GetUUID();
+    // DEBUG
+    // OutputDebugStringA(("Current working dir: " + std::filesystem::current_path().string() + "\n").c_str());
+    
+    json objectsJson = json::object(); // key, value 형식으로 저장하기 위함
+    
+    int index = 0;
 
     for (UObject* obj : ObjectManager::GetInstance().AllObjects)
     {
@@ -66,32 +87,36 @@ void SaveLoadManager::SaveScene(const FString& path)
         FVector rotation = actor->GetRotation();    // rotation 저장
         FVector scale = actor->GetScale();          // scale 저장
         EPrimitive type = actor->GetPrimitive();    // type 저장
-
+        
         json objJson;
-        objJson["UUID"]     = actor->GetID();
+        // objJson["UUID"]     = actor->GetID();
         objJson["Location"] = { location.x, location.y, location.z }; // {x,y,z}-> [x,y,z] 형태로 저장됨
         objJson["Rotation"] = { rotation.x, rotation.y, rotation.z };
         objJson["Scale"]    = { scale.x, scale.y, scale.z };
-        objJson["Class"]    = string(actor->GetObjClassName()); // ACube, ASphere ...
-        objJson["Type"]     = static_cast<int>(type);           // Sphere(0), Cube(1), None(2)
-
-
-        objectsJson.push_back(objJson);
+        // objJson["Class"]    = string(actor->GetObjClassName()); // ACube, ASphere ...
+        objJson["Type"]     = EPrimitiveToStr(type);           // Sphere -> "Sphere", Cube -> "Cube"
+        
+        objectsJson[std::to_string(index)] = objJson; // 0 -> "0", 1 -> "1" ...
+        ++index;
     }
-
-    sceneJson["objects"] = objectsJson;
-
+    
+    sceneJson["Primitives"] = objectsJson;
+    
     std::ofstream file(path + ".Scene"); // 파일 경로
-
+    
     if (!file.is_open())
     {
         assert(false && "Failed to Save objects!\n");
         return;
     }
-
+    
     file << sceneJson.dump(4); // json 객체 -> string으로 변환 (4칸 들여쓰기)
     file.close();
 }
+
+////////////////////////////
+/////////// LOAD ///////////
+////////////////////////////
 
 // 데이터 로드 - 역직렬화(json -> 객체)
 TArray<UObject*> SaveLoadManager::LoadScene(const FString& path)
@@ -99,7 +124,7 @@ TArray<UObject*> SaveLoadManager::LoadScene(const FString& path)
     TArray<UObject*> loadedObjects;
 
     // DEBUG
-    OutputDebugStringA(("Current working dir: " + std::filesystem::current_path().string() + "\n").c_str());
+    // OutputDebugStringA(("Current working dir: " + std::filesystem::current_path().string() + "\n").c_str());
 
     std::ifstream file(path);
 
@@ -112,21 +137,41 @@ TArray<UObject*> SaveLoadManager::LoadScene(const FString& path)
     }
 
     json sceneJson;
-    file >> sceneJson; // Load
+
+
+    // Parsing Check
+    try
+    {
+        file >> sceneJson; // Load
+    }
+    catch(const std::exception& e)
+    {
+        OutputDebugStringA(("Parse failed : " + string(e.what())).c_str());
+        return loadedObjects; // {} 빈 배열 return
+
+    }
+
+    // 기존 Scene에 있던 Objects Clear
+    ObjectManager::GetInstance().DestroyAllActors();
+
+    // Format Version Check
+    int version = sceneJson["Version"].get<int>();
+    if (version != CURRENT_SCENE_VERSION)
+        OutputDebugStringA("Scene Version mismatch!");
 
     // 함수 Load 및 람다 등록
     auto& registry = GetActorCreatorRegistry();
 
-    for (json objJson : sceneJson["objects"]){
+    for (json objJson : sceneJson["Primitives"]){
 
-        string Class     = objJson["Class"];  // ACube, ASphere ...
+        string Class     = objJson["Type"];  // Cube, Sphere ...
         auto it = registry.find(Class);
 
         // 등록되지 않은 AActor면 패스 (EX. Gizmo ...)
         if(it == registry.end())
             continue;
 
-        auto uuid       = objJson["UUID"]; 
+        // auto uuid       = objJson["UUID"]; 
         auto location   = objJson["Location"];
         auto rotation   = objJson["Rotation"];
         auto scale      = objJson["Scale"];
@@ -136,9 +181,9 @@ TArray<UObject*> SaveLoadManager::LoadScene(const FString& path)
         FVector rat(rotation[0].get<float>(), rotation[1].get<float>(), rotation[2].get<float>());
         FVector sc(scale[0].get<float>(), scale[1].get<float>(), scale[2].get<float>());
         
-        EPrimitive prim = static_cast<EPrimitive>(objJson["Type"].get<int>());
+        // EPrimitive prim = static_cast<EPrimitive>(objJson["Type"].get<int>());
 
-        AActor* actor = it->second(loc, rat, sc, prim);
+        AActor* actor = it->second(loc, rat, sc);
         loadedObjects.push_back(actor);
 
     }
