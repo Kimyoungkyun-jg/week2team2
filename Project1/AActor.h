@@ -6,10 +6,11 @@
 #include "Transform.h"
 #include "VertexBuffer.h"
 #include "GlobalBuffer.h"
-#include "UGizmo.h"
 
 using namespace DirectX;
 
+
+struct FRay;
 
 class AActor : public UObject
 {
@@ -20,9 +21,6 @@ public:
 	virtual ~AActor();
 	virtual void Render() override;
 	virtual void Update(float Deltatime) override;
-
-	virtual void UpdateGizmo(float Deltatime);
-	virtual void RenderGizmo();
 
 
 	void SetLocation(const FVector& loc) { transform.SetLocation(loc); }
@@ -50,12 +48,64 @@ public:
 	void InitVertexBuffer(const VertexType (&vertices)[N])
 	{
 		InitVertexBuffer(vertices, sizeof(VertexType), static_cast<UINT>(N), RENDERER.GetInputLayout<VertexType>());
+		
+		LocalVertices.clear();
+		LocalVertices.reserve(N);
+
+		for (size_t i = 0; i < N; ++i)
+		{
+			LocalVertices.push_back(FVector(vertices[i].x, vertices[i].y, vertices[i].z));
+		}
+	}
+
+	//std::vector 정점 배열 초기화
+	template <typename VertexType>
+	void InitVertexBuffer(const std::vector<VertexType>& vertices)
+	{
+		if (vertices.empty()) return;
+
+		InitVertexBuffer(vertices.data(), sizeof(VertexType), static_cast<UINT>(vertices.size()), RENDERER.GetInputLayout<VertexType>());
+
+		LocalVertices.clear();
+		LocalVertices.reserve(vertices.size());
+
+		for (size_t i = 0; i < vertices.size(); ++i)
+		{
+			LocalVertices.push_back(FVector(vertices[i].x, vertices[i].y, vertices[i].z));
+		}
+	}
+
+	//TArray 정점 배열 초기화
+	template <typename VertexType>
+	void InitVertexBuffer(const TArray<VertexType>& vertices)
+	{
+		if (vertices.empty()) return;
+
+		InitVertexBuffer(vertices.data(), sizeof(VertexType), static_cast<UINT>(vertices.size()), RENDERER.GetInputLayout<VertexType>());
+
+		LocalVertices.clear();
+		LocalVertices.reserve(vertices.size());
+
+		for (size_t i = 0; i < vertices.size(); ++i)
+		{
+			LocalVertices.push_back(FVector(vertices[i].x, vertices[i].y, vertices[i].z));
+		}
+	}
+
+
+	bool bIsPicked(const FRay& worldRay, float& outDistance);
+	bool bIsPicked(const FRay& worldRay)
+	{
+		float dummyDist = 0.0f;
+		return bIsPicked(worldRay, dummyDist);
 	}
 
 	UINT GetNumVertices() const { return numVertices; }
 
-	virtual void Pressed(FVector _Location) {}
-	virtual void Released(FVector _Location) {}
+	virtual void Pressed() {}
+	virtual void Released() {}
+
+	void SetWorldBuffer();
 
 	bool isInvalid = false;
 
@@ -69,7 +119,6 @@ public:
 	FLinearColor Color = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	UINT numVertices = 0;
 
-	TArray<UGizmo*> gizmos;
-
+	TArray<FVector> LocalVertices;
 };
 

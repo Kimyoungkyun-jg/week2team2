@@ -6,7 +6,9 @@
 
 Camera::Camera()
 {
-	transform.SetLocation(FVector(0.0f, 0.0f, -3.0f));
+	//기본 카메라 위치 및 회전 설정
+	transform.SetLocation(FVector(3.336f, 3.282f, -4.715f));
+	transform.SetRotation(FVector(0.391f, -0.468f, 0.0f));
 
 	vpBuffer = new MatrixBuffer();
 }
@@ -52,16 +54,17 @@ FMatrix Camera::GetProjectionMatrix(float aspectRatio) const
 
 void Camera::Update()
 {
-	float speed = 5.0f * DELTA;
-	if (KEY_PRESS(ImGuiKey_W)) MoveForward(speed);
-	if (KEY_PRESS(ImGuiKey_S)) MoveForward(-speed);
-	if (KEY_PRESS(ImGuiKey_D)) MoveRight(speed);
-	if (KEY_PRESS(ImGuiKey_A)) MoveRight(-speed);
-	if (KEY_PRESS(ImGuiKey_Q)) MoveUp(speed);
-	if (KEY_PRESS(ImGuiKey_E)) MoveUp(-speed);
+	//카메라 이동 처리
+	float currentSpeed = speed * DELTA;
+	if (KEY_PRESS(ImGuiKey_W)) MoveForward(currentSpeed);
+	if (KEY_PRESS(ImGuiKey_S)) MoveForward(-currentSpeed);
+	if (KEY_PRESS(ImGuiKey_D)) MoveRight(currentSpeed);
+	if (KEY_PRESS(ImGuiKey_A)) MoveRight(-currentSpeed);
+	if (KEY_PRESS(ImGuiKey_Q)) MoveUp(currentSpeed);
+	if (KEY_PRESS(ImGuiKey_E)) MoveUp(-currentSpeed);
 
-
-	if (MOUSE_PRESS(0)) {
+	//카메라 회전 처리
+	if (MOUSE_PRESS(1)) {
 		ImVec2 delta = ImGui::GetIO().MouseDelta;
 		Rotate(delta.x * 0.2f, delta.y * 0.2f);
 	}

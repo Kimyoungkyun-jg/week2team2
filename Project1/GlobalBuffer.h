@@ -31,7 +31,7 @@ class ColorBuffer : public ConstBuffer
 private:
     struct Data
     {
-        FLinearColor color;
+        FLinearColor color = FLinearColor(0,0,0,0);
     };
     
     Data data;

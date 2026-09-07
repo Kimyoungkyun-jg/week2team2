@@ -21,24 +21,10 @@ void ACollider::Move(float deltaTime)
 	transform.Rotation.z += AngularVelocity * deltaTime;
 }
 
-void ACollider::Pressed(FVector _Location)
+void ACollider::Pressed()
 {
-	if (bEditing)
-	{
-		WakeUp();
-		transform.Location = _Location;
-		Velocity = FVector();
-		bUseGravity = false;
-	}
 }
 
-void ACollider::Released(FVector _Location)
+void ACollider::Released()
 {
-	if (bEditing)
-	{
-		WakeUp();
-		transform.Location = _Location;
-		Velocity = FVector();
-		bUseGravity = true;
-	}
 }

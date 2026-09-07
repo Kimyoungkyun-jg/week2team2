@@ -127,6 +127,12 @@ public:
     {
         return ArrayData.end();        
     }
+
+    //데이터 포인터 반환
+    T* data() { return ArrayData.data(); }
+    const T* data() const { return ArrayData.data(); }
+    T* GetData() { return ArrayData.data(); }
+    const T* GetData() const { return ArrayData.data(); }
 };
 
 ///////////////////////////////////////

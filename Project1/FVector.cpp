@@ -36,7 +36,7 @@ FVector FVector::Normalized() const
 
 
 
-float FVector::DotProduct(const FVector& other) const
+float FVector::Dot(const FVector& other) const
 {
 	return x * other.x + y * other.y + z * other.z;
 }

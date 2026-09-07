@@ -138,12 +138,15 @@
     <ClInclude Include="..\Project1\UEngineStatics.h" />
     <ClInclude Include="..\Project1\enums.h" />
     <ClInclude Include="..\Project1\pch.h" />
-    <ClInclude Include="UGizmo.h" />
+    <ClInclude Include="AGizmo.h" />
+    <ClInclude Include="AGrid.h" />
+    <ClInclude Include="AWorldAxises.h" />
     <ClInclude Include="ConstBuffer.h" />
     <ClInclude Include="Containers.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="FLinearColor.h" />
     <ClInclude Include="GlobalBuffer.h" />
+    <ClInclude Include="Intersection.h" />
     <ClInclude Include="SaveLoadManager.h" />
     <ClInclude Include="USphere.h" />
     <ClInclude Include="VertexBuffer.h" />
@@ -188,9 +191,12 @@
     <ClCompile Include="..\Project1\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="UGizmo.cpp" />
+    <ClCompile Include="AGizmo.cpp" />
+    <ClCompile Include="AGrid.cpp" />
+    <ClCompile Include="AWorldAxises.cpp" />
     <ClCompile Include="ConstBuffer.cpp" />
     <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="Intersection.cpp" />
     <ClCompile Include="SaveLoadManager.cpp" />
     <ClCompile Include="USphere.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />

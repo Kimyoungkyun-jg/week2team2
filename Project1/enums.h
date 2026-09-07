@@ -4,6 +4,10 @@ enum class EPrimitive
 {
 	Sphere,
 	Cube,
+	Circle,
+	Rectangle,
+	Triangle,
+	Gizmo,
 	None
 };
 
@@ -20,4 +24,10 @@ enum class EGizmoMode
 	Translation,
 	Rotation,
 	Scale
+};
+
+enum class EGridType
+{
+	Line,
+	Triangle
 };
