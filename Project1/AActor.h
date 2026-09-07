@@ -6,6 +6,7 @@
 #include "Transform.h"
 #include "VertexBuffer.h"
 #include "GlobalBuffer.h"
+#include "UGizmo.h"
 
 using namespace DirectX;
 
@@ -19,6 +20,9 @@ public:
 	virtual ~AActor();
 	virtual void Render() override;
 	virtual void Update(float Deltatime) override;
+
+	virtual void UpdateGizmo(float Deltatime);
+	virtual void RenderGizmo();
 
 
 	void SetLocation(const FVector& loc) { transform.SetLocation(loc); }
@@ -64,5 +68,8 @@ public:
 	ID3D11InputLayout* inputLayout = nullptr;
 	FLinearColor Color = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	UINT numVertices = 0;
+
+	TArray<UGizmo*> gizmos;
+
 };
 

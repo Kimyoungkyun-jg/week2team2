@@ -6,16 +6,29 @@
 AActor::AActor()
 {
 	worldBuffer = new MatrixBuffer();
+	for (EGizmoAxis mode : { EGizmoAxis::X, EGizmoAxis::Z, EGizmoAxis::Y })
+	{
+		UGizmo* gizmo = new UGizmo(mode, this);
+		gizmos.push_back(gizmo);
+	}
 }
 
 AActor::~AActor()
 {
 	delete worldBuffer;
+	worldBuffer = nullptr;
+
 	if (vertexbuffer)
 	{
 		delete vertexbuffer;
 		vertexbuffer = nullptr;
 	}
+
+	for (UGizmo* gizmo : gizmos)
+	{
+		delete gizmo;
+	}
+	gizmos.clear();
 }
 
 void AActor::InitVertexBuffer(const void* vertices, UINT stride, UINT inNumVertices, ID3D11InputLayout* inLayout)
@@ -28,6 +41,7 @@ void AActor::InitVertexBuffer(const void* vertices, UINT stride, UINT inNumVerti
 		delete vertexbuffer;
 		vertexbuffer = nullptr;
 	}
+
 
 	if (vertices && inNumVertices > 0)
 	{
@@ -50,6 +64,8 @@ void AActor::Render()
 		vertexbuffer->IASet();
 		RENDERER.GetDeviceContext()->Draw(numVertices, 0);
 	}
+
+	RenderGizmo();
 }
 
 
@@ -57,4 +73,23 @@ void AActor::Render()
 void AActor::Update(float Deltatime)
 {
 	UObject::Update(Deltatime);
+
+	UpdateGizmo(Deltatime);
+
+}
+
+void AActor::UpdateGizmo(float Deltatime)
+{
+	for (auto& it : gizmos)
+	{
+		it->Update(Deltatime);
+	}
+}
+
+void AActor::RenderGizmo()
+{
+	for (auto& it : gizmos)
+	{
+		it->Render();
+	}
 }
