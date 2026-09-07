@@ -21,6 +21,9 @@ public:
 	EGizmoAxis GetAxis() const { return Axis; }
 	void Picked(); // 피킹되었을 때의 처리
 
+	EPrimitive Primitive = EPrimitive::None;
+
+
 private:
 	EGizmoAxis Axis = EGizmoAxis::None;
 };
@@ -35,6 +38,7 @@ public:
 	static inline AGizmo* MainGizmo = nullptr;
 
 	AGizmo();
+		
 	virtual ~AGizmo();
 
 	virtual void Update(float DeltaTime) override;
