@@ -9,7 +9,7 @@
 DefaultScene::DefaultScene()
 {
 	// 기즈모만 단독으로 스폰 (위치: 원점 0, 0, 0 / 크기: 1, 1, 1)
-	//gizmo = new UGizmo(EGizmoAxis::Y, nullptr);
+	gizmo = new UGizmo(EGizmoAxis::Y, nullptr);
 	cube = FObjectFactory::SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
 }
 
@@ -89,10 +89,20 @@ void DefaultScene::Render()
 	{
 		// "./SceneData/MyScene.Scene" 에서 로드됨
 		TArray<UObject*> loadedObj = SaveLoadManager::LoadScene("./SceneData/MyScene.Scene");
-
+		
 		// 기존 cube는 이미 삭제됐으므로 일단 무효화
-		cube = nullptr;  
+		cube = nullptr;
 
+		for (UObject* obj : loadedObj)
+		{
+			// Todo: 객체 여러 개 소환되면 객체 type (Sphere, Cube 별로 Load)
+			// 현재는 객체가 하나라는 가정 하에, 혹은 여러 개 중 첫번째 것이 cube인 경우만 구현함.
+			if (ACube* c = dynamic_cast<ACube*>(obj) )
+			{
+				cube = c;
+				break;
+			}
+		}
 	}
 	
 	ImGui::Separator();
@@ -101,34 +111,36 @@ void DefaultScene::Render()
 	ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.2f, 1.0f), "[ Cube Controls ]");
 	if (cube)
 	{
+		string uid = std::to_string(cube->GetID());
+
 		FVector loc = cube->GetLocation();
-		if (ImGui::DragFloat3("Cube Pos", &loc.x, 0.01f, -10.0f, 10.0f))
+		if (ImGui::DragFloat3(("Cube Pos##" + uid).c_str(), &loc.x, 0.01f, -10.0f, 10.0f))
 		{
 			cube->SetLocation(loc);
 		}
 
 		FVector scale = cube->GetScale();
-		if (ImGui::DragFloat3("Cube Scale", &scale.x, 0.01f, 0.01f, 5.0f))
+		if (ImGui::DragFloat3(("Cube Scale##" + uid).c_str(), &scale.x, 0.01f, 0.01f, 5.0f))
 		{
 			cube->SetScale(scale);
 		}
 
 		FVector rot = cube->GetRotation();
-		bool bRotChanged = false;
-		if (ImGui::DragFloat("Rotation X", &rot.x, 0.01f, -3.14f, 3.14f))
+		bool bCubeChanged = false;
+		if (ImGui::DragFloat(("Rotation X" + uid).c_str(), &rot.x, 0.01f, -3.14f, 3.14f))
 		{
-			bRotChanged = true;
+			bCubeChanged = true;
 		}
-		if (ImGui::DragFloat("Rotation Y", &rot.y, 0.01f, -3.14f, 3.14f))
+		if (ImGui::DragFloat(("Rotation Y" + uid).c_str(), &rot.y, 0.01f, -3.14f, 3.14f))
 		{
-			bRotChanged = true;
+			bCubeChanged = true;
 		}
-		if (ImGui::DragFloat("Rotation Z", &rot.z, 0.01f, -3.14f, 3.14f))
+		if (ImGui::DragFloat(("Rotation Z" + uid).c_str(), &rot.z, 0.01f, -3.14f, 3.14f))
 		{
-			bRotChanged = true;
+			bCubeChanged = true;
 		}
 
-		if (bRotChanged)
+		if (bCubeChanged)
 		{
 			cube->SetRotation(rot);
 		}
