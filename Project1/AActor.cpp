@@ -94,7 +94,9 @@ void AActor::Render()
 	//버텍스 버퍼 바인딩 및 렌더링
 	if (vertexbuffer != nullptr && numVertices > 0)
 	{
+		OutputDebugStringA("[AActor] DRAW ENTER\n");
 		RENDERER.PrepareShader(inputLayout);
+
 		RENDERER.SetCustomColor(Color);
 		vertexbuffer->IASet();
 		RENDERER.GetDeviceContext()->Draw(numVertices, 0);

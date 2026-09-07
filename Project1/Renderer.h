@@ -19,8 +19,6 @@ struct FVertexBufferInfo
 
 class Renderer
 {
-
-
 public:
 	static Renderer& GetInstance()
 	{

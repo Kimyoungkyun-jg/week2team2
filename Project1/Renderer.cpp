@@ -172,7 +172,7 @@ bool Renderer::CreateVertexShader(LPCWSTR path, LPCSTR entryPoint, ID3D11VertexS
 
 	hr = Device->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), nullptr, outVS);
 
-	if (outBlob)
+	if (!outBlob)
 	{
 		*outBlob = vsBlob;
 	}
@@ -431,5 +431,6 @@ void Renderer::SetGizmoDepthState()
 void Renderer::SwapBuffer()
 {
 	SwapChain->Present(1, 0);
+	
 }
 
