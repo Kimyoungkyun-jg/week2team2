@@ -115,7 +115,7 @@ void SaveLoadManager::SaveScene(const FString& path)
         FVector rotation = actor->GetRotation();    // rotation 저장
         FVector scale = actor->GetScale();          // scale 저장
         EPrimitive type = actor->GetPrimitive();    // type 저장
-        if (type == EPrimitive::Gizmo) continue; // Gizmo면 pass
+        // if (type == EPrimitive::Gizmo) continue; // Gizmo면 pass
         
         json objJson;
         // objJson["UUID"]     = actor->GetID();

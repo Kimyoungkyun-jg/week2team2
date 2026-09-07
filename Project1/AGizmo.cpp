@@ -9,6 +9,7 @@ AGizmoAxis::AGizmoAxis(EGizmoAxis inAxis)
 {
 	// AActor의 템플릿 InitVertexBuffer 호출 -> GPU 버퍼 생성 및 LocalVertices 자동 저장!
 	InitVertexBuffer(arrow_vertices);
+	Primitive = EPrimitive::Gizmo;
 
 	switch (Axis)
 	{
