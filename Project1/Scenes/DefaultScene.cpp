@@ -8,9 +8,16 @@
 
 DefaultScene::DefaultScene()
 {
-	// 기즈모만 단독으로 스폰 (위치: 원점 0, 0, 0 / 크기: 1, 1, 1)
-	gizmo = new UGizmo(EGizmoAxis::Y, nullptr);
 	cube = FObjectFactory::SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
+	cube->SetColor(FLinearColor::Blue);
+
+	cube2 = FObjectFactory::SpawnColider<ACube>(FVector(10.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
+	cube2->SetColor(FLinearColor::Red);
+
+	sphere = FObjectFactory::SpawnActor<ASphere>(FVector(-10.0f, 0.0f, 0.0f));
+	sphere->SetColor(FLinearColor::Green);
+
+	gizmo = FObjectFactory::SpawnActor<AGizmo>();
 }
 
 DefaultScene::~DefaultScene()
@@ -59,18 +66,21 @@ void DefaultScene::Render()
 	ImGui::Separator();
 	
 	if (ImGui::IsMouseClicked(0)) {
-		// pick 테스트 코드 부분입니다! F5 로 출력 확인해보세요 :)
-		ray = PickingManager::GetInstance().ScreenToWorldRay(ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y,
-			Renderer::GetInstance().ViewportInfo.Width, Renderer::GetInstance().ViewportInfo.Height);
-		UObject * pickedObj = PickingManager::GetInstance().Pick(ray);
+		// pick 테스트 코드: 클릭된 액터에 기즈모 부착
+		ray = PICK.ScreenToWorldRay(ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y,
+			RENDERER.ViewportInfo.Width, RENDERER.ViewportInfo.Height);
+		AActor* pickedObj = PICK.Pick(ray);
 		if (pickedObj) {
-			OutputDebugStringA("hit!");
+			FString className = pickedObj->GetClass() ? std::string(pickedObj->GetClass()->Name) : "Unknown";
+			FString msg = "Class: " + className + "\n";
+		
+			OutputDebugStringA(msg.c_str());
+			if (gizmo)
+			{
+				gizmo->SetTargetActor(pickedObj);
+			}
 		}
 	}
-
-	// 기즈모 디버그 섹션
-	ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.2f, 1.0f), "[ Gizmo Controls ]");
-	if (gizmo)
 	
 	/////////////////////////////
 	//////// SAVE & LOAD ////////

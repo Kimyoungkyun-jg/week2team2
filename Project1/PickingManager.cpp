@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "PickingManager.h"
 #include "Camera.h"
+#include "TemplateLibrary.h"
+#include "AGizmo.h"
 
 FRay PickingManager::ScreenToWorldRay(float mouseX, float mouseY, float screenW, float screenH) const
 {
@@ -28,26 +30,33 @@ FRay PickingManager::ScreenToWorldRay(float mouseX, float mouseY, float screenW,
 
 AActor* PickingManager::Pick(const FRay& ray) const
 {
+	//기즈모 축 피킹 우선 검사
+	if (AGizmo::MainGizmo && AGizmo::MainGizmo->GetTargetActor())
+	{
+		for (AGizmoAxis* axis : AGizmo::MainGizmo->GetAxes())
+		{
+			float axisDist = 0.0f;
+			if (axis->bIsPicked(ray, axisDist))
+			{
+				return axis;
+			}
+		}
+	}
+
+	//일반 액터 피킹 검사
 	AActor* closest = nullptr;
 	float closestDist = FLT_MAX;
 
 	for (auto object : ObjectManager::GetInstance().AllObjects) {
-		AActor* actor = dynamic_cast<AActor*> (object);
-		if (actor == nullptr) continue;
+		AActor* actor = Cast<AActor>(object);
+		if (actor == nullptr || Cast<AGizmo>(actor)) continue;
 
-		if (actor->GetPrimitive() == EPrimitive::Cube) {
-			float dist;
-			if (RayIntersectBox(ray, actor->GetLocation(), actor->GetScale(), dist)) {
-				if (dist < closestDist) {
-					closestDist = dist;
-					closest = actor;
-				}
-			}
+		float dist = 0.0f;
+		if (actor->bIsPicked(ray, dist) && dist < closestDist)
+		{
+			closestDist = dist;
+			closest = actor;
 		}
-
-		// ---------------------------------
-		// 기즈모인지 판별하는 코드 추가!
-		// ---------------------------------
 	}
 	return closest;
 }

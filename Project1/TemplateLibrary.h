@@ -66,7 +66,7 @@ public:
 	}
 
 	template<class T, typename... Args>
-	static inline T* SpawnActor(FVector Location, FVector Scale = { 0.1, 0.1, 1 }, Args&&... args)
+	static inline T* SpawnActor(FVector Location = { 0,0,0 }, FVector Scale = { 1, 1, 1 }, Args&&... args)
 	{
 		static_assert(is_base_of_v<AActor, T>);
 
@@ -82,7 +82,7 @@ public:
 	}
 
 	template<class T, typename... Args>
-	static inline T* SpawnColider(FVector Location, FVector Scale = { 1, 1, 1 }, float Mass = 1, Args&&... args)
+	static inline T* SpawnColider(FVector Location = {0,0,0}, FVector Scale = {1, 1, 1}, float Mass = 1, Args&&... args)
 	{
 		static_assert(is_base_of_v<ACollider, T>);
 		T* Colider = SpawnActor<T>(Location, Scale, std::forward<Args>(args)...);
@@ -93,7 +93,7 @@ public:
 		return static_cast<T*>(Colider);
 	}
 
-	static inline bool TraceSphere(FVector Location, float Radius, TArray<ACollider*>& Result)
+	static inline bool TraceSphere(TArray<ACollider*>& Result, FVector Location = {0,0,0}, float Radius = 1.0f)
 	{
 		bool bFound = false;
 		TArray<ACollider*> Colliders = CollisionManager::GetInstance().colliders;
