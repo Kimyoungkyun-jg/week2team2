@@ -7,9 +7,6 @@
     <Filter Include="Scenes">
       <UniqueIdentifier>{86EEB3D0-7290-DEA6-5B4B-F2FA478C65F7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GConsole">
-      <UniqueIdentifier>{33c6b220-ba76-45b0-b7f3-09cd225a1ddb}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Project1\AActor.h" />
