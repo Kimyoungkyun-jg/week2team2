@@ -75,10 +75,6 @@ void DefaultScene::Render()
 	
 	ImGui::Separator();
 	
-	
-
-
-
 	/////////////////////////////
 	//////// SAVE & LOAD ////////
 	/////////////////////////////
@@ -114,13 +110,17 @@ void DefaultScene::Render()
 				case 1 :
 					FObjectFactory::SpawnColider<ACube>(randomLoc, { 1.0f, 1.0f, 1.0f });
 					break;
+				case 2 :
+					FObjectFactory::SpawnColider<ACircle>(randomLoc, { 1.0f, 1.0f, 1.0f });
+					break;
+				case 3 : 
+					FObjectFactory::SpawnColider<ARectangle>(randomLoc, { 1.0f, 1.0f, 1.0f });
+					break;
+				case 4 :
+					FObjectFactory::SpawnColider<ATriangle>(randomLoc, { 1.0f, 1.0f, 1.0f });
+					break;
 				default :
 					break;
-	
-				// Todo : SpawnColider 구현 뒤 주석 해제 필요
-				// case 2 : FObjectFactory::SpawnColider<ACircle>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
-				// case 3 : FObjectFactory::SpawnColider<ARec>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
-				// case 4 : FObjectFactory::SpawnColider<ATri>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
 			}
 		}
 			

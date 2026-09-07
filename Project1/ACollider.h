@@ -2,6 +2,7 @@
 
 #include "AActor.h"
 #include "Sphere.h"
+#include "CircleGenerator.h"
 
 class ACollider : public AActor
 {
@@ -62,34 +63,90 @@ protected:
 	float SleepTimer = 0.0f;
 };
 
+////////////////////////////
+/////////// Cube ///////////
+////////////////////////////
 class ACube : public ACollider
 {
 	DECLARE_CLASS(ACube, ACollider)
-
-public:
+	
+	public:
 	ACube()
 	{
 		InitVertexBuffer(cube_vertices);
+		Primitive = EPrimitive::Cube;
 	}
 };
+
+//////////////////////////////
+/////////// Sphere ///////////
+//////////////////////////////
 
 // 기존 ACircle -> 변경 ASphere
 class ASphere : public ACollider
 {
 	DECLARE_CLASS(ASphere, ACollider)
-
-public:
+	
+	public:
 	ASphere()
 	{
 		InitVertexBuffer(sphere_vertices);
 		Primitive = EPrimitive::Sphere;
 	}
+
 	float GetRadius() const { return transform.Scale.x * 0.5f; }
 	virtual float GetInertia() const override
 	{
 		float r = GetRadius();
 		return 0.5f * Mass * r * r;
+	}	
+};
+
+////////////////////////
+/////// Triangle ///////
+////////////////////////
+
+class ATriangle : public ACollider
+{
+	DECLARE_CLASS(ATriangle, ACollider)
+	
+	public:
+	ATriangle()
+	{
+		InitVertexBuffer(triangle_vertices);
+		Primitive = EPrimitive::Triangle;
 	}
+};
 
+/////////////////////////
+/////// Rectangle ///////
+/////////////////////////
 
+class ARectangle : public ACollider
+{
+	DECLARE_CLASS(ARectangle, ACollider)
+	
+	public:
+	ARectangle()
+	{
+		InitVertexBuffer(rectangle_vertices);
+		Primitive = EPrimitive::Rectangle;
+	}
+};
+
+/////////////////////////
+/////// Circle ///////
+/////////////////////////
+
+class ACircle : public ACollider
+{
+	DECLARE_CLASS(ACircle, ACollider)
+	
+	public:
+	ACircle()
+	{
+		TArray<FVertexColor> circle_vertices = CircleGenerator::MakeCircle(32, 1.0f, 1.0f, 0.0f, 1.0f);
+		InitVertexBuffer(circle_vertices);
+		Primitive = EPrimitive::Circle;
+	}
 };
