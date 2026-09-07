@@ -4,6 +4,10 @@ enum class EPrimitive
 {
 	Sphere,
 	Cube,
+	Circle,
+	Rectangle,
+	Triangle,
+	Gizmo,
 	None
 };
 

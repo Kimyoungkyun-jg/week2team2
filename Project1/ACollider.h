@@ -82,6 +82,7 @@ public:
 	ASphere()
 	{
 		InitVertexBuffer(sphere_vertices);
+		Primitive = EPrimitive::Sphere;
 	}
 	float GetRadius() const { return transform.Scale.x * 0.5f; }
 	virtual float GetInertia() const override
@@ -89,4 +90,6 @@ public:
 		float r = GetRadius();
 		return 0.5f * Mass * r * r;
 	}
+
+
 };

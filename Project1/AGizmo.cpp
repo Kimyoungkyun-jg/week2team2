@@ -87,6 +87,7 @@ void AGizmoAxis::Picked()
 AGizmo::AGizmo()
 {
 	MainGizmo = this;
+	Primitive = EPrimitive::Gizmo;
 
 	// 3개의 기즈모 축 액터 생성 (X, Y, Z)
 	Axes.push_back(new AGizmoAxis(EGizmoAxis::X));
