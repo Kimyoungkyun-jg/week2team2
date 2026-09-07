@@ -5,6 +5,7 @@
 
 class UObject;
 class AActor;
+
 class SaveLoadManager
 {
 public:
@@ -19,5 +20,6 @@ private:
     // <location, ratation, scale, type> 을 인자로 받아서 AACtor*를 반환하는 공통타입 함수
     using CreatorFunc = std::function<AActor*(FVector, FVector, FVector, EPrimitive)>;
     static TMap<string, CreatorFunc>& GetActorCreatorRegistry();
+    static string EPrimitiveToStr(EPrimitive prim);
 
 };

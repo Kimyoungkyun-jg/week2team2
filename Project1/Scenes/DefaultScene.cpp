@@ -167,7 +167,6 @@ void DefaultScene::Render()
 		}
 	}
 
-	
-
 	ImGui::End();
+
 }
