@@ -2646,3 +2646,22 @@ inline FVertexSimple arrow_vertices[] =
 	{  0.0636f, 0.70f, -0.0636f },
 	{  0.0900f, 0.70f,  0.0000f }
 };
+
+inline FVertexColor rectangle_vertices[] =
+{
+    // Triangle A
+    { -1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f }, // Bottom-left (green)
+    {  1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f }, // Bottom-right (green)
+    { -1.0f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f }, // Top-left (blue)
+
+    // Triangle B
+    {  1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f }, // Bottom-right (green)
+    {  1.0f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f }, // Top-right (blue)
+    { -1.0f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f }, // Top-left (blue)
+};
+
+inline FVertexColor circle_vertices[] =
+{
+	{ }
+};
+
