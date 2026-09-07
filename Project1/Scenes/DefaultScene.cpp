@@ -4,6 +4,7 @@
 #include "Renderer.h"
 #include "PickingManager.h"
 #include "SaveLoadManager.h"
+#include <random>
 
 
 DefaultScene::DefaultScene()
@@ -78,8 +79,59 @@ void DefaultScene::Render()
 	//////// SAVE & LOAD ////////
 	/////////////////////////////
 	
+	// Spawn 버튼
+	ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.8f, 1.0f), "[ Spawn Primitives ]");
+	
+	// Select number
+	static int spawnCount = 1;
+	ImGui::InputInt("No. of Prim", &spawnCount);
+	if (spawnCount < 0) spawnCount = 0;
+
+	// Select Primitives
+	static int selected_item = 0;
+	const char* items[] = { "Sphere", "Cube", "Circle", "Rectangle", "Triangle" };
+	ImGui::Combo("##Primitives", &selected_item, items, IM_ARRAYSIZE(items));
+
+	// 난수 생성 및 범위 설정 -> spawn 위치 지정을 위해
+	static std::mt19937 rng(std::random_device{}());
+	static std::uniform_real_distribution<float> dist(-5.0f, 5.0f);
+
+	if (ImGui::Button("Spawn"))
+	{
+		for (int i=0; i<spawnCount; i++)
+		{
+			FVector randomLoc(dist(rng), dist(rng), dist(rng));
+	
+			switch(selected_item)
+			{
+				case 0 :
+					FObjectFactory::SpawnColider<ASphere>(randomLoc, { 1.0f, 1.0f, 1.0f });
+					break;
+				case 1 :
+					FObjectFactory::SpawnColider<ACube>(randomLoc, { 1.0f, 1.0f, 1.0f });
+					break;
+				default :
+					break;
+	
+				// Todo : SpawnColider 구현 뒤 주석 해제 필요
+				// case 2 : FObjectFactory::SpawnColider<ACircle>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
+				// case 3 : FObjectFactory::SpawnColider<ARec>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
+				// case 4 : FObjectFactory::SpawnColider<ATri>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
+			}
+		}
+			
+	}
+
+	ImGui::Separator();
+
 	// Save 버튼
-	ImGui::TextColored(ImVec4(0.3f, 1.0f, 0.8f, 1.0f), "[ Save & Load Scene ]");
+	ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.8f, 1.0f), "[ Save & Load Scene ]");
+	if (ImGui::Button("New Scene"))
+	{
+		// Todo : DestroyAllActors
+
+	}
+	
 	if (ImGui::Button("Save Scene"))
 	{
 		// "./SceneData/MyScene.Scene" 으로 저장됨
@@ -186,5 +238,10 @@ void DefaultScene::Render()
 	}
 
 	ImGui::End();
+
+	ImGui::Begin("Picking Primitive Property", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+	ImGui::Text("This is the info. of property picked!");
+	ImGui::End();
+
 
 }

@@ -28,7 +28,7 @@ TMap<string, SaveLoadManager::CreatorFunc>& SaveLoadManager::GetActorCreatorRegi
     // 처음 호출 시에만 ACube, ASphere 등록
     if (registry.empty())
     {
-        // "ACube" -> 상자 생성
+        // "Cube" -> 상자 생성
         registry["Cube"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
         {
             AActor* actor = FObjectFactory::SpawnColider<ACube>(loc, sc);
@@ -36,13 +36,37 @@ TMap<string, SaveLoadManager::CreatorFunc>& SaveLoadManager::GetActorCreatorRegi
             return actor;
         };
         
-        // "ASphere" -> 구 생성
+        // "Sphere" -> 구 생성
         registry["Sphere"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
         {
             AActor* actor = FObjectFactory::SpawnColider<ASphere>(loc, sc);
             actor->SetRotation(rot);
             return actor;
         };
+
+        // // "Circle" -> 원 생성
+        // registry["Circle"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
+        // {
+        //     AActor* actor = FObjectFactory::SpawnColider<ACircle>(loc, sc);
+        //     actor->SetRotation(rot);
+        //     return actor;
+        // };
+
+        // // "Rectangle" -> 사각형 생성
+        // registry["Rectangle"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
+        // {
+        //     AActor* actor = FObjectFactory::SpawnColider<ARec>(loc, sc);
+        //     actor->SetRotation(rot);
+        //     return actor;
+        // };
+
+        // // "Triangle" -> 삼각형 생성
+        // registry["Triangle"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
+        // {
+        //     AActor* actor = FObjectFactory::SpawnColider<ATri>(loc, sc);
+        //     actor->SetRotation(rot);
+        //     return actor;
+        // };
     }
     
     return registry;
@@ -55,6 +79,10 @@ string SaveLoadManager::EPrimitiveToStr(EPrimitive prim)
     {
         case EPrimitive::Cube : return "Cube";
         case EPrimitive::Sphere : return "Sphere";
+        case EPrimitive::Circle : return "Circle";
+        case EPrimitive::Rectangle : return "Rectangle";
+        case EPrimitive::Triangle : return "Triangle";
+        case EPrimitive::Gizmo : return "Gizmo";
         default : return "None";
     }
 }
@@ -87,6 +115,7 @@ void SaveLoadManager::SaveScene(const FString& path)
         FVector rotation = actor->GetRotation();    // rotation 저장
         FVector scale = actor->GetScale();          // scale 저장
         EPrimitive type = actor->GetPrimitive();    // type 저장
+        if (type == EPrimitive::Gizmo) continue; // Gizmo면 pass
         
         json objJson;
         // objJson["UUID"]     = actor->GetID();
@@ -95,7 +124,7 @@ void SaveLoadManager::SaveScene(const FString& path)
         objJson["Scale"]    = { scale.x, scale.y, scale.z };
         // objJson["Class"]    = string(actor->GetObjClassName()); // ACube, ASphere ...
         objJson["Type"]     = EPrimitiveToStr(type);           // Sphere -> "Sphere", Cube -> "Cube"
-        
+
         objectsJson[std::to_string(index)] = objJson; // 0 -> "0", 1 -> "1" ...
         ++index;
     }
@@ -138,7 +167,6 @@ TArray<UObject*> SaveLoadManager::LoadScene(const FString& path)
 
     json sceneJson;
 
-
     // Parsing Check
     try
     {
@@ -165,6 +193,7 @@ TArray<UObject*> SaveLoadManager::LoadScene(const FString& path)
     for (json objJson : sceneJson["Primitives"]){
 
         string Class     = objJson["Type"];  // Cube, Sphere ...
+
         auto it = registry.find(Class);
 
         // 등록되지 않은 AActor면 패스 (EX. Gizmo ...)

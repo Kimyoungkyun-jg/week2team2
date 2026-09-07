@@ -69,7 +69,8 @@ void AGizmoAxis::Render()
 	worldBuffer->SetMat(transform.WorldMat);
 	worldBuffer->SetVSBuffer(0);
 
-	RENDERER.SetCustomColor(Color);
+	FLinearColor finalColor = Highlighting(Color);
+	RENDERER.SetCustomColor(finalColor);
 	DC->Draw(numVertices, 0);
 
 	// 기본 깊이 상태로 복원
@@ -148,6 +149,7 @@ AGizmo::AGizmo()
 {
 	//메인 기즈모 인스턴스 등록
 	MainGizmo = this;
+	Primitive = EPrimitive::Gizmo;
 
 	//기즈모 축 액터 생성
 	Axes.push_back(new AGizmoAxis(EGizmoAxis::X));

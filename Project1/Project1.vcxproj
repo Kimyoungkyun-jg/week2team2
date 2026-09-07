@@ -144,6 +144,7 @@
     <ClInclude Include="Cube.h" />
     <ClInclude Include="FLinearColor.h" />
     <ClInclude Include="GlobalBuffer.h" />
+    <ClInclude Include="Intersection.h" />
     <ClInclude Include="SaveLoadManager.h" />
     <ClInclude Include="USphere.h" />
     <ClInclude Include="VertexBuffer.h" />
@@ -191,6 +192,7 @@
     <ClCompile Include="AGizmo.cpp" />
     <ClCompile Include="ConstBuffer.cpp" />
     <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="Intersection.cpp" />
     <ClCompile Include="SaveLoadManager.cpp" />
     <ClCompile Include="USphere.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
