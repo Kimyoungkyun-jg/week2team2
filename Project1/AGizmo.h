@@ -67,3 +67,15 @@ private:
 	// 3개의 기즈모 축 액터 (X, Y, Z)
 	TArray<AGizmoAxis*> Axes;
 };
+
+inline FLinearColor Highlighting(const FLinearColor& color) {
+	float t = 0.5f;
+
+	FLinearColor result = color;
+
+	result.r = color.r + (1.0f - color.r) * t;
+	result.g = color.g + (1.0f - color.g) * t;
+	result.b = color.b + (1.0f - color.b) * t;
+	result.a = color.a;
+	return result;
+}

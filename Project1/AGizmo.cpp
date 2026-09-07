@@ -69,7 +69,8 @@ void AGizmoAxis::Render()
 	worldBuffer->SetMat(transform.WorldMat);
 	worldBuffer->SetVSBuffer(0);
 
-	RENDERER.SetCustomColor(Color);
+	FLinearColor finalColor = Highlighting(Color);
+	RENDERER.SetCustomColor(finalColor);
 	DC->Draw(numVertices, 0);
 
 	// 기본 깊이 상태로 복원
