@@ -47,29 +47,29 @@ TMap<string, SaveLoadManager::CreatorFunc>& SaveLoadManager::GetActorCreatorRegi
             return actor;
         };
 
-        // // "Circle" -> 원 생성
-        // registry["Circle"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
-        // {
-        //     AActor* actor = FObjectFactory::SpawnColider<ACircle>(loc, sc);
-        //     actor->SetRotation(rot);
-        //     return actor;
-        // };
+        // "Circle" -> 원 생성
+        registry["Circle"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
+        {
+            AActor* actor = FObjectFactory::SpawnColider<ACircle>(loc, sc);
+            actor->SetRotation(rot);
+            return actor;
+        };
 
-        // // "Rectangle" -> 사각형 생성
-        // registry["Rectangle"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
-        // {
-        //     AActor* actor = FObjectFactory::SpawnColider<ARec>(loc, sc);
-        //     actor->SetRotation(rot);
-        //     return actor;
-        // };
+        // "Rectangle" -> 사각형 생성
+        registry["Rectangle"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
+        {
+            AActor* actor = FObjectFactory::SpawnColider<ARectangle>(loc, sc);
+            actor->SetRotation(rot);
+            return actor;
+        };
 
-        // // "Triangle" -> 삼각형 생성
-        // registry["Triangle"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
-        // {
-        //     AActor* actor = FObjectFactory::SpawnColider<ATri>(loc, sc);
-        //     actor->SetRotation(rot);
-        //     return actor;
-        // };
+        // "Triangle" -> 삼각형 생성
+        registry["Triangle"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
+        {
+            AActor* actor = FObjectFactory::SpawnColider<ATriangle>(loc, sc);
+            actor->SetRotation(rot);
+            return actor;
+        };
     }
     
     return registry;
@@ -118,7 +118,7 @@ void SaveLoadManager::SaveScene(const FString& path)
         FVector rotation = actor->GetRotation();    // rotation 저장
         FVector scale = actor->GetScale();          // scale 저장
         EPrimitive type = actor->GetPrimitive();    // type 저장
-        // if (type == EPrimitive::Gizmo) continue; // Gizmo면 pass
+        if (type == EPrimitive::Gizmo) continue; // Gizmo면 pass
         
         json objJson;
         // objJson["UUID"]     = actor->GetID();
@@ -183,7 +183,7 @@ TArray<UObject*> SaveLoadManager::LoadScene(const FString& path)
     }
 
     // 기존 Scene에 있던 Objects Clear
-    ObjectManager::GetInstance().DestroyAllActors();
+    ObjectManager::GetInstance().DestroyAllColliders();
 
     // Format Version Check
     int version = sceneJson["Version"].get<int>();
@@ -213,8 +213,6 @@ TArray<UObject*> SaveLoadManager::LoadScene(const FString& path)
         FVector rat(rotation[0].get<float>(), rotation[1].get<float>(), rotation[2].get<float>());
         FVector sc(scale[0].get<float>(), scale[1].get<float>(), scale[2].get<float>());
         
-        // EPrimitive prim = static_cast<EPrimitive>(objJson["Type"].get<int>());
-
         AActor* actor = it->second(loc, rat, sc);
         loadedObjects.push_back(actor);
 
