@@ -1,7 +1,7 @@
 #pragma once
 #include "Scene.h"
 #include "ACollider.h"
-#include "AGizmo.h"
+#include "UGizmo.h"
 #include "PickingManager.h"
 
 class DefaultScene : public Scene
@@ -15,8 +15,7 @@ public:
 	virtual void Render() override;
 
 	ACube* cube = nullptr;
-	AGizmo* gizmo = nullptr;
-
+	UGizmo* gizmo = nullptr;
 
 
 	FRay ray;

@@ -9,11 +9,10 @@ enum class EPrimitive
 
 enum class EGizmoAxis
 {
-	None,
 	X,
 	Y,
 	Z,
-	All
+	None
 };
 
 enum class EGizmoMode

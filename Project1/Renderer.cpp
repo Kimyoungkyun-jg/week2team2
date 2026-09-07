@@ -382,10 +382,22 @@ void Renderer::CreateDepthStencil()
 	dsDesc.BackFace = dsDesc.FrontFace;
 
 	Device->CreateDepthStencilState(&dsDesc, &dsState);
+
+	// 기즈모용 깊이 스텐실 상태 (깊이 테스트 비활성화로 항상 최상단 렌더링)
+	D3D11_DEPTH_STENCIL_DESC gizmoDesc = {};
+	gizmoDesc.DepthEnable = FALSE;
+	gizmoDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	Device->CreateDepthStencilState(&gizmoDesc, &dsGizmoState);
 }
 
 void Renderer::ReleaseDepthStencil()
 {
+	if (dsGizmoState)
+	{
+		dsGizmoState->Release();
+		dsGizmoState = nullptr;
+	}
+
 	if (dsState)
 	{
 		dsState->Release();
@@ -397,6 +409,18 @@ void Renderer::ReleaseDepthStencil()
 		depthStencilView->Release();
 		depthStencilView = nullptr;
 	}
+}
+
+void Renderer::SetDefaultDepthState()
+{
+	UINT stencilRef = 1;
+	DeviceContext->OMSetDepthStencilState(dsState, stencilRef);
+}
+
+void Renderer::SetGizmoDepthState()
+{
+	UINT stencilRef = 1;
+	DeviceContext->OMSetDepthStencilState(dsGizmoState, stencilRef);
 }
 
 void Renderer::SwapBuffer()

@@ -8,8 +8,8 @@
 DefaultScene::DefaultScene()
 {
 	// 기즈모만 단독으로 스폰 (위치: 원점 0, 0, 0 / 크기: 1, 1, 1)
-	gizmo = FObjectFactory::SpawnActor<AGizmo>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
-	//cube = FObjectFactory::SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
+	//gizmo = new UGizmo(EGizmoAxis::Y, nullptr);
+	cube = FObjectFactory::SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
 }
 
 DefaultScene::~DefaultScene()
