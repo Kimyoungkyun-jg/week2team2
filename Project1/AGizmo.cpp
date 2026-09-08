@@ -129,7 +129,7 @@ void AGizmoAxis::Render()
 
 void AGizmoAxis::Picked()
 {
-	if (!Targettransform) return;
+	if (!TargetActor) return;
 
 	//축 방향 결정
 	FVector localDir(0.0f, 0.0f, 0.0f);
@@ -144,7 +144,7 @@ void AGizmoAxis::Picked()
 	//로컬 모드이면 타겟의 회전을 반영하고, 월드 모드이면 월드 정방향 축 사용
 	if (bIsLocal)
 	{
-		currentAxisDir = TransformDirection(localDir, Targettransform->WorldMat).Normalized();
+		currentAxisDir = TransformDirection(localDir, TargetActor->GetTransform().WorldMat).Normalized();
 	}
 	else
 	{
@@ -188,11 +188,11 @@ void AGizmoAxis::Picked()
 	float denom = planeNormal.Dot(ray.Direction);
 	if (fabsf(denom) > 1e-6f)
 	{
-		float t = (Targettransform->GetLocation() - ray.Origin).Dot(planeNormal) / denom;
+		float t = (TargetActor->GetLocation() - ray.Origin).Dot(planeNormal) / denom;
 		dragStartPoint = ray.Origin + ray.Direction * t;
-		dragStartActorLocation = Targettransform->GetLocation();
-		dragStartActorRotation = Targettransform->GetRotation();
-		dragStartActorScale = Targettransform->GetScale();
+		dragStartActorLocation = TargetActor->GetLocation();
+		dragStartActorRotation = TargetActor->GetRotation();
+		dragStartActorScale = TargetActor->GetScale();
 	}
 
 
@@ -204,7 +204,7 @@ void AGizmoAxis::Picked()
 
 void AGizmoAxis::Pressed()
 {
-	if (!Targettransform) return;
+	if (!TargetActor) return;
 
 	FRay ray = PICK.ScreenToWorldRay();
 	float denom = planeNormal.Dot(ray.Direction);
@@ -215,8 +215,8 @@ void AGizmoAxis::Pressed()
 
 		if (mode && *mode == EGizmoMode::Rotation) //기즈모가 Rotation일때
 		{
-			FVector A = dragStartPoint - Targettransform->GetLocation();
-			FVector B = currentHitPoint - Targettransform->GetLocation();
+			FVector A = dragStartPoint - TargetActor->GetLocation();
+			FVector B = currentHitPoint - TargetActor->GetLocation();
 
 			// 단위 벡터 정규화
 			FVector vA = A.Normalized();
@@ -243,7 +243,7 @@ void AGizmoAxis::Pressed()
 			default: break;
 			}
 
-			Targettransform->SetRotation(newRot);
+			TargetActor->SetRotation(newRot);
 		}
 		else if (mode && *mode == EGizmoMode::Scale) //Scale일때
 		{
@@ -265,7 +265,7 @@ void AGizmoAxis::Pressed()
 			newScale.y = (std::max)(newScale.y, 0.05f);
 			newScale.z = (std::max)(newScale.z, 0.05f);
 
-			Targettransform->SetScale(newScale);
+			TargetActor->SetScale(newScale);
 			currentDragDist = moveDist;
 		}
 		else //이동일때
@@ -275,7 +275,7 @@ void AGizmoAxis::Pressed()
 			float moveDist = delta.Dot(currentAxisDir);
 
 			//타겟 위치 갱신 및 월드 행렬 업데이트
-			Targettransform->SetLocation(dragStartActorLocation + currentAxisDir * moveDist);
+			TargetActor->SetLocation(dragStartActorLocation + currentAxisDir * moveDist);
 		}
 	}
 
@@ -334,12 +334,19 @@ void AGizmo::SetTargetActor(AActor* inTarget)
 	{
 		for (auto& it : Axes)
 		{
-			it->SetTargetActor(&inTarget->GetTransform());
+			it->SetTargetActor(inTarget);
 			it->SetIsLocal(bIsLocal);
 		}
 
 		transform.SetLocation(TargetActor->GetLocation());
 		transform.Scale = TargetActor->GetScale() * 0.7f;
+	}
+	else
+	{
+		for (auto& it : Axes)
+		{
+			it->SetTargetActor(nullptr);
+		}
 	}
 }
 

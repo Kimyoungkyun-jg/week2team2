@@ -267,12 +267,19 @@ void DefaultScene::Render()
 
 	if (pickedActor)
 	{
+		AGizmoAxis* gizmo = dynamic_cast<AGizmoAxis*>(pickedActor);
+		if (gizmo)
+		{
+			pickedActor = gizmo->GetTargetActor();
+		}
+
+
 		string uid = std::to_string(pickedActor->GetID());
-		
+		string cid = string(pickedActor->GetClass()->Name);
 		// DEBUG
 		// OutputDebugStringA(uid.c_str());
-
 		ImGui::Text("UUID: %s", uid.c_str());
+		ImGui::Text("ClassName: %s", cid.c_str());
 
 
 		// Location Editor

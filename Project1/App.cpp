@@ -124,9 +124,6 @@ void App::Render()
 	// 프레임 버퍼 클리어 및 뷰포트/래스터라이저 설정
 	renderer.Prepare();
 
-	// ImGui 테스트 및 데모 윈도우 (상시 출력)
-	ImGui::ShowDemoWindow();
-
 	ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
 
 	ImGui::Begin("Engine Main Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize);

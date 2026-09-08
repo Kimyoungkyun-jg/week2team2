@@ -25,11 +25,19 @@ public:
 	virtual void Pressed() override;
 	virtual void Released() override;
 
-	void SetTargetActor(Transform* targettf)
+	void SetTargetActor(AActor* inTarget)
 	{
-		Targettransform = targettf;
-		transform.SetParent(targettf, false);
+		TargetActor = inTarget;
+		if (TargetActor)
+		{
+			transform.SetParent(&TargetActor->GetTransform(), false);
+		}
+		else
+		{
+			transform.SetParent(nullptr, false);
+		}
 	}
+	AActor* GetTargetActor() const { return TargetActor; }
 
 
 	void HighlightAxe();
@@ -55,7 +63,7 @@ public:
 
 private:
 	EGizmoAxis Axis = EGizmoAxis::None;
-	Transform* Targettransform = nullptr;
+	AActor* TargetActor = nullptr;
 	FVector planeNormal; 
 	FVector currentAxisDir;
 	FVector dragStartPoint;
