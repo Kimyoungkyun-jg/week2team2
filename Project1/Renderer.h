@@ -67,6 +67,8 @@ public:
 	ID3D11DepthStencilView* depthStencilView = nullptr;
 	ID3D11DepthStencilState* dsState = nullptr;
 	ID3D11DepthStencilState* dsGizmoState = nullptr;
+	ID3D11DepthStencilState* dsSelectedState = nullptr;
+	ID3D11DepthStencilState* dsOutlineState = nullptr;
 
 	// 단일 공유 컬러 버퍼 (b2 슬롯)
 	ColorBuffer* CustomColorBuffer = nullptr;
@@ -82,6 +84,9 @@ public:
 	// 깊이 상태 전환
 	void SetDefaultDepthState();
 	void SetGizmoDepthState();
+	void SetDepthState();
+	void SetSelectedState();
+	void SetOutlineState();
 
 
 	void CreateDeviceAndSwapChain(HWND hWindow);

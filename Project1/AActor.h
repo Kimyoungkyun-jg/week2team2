@@ -22,6 +22,7 @@ public:
 	virtual void Render() override;
 	virtual void Update(float Deltatime) override;
 
+	void RenderOutline();
 
 	void SetLocation(const FVector& loc) { transform.SetLocation(loc); }
 	void SetRotation(const FVector& _Rotation) { transform.SetRotation(_Rotation); }
@@ -99,6 +100,10 @@ public:
 		float dummyDist = 0.0f;
 		return bIsPicked(worldRay, dummyDist);
 	}
+
+
+	void SetOutlineState();
+	void SetDefaultState();
 
 	UINT GetNumVertices() const { return numVertices; }
 
