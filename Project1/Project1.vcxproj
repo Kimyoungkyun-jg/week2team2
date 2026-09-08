@@ -147,6 +147,7 @@
     <ClInclude Include="ConstBuffer.h" />
     <ClInclude Include="Containers.h" />
     <ClInclude Include="FLinearColor.h" />
+    <ClInclude Include="FQuaternion.h" />
     <ClInclude Include="GlobalBuffer.h" />
     <ClInclude Include="Intersection.h" />
     <ClInclude Include="Mesh.h" />
@@ -199,6 +200,7 @@
     <ClCompile Include="CircleGenerator.cpp" />
     <ClCompile Include="ConsoleWindow.cpp" />
     <ClCompile Include="ConstBuffer.cpp" />
+    <ClCompile Include="FQuaternion.cpp" />
     <ClCompile Include="Intersection.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="SaveLoadManager.cpp" />

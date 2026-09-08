@@ -31,7 +31,7 @@ TMap<string, SaveLoadManager::CreatorFunc>& SaveLoadManager::GetActorCreatorRegi
     if (registry.empty())
     {
         // "Cube" -> 상자 생성
-        registry["Cube"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
+        registry["Cube"] = [](FVector loc, FQuaternion rot, FVector sc) -> AActor *
         {
             AActor* actor = FObjectFactory::SpawnColider<ACube>(loc, sc);
             actor->SetRotation(rot);
@@ -39,7 +39,7 @@ TMap<string, SaveLoadManager::CreatorFunc>& SaveLoadManager::GetActorCreatorRegi
         };
         
         // "Sphere" -> 구 생성
-        registry["Sphere"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
+        registry["Sphere"] = [](FVector loc, FQuaternion rot, FVector sc) -> AActor *
         {
             AActor* actor = FObjectFactory::SpawnColider<ASphere>(loc, sc);
             actor->SetRotation(rot);
@@ -47,7 +47,7 @@ TMap<string, SaveLoadManager::CreatorFunc>& SaveLoadManager::GetActorCreatorRegi
         };
 
         // "Circle" -> 원 생성
-        registry["Circle"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
+        registry["Circle"] = [](FVector loc, FQuaternion rot, FVector sc) -> AActor *
         {
             AActor* actor = FObjectFactory::SpawnColider<ACircle>(loc, sc);
             actor->SetRotation(rot);
@@ -55,7 +55,7 @@ TMap<string, SaveLoadManager::CreatorFunc>& SaveLoadManager::GetActorCreatorRegi
         };
 
         // "Rectangle" -> 사각형 생성
-        registry["Rectangle"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
+        registry["Rectangle"] = [](FVector loc, FQuaternion rot, FVector sc) -> AActor *
         {
             AActor* actor = FObjectFactory::SpawnColider<ARectangle>(loc, sc);
             actor->SetRotation(rot);
@@ -63,7 +63,7 @@ TMap<string, SaveLoadManager::CreatorFunc>& SaveLoadManager::GetActorCreatorRegi
         };
 
         // "Triangle" -> 삼각형 생성
-        registry["Triangle"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
+        registry["Triangle"] = [](FVector loc, FQuaternion rot, FVector sc) -> AActor *
         {
             AActor* actor = FObjectFactory::SpawnColider<ATriangle>(loc, sc);
             actor->SetRotation(rot);
@@ -114,7 +114,7 @@ void SaveLoadManager::SaveScene(const FString& path)
         if (!actor) continue;
         
         FVector location = actor->GetLocation();    // location 저장
-        FVector rotation = actor->GetRotation();    // rotation 저장
+        FQuaternion rotation = actor->GetRotation();    // rotation 저장
         FVector scale = actor->GetScale();          // scale 저장
         EPrimitive type = actor->GetPrimitive();    // type 저장
         if (type == EPrimitive::Gizmo) continue; // Gizmo면 pass
@@ -209,7 +209,7 @@ TArray<UObject*> SaveLoadManager::LoadScene(const FString& path)
         
         // 명시적 형변환 (float) 하여 x, y, z 값 가져오기
         FVector loc(location[0].get<float>(), location[1].get<float>(), location[2].get<float>());
-        FVector rat(rotation[0].get<float>(), rotation[1].get<float>(), rotation[2].get<float>());
+        FQuaternion rat = FQuaternion::FromEuler(rotation[0].get<float>(), rotation[1].get<float>(), rotation[2].get<float>());
         FVector sc(scale[0].get<float>(), scale[1].get<float>(), scale[2].get<float>());
         
         AActor* actor = it->second(loc, rat, sc);

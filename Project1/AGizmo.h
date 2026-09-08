@@ -68,7 +68,7 @@ private:
 	FVector currentAxisDir;
 	FVector dragStartPoint;
 	FVector dragStartActorLocation;
-	FVector dragStartActorRotation;
+	FQuaternion dragStartActorRotation;
 	FVector dragStartActorScale;
 	bool bSelected = false;
 	bool bHovered = false;

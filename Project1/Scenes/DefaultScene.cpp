@@ -4,6 +4,7 @@
 #include "Renderer.h"
 #include "PickingManager.h"
 #include "SaveLoadManager.h"
+#include "Global.h"
 #include <random>
 
 
@@ -60,7 +61,7 @@ void DefaultScene::Render()
 	{
 		cam.SetLocation(camLoc);
 	}
-	FVector camRot = cam.GetRotation();
+	FQuaternion camRot = cam.GetRotation();
 	if (ImGui::DragFloat3("Cam Rot", &camRot.x, 0.01f, -3.14f, 3.14f))
 	{
 		cam.SetRotation(camRot);
@@ -73,7 +74,7 @@ void DefaultScene::Render()
 	if (ImGui::Button("Reset Camera"))
 	{
 		cam.SetLocation(FVector(3.336f, 3.282f, -4.715f));
-		cam.SetRotation(FVector(0.391f, -0.468f, 0.0f));
+		cam.SetRotation(FQuaternion::FromEuler(0.391f, -0.468f, 0.0f));
 	}
 	
 	FVector camFwd = cam.GetForward();
@@ -199,7 +200,7 @@ void DefaultScene::Render()
 			cube->SetScale(scale);
 		}
 
-		FVector rot = cube->GetRotation();
+		FQuaternion rot = cube->GetRotation();
 		bool bCubeChanged = false;
 		if (ImGui::DragFloat(("Rotation X" + uid).c_str(), &rot.x, 0.01f, -3.14f, 3.14f))
 		{
@@ -236,7 +237,7 @@ void DefaultScene::Render()
 			gizmo->SetScale(scale);
 		}
 
-		FVector rot = gizmo->GetRotation();
+		FQuaternion rot = gizmo->GetRotation();
 		bool bRotChanged = false;
 		if (ImGui::DragFloat("Rotation X", &rot.x, 0.01f, -3.14f, 3.14f))
 		{
@@ -296,26 +297,42 @@ void DefaultScene::Render()
 			pickedActor->SetScale(scale);
 		}
 
-		// Rotation Editor
-		FVector rot = pickedActor->GetRotation();
+		// Rotation Editor (오일러로 표시, 편집하되 내부 데이터만 쿼터니언)
+		static string s_RotEditedActorID; // 회전 수정한 Actor ID
+		static float s_euler[3] = { 0.0f, 0.0f, 0.0f }
+;		FQuaternion rot = pickedActor->GetRotation();
+
+		if (uid != s_RotEditedActorID)
+		{
+			FVector eulerRad = FQuaternion::ToEuler(pickedActor->GetRotation());
+			s_euler[0] = eulerRad.x * (180 / Global::PI);
+			s_euler[1] = eulerRad.y * (180 / Global::PI);
+			s_euler[2] = eulerRad.z * (180 / Global::PI);
+			s_RotEditedActorID = uid;
+		}
 
 		bool bPrimChanged = false;
-		if (ImGui::DragFloat(("Rotation X" + uid).c_str(), &rot.x, 0.01f, -3.14f, 3.14f))
+		if (ImGui::DragFloat(("Rotation X" + uid).c_str(), &s_euler[0], 5.0f, -180.0f, 180.0f))
 		{
 			bPrimChanged = true;
 		}
-		if (ImGui::DragFloat(("Rotation Y" + uid).c_str(), &rot.y, 0.01f, -3.14f, 3.14f))
+		if (ImGui::DragFloat(("Rotation Y" + uid).c_str(), &s_euler[1], 5.0f, -180.0f, 180.0f))
 		{
 			bPrimChanged = true;
 		}
-		if (ImGui::DragFloat(("Rotation Z" + uid).c_str(), &rot.z, 0.01f, -3.14f, 3.14f))
+		if (ImGui::DragFloat(("Rotation Z" + uid).c_str(), &s_euler[2], 5.0f, -180.0f, 180.0f))
 		{
 			bPrimChanged = true;
 		}
 		// 수정했으면 Rotation 재설정
 		if (bPrimChanged)
 		{
-			pickedActor->SetRotation(rot);
+			FQuaternion newRot = FQuaternion::FromEuler(
+				s_euler[0] * (180 / Global::PI),
+				s_euler[1] * (180 / Global::PI),
+				s_euler[2] * (180 / Global::PI)
+			);
+			pickedActor->SetRotation(newRot);
 		}
 	}
 

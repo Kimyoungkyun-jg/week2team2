@@ -77,15 +77,9 @@ void AGrid::CreateTriangleVertices()
 
 void AGrid::Render()
 {
-	UObject::Render();
+	AActor::Render();
 
 	SetWorldBuffer();
-
-	if (mesh)
-	{
-		mesh->Render(GridType == EGridType::Line ? D3D11_PRIMITIVE_TOPOLOGY_LINELIST
-			: D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	}
 }
 
 
