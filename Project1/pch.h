@@ -77,6 +77,8 @@ using namespace std;
 #define CAMERA Camera::GetInstance()
 
 #define PICK PickingManager::GetInstance()
+#define OBJECT ObjectManager::GetInstance()
+
 
 #define WIN_WIDTH 1920	
 #define WIN_HEIGHT 1080
@@ -95,3 +97,4 @@ typedef string FString;
 #include "Camera.h"
 
 #include "PickingManager.h"
+#include "ObjectManager.h"

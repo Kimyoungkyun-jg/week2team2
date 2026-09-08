@@ -9,7 +9,7 @@ class ACollider : public AActor
 	DECLARE_CLASS(ACollider, AActor)
 
 public:
-	ACollider() {}
+	ACollider(const FLinearColor& inColor = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f)) : AActor(inColor) {}
 	virtual ~ACollider() {}
 
 	virtual void Move(float deltaTime);
@@ -70,12 +70,8 @@ class ACube : public ACollider
 {
 	DECLARE_CLASS(ACube, ACollider)
 	
-	public:
-	ACube()
-	{
-		InitVertexBuffer(cube_vertices);
-		Primitive = EPrimitive::Cube;
-	}
+public:
+	ACube(const FLinearColor& inColor = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f));
 };
 
 //////////////////////////////
@@ -87,12 +83,8 @@ class ASphere : public ACollider
 {
 	DECLARE_CLASS(ASphere, ACollider)
 	
-	public:
-	ASphere()
-	{
-		InitVertexBuffer(sphere_vertices);
-		Primitive = EPrimitive::Sphere;
-	}
+public:
+	ASphere(const FLinearColor& inColor = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f));
 
 	float GetRadius() const { return transform.Scale.x * 0.5f; }
 	virtual float GetInertia() const override
@@ -110,12 +102,8 @@ class ATriangle : public ACollider
 {
 	DECLARE_CLASS(ATriangle, ACollider)
 	
-	public:
-	ATriangle()
-	{
-		InitVertexBuffer(triangle_vertices);
-		Primitive = EPrimitive::Triangle;
-	}
+public:
+	ATriangle(const FLinearColor& inColor = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f));
 };
 
 /////////////////////////
@@ -126,12 +114,8 @@ class ARectangle : public ACollider
 {
 	DECLARE_CLASS(ARectangle, ACollider)
 	
-	public:
-	ARectangle()
-	{
-		InitVertexBuffer(rectangle_vertices);
-		Primitive = EPrimitive::Rectangle;
-	}
+public:
+	ARectangle(const FLinearColor& inColor = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f));
 };
 
 /////////////////////////
@@ -142,11 +126,7 @@ class ACircle : public ACollider
 {
 	DECLARE_CLASS(ACircle, ACollider)
 	
-	public:
-	ACircle()
-	{
-		TArray<FVertexColor> circle_vertices = CircleGenerator::MakeCircle(32, 1.0f, 1.0f, 0.0f, 1.0f);
-		InitVertexBuffer(circle_vertices);
-		Primitive = EPrimitive::Circle;
-	}
+public:
+	ACircle(const FLinearColor& inColor = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f));
 };
+

@@ -15,6 +15,7 @@
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Project1</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -41,8 +42,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)..\bin\Debug\</OutDir>
-    <IntDir>$(ProjectDir)..\bin-int\Debug\</IntDir>
+    <OutDir>$(ProjectDir)..\Build\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\Build\$(Configuration)\</IntDir>
     <TargetName>Project1</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
@@ -75,7 +76,7 @@
     <ProjectReference>
     </ProjectReference>
     <PostBuildEvent>
-      <Command>copy /B /Y $(SolutionDir)\..\Project1\ShaderW0.hlsl ..\bin\Debug\ShaderW0.hlsl</Command>
+      <Command>copy /B /Y "$(ProjectDir)ShaderW0.hlsl" "$(TargetDir)ShaderW0.hlsl"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -145,12 +146,11 @@
     <ClInclude Include="ConsoleWindow.h" />
     <ClInclude Include="ConstBuffer.h" />
     <ClInclude Include="Containers.h" />
-    <ClInclude Include="Cube.h" />
     <ClInclude Include="FLinearColor.h" />
     <ClInclude Include="GlobalBuffer.h" />
     <ClInclude Include="Intersection.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="SaveLoadManager.h" />
-    <ClInclude Include="USphere.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="PickingManager.h" />
   </ItemGroup>
@@ -199,15 +199,11 @@
     <ClCompile Include="CircleGenerator.cpp" />
     <ClCompile Include="ConsoleWindow.cpp" />
     <ClCompile Include="ConstBuffer.cpp" />
-    <ClCompile Include="Cube.cpp" />
     <ClCompile Include="Intersection.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="SaveLoadManager.cpp" />
-    <ClCompile Include="USphere.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="PickingManager.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Project1\ShaderW0.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CubeVertice.txt" />

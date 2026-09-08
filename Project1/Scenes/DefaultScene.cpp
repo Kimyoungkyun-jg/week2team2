@@ -9,14 +9,17 @@
 
 DefaultScene::DefaultScene()
 {
-	cube = FObjectFactory::SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
-	cube->SetColor(FLinearColor::Blue);
+	cube = FObjectFactory::SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f }, 1.0f, FLinearColor::Cyan);
 
-	cube2 = FObjectFactory::SpawnColider<ACube>(FVector(5.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
-	cube2->SetColor(FLinearColor::Red);
+	cube2 = FObjectFactory::SpawnColider<ACube>(FVector(5.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f }, 1.0f, FLinearColor::Magenta);
 
-	sphere = FObjectFactory::SpawnColider<ASphere>(FVector(-5.0f, 0.0f, 0.0f));
-	sphere->SetColor(FLinearColor::Green);
+
+	sphere = FObjectFactory::SpawnActor<ASphere>(
+		FVector(-5.0f, 0.0f, 0.0f),
+		FVector(1.0f, 1.0f, 1.0f),
+		FLinearColor::Red
+	);
+
 
 	// World Map Axis 생성
 	worldAxises = FObjectFactory::SpawnActor<AWorldAxises>();
@@ -264,12 +267,19 @@ void DefaultScene::Render()
 
 	if (pickedActor)
 	{
+		AGizmoAxis* gizmo = dynamic_cast<AGizmoAxis*>(pickedActor);
+		if (gizmo)
+		{
+			pickedActor = gizmo->GetTargetActor();
+		}
+
+
 		string uid = std::to_string(pickedActor->GetID());
-		
+		string cid = string(pickedActor->GetClass()->Name);
 		// DEBUG
 		// OutputDebugStringA(uid.c_str());
-
 		ImGui::Text("UUID: %s", uid.c_str());
+		ImGui::Text("ClassName: %s", cid.c_str());
 
 
 		// Location Editor

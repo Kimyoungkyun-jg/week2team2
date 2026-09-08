@@ -31,7 +31,33 @@ public:
 		FMatrix T = FMatrix::Translation(Location);
 
 		WorldMat = S * R * T;
+
+		if (Parent)
+		{
+			if (bInheritScale)
+			{
+				WorldMat = WorldMat * Parent->WorldMat;
+			}
+			else
+			{
+				FMatrix parentRot = FMatrix::RotationZ(Parent->Rotation.z) 
+				                  * FMatrix::RotationX(Parent->Rotation.x) 
+				                  * FMatrix::RotationY(Parent->Rotation.y);
+				FMatrix parentTrans = FMatrix::Translation(Parent->Location);
+
+				WorldMat = WorldMat * (parentRot * parentTrans);
+			}
+		}
 	}
+
+	void SetParent(const Transform* InParent, bool inInheritScale = false)
+	{
+		Parent = InParent;
+		bInheritScale = inInheritScale;
+		UpdateWorldMatrix();
+	}
+
+	const Transform* GetParent() const { return Parent; }
 
 	void SetLocation(const FVector& InLocation) { Location = InLocation; UpdateWorldMatrix(); }
 	void SetRotation(const FVector& InRotation) { Rotation = InRotation; UpdateWorldMatrix(); }
@@ -43,6 +69,7 @@ public:
 
 	void SetWorldMatrix(const FMatrix& InWorldMatrix) { WorldMat = InWorldMatrix; }
 	const FMatrix& GetWorldMatrix() const { return WorldMat; }
+
 
 
 	FVector Forward() const //현재 상태에서 앞 (+Z)
@@ -72,4 +99,8 @@ public:
 	FVector Rotation;
 	FVector Scale;
 	FMatrix WorldMat;
+
+	const Transform* Parent = nullptr;
+	bool bInheritScale = false;
 };
+

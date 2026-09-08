@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "TemplateLibrary.h"
 #include "AGizmo.h"
+#include "AWorldAxises.h"
 
 FRay PickingManager::ScreenToWorldRay(float mouseX, float mouseY, float screenW, float screenH) const
 {
@@ -42,15 +43,27 @@ AActor* PickingManager::Pick()
 	//기즈모 축 피킹 우선 검사
 	if (AGizmo::MainGizmo && AGizmo::MainGizmo->GetTargetActor())
 	{
+		AGizmoAxis* closestAxis = nullptr;
+		float closestDist = FLT_MAX;
+
 		for (AGizmoAxis* axis : AGizmo::MainGizmo->GetAxes())
 		{
 			float axisDist = 0.0f;
 			if (axis->bIsPicked(ray, axisDist))
 			{
-				axis->Picked();
-				pickedObjcect = axis;
-				return axis;
+				if (axisDist > 0.0f && axisDist < closestDist)
+				{
+					closestDist = axisDist;
+					closestAxis = axis;
+				}
 			}
+		}
+
+		if (closestAxis)
+		{
+			closestAxis->Picked();
+			pickedObjcect = closestAxis;
+			return closestAxis;
 		}
 	}
 
@@ -60,7 +73,7 @@ AActor* PickingManager::Pick()
 
 	for (auto object : ObjectManager::GetInstance().AllObjects) {
 		AActor* actor = Cast<AActor>(object);
-		if (actor == nullptr || Cast<AGizmo>(actor)) continue;
+		if (actor == nullptr || Cast<AGizmo>(actor) || Cast<AWorldAxises>(actor)) continue;
 
 		float dist = 0.0f;
 		if (actor->bIsPicked(ray, dist) && dist < closestDist)

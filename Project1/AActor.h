@@ -6,6 +6,8 @@
 #include "Transform.h"
 #include "VertexBuffer.h"
 #include "GlobalBuffer.h"
+#include "FLinearColor.h"
+#include "Mesh.h"
 
 using namespace DirectX;
 
@@ -17,19 +19,20 @@ class AActor : public UObject
 	DECLARE_CLASS(AActor, UObject)
 
 public:
-	AActor();
+	AActor(const FLinearColor& inColor = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f));
 	virtual ~AActor();
 	virtual void Render() override;
 	virtual void Update(float Deltatime) override;
 
+	void RenderOutline();
 
 	void SetLocation(const FVector& loc) { transform.SetLocation(loc); }
 	void SetRotation(const FVector& _Rotation) { transform.SetRotation(_Rotation); }
 	void SetScale(const FVector& _Scale) { transform.SetScale(_Scale); }
 
 	void SetPrimitive(EPrimitive _Primitive) { Primitive = _Primitive; }
-	const FVector& GetRotation() const { return transform.GetRotation(); }
 	EPrimitive GetPrimitive() const { return Primitive; }
+	const FVector& GetRotation() const { return transform.GetRotation(); }
 	const FVector& GetScale() const { return transform.GetScale(); }
 	const FVector& GetLocation() const { return transform.GetLocation(); }
 
@@ -40,67 +43,81 @@ public:
 	void SetColor(const FLinearColor& inColor) { Color = inColor; }
 	const FLinearColor& GetColor() const { return Color; }
 
-	// 커스텀 정점 버퍼 초기화 함수
-	void InitVertexBuffer(const void* vertices, UINT stride, UINT inNumVertices, ID3D11InputLayout* inLayout = nullptr);
+	void SetMesh(Mesh* inMesh, bool bOwned = false)
+	{
+		if (bOwnsMesh && mesh && mesh != inMesh)
+		{
+			delete mesh;
+		}
+		mesh = inMesh;
+		bOwnsMesh = bOwned;
+	}
+	Mesh* GetMesh() const { return mesh; }
+
+	// 커스텀 정점 버퍼 초기화 함수 (독자 소유 메시 생성)
+	void InitVertexBuffer(const void* vertices, UINT stride, UINT inNumVertices, ID3D11InputLayout* inLayout = nullptr)
+	{
+		if (bOwnsMesh && mesh)
+		{
+			delete mesh;
+			mesh = nullptr;
+		}
+		mesh = new Mesh();
+		bOwnsMesh = true;
+		mesh->InitVertexBuffer(vertices, stride, inNumVertices, inLayout);
+	}
 
 	// 정점 배열을 넘기면 타입(VertexType), 정점 개수, InputLayout까지 자동 추론 및 저장!
 	template <typename VertexType, size_t N>
-	void InitVertexBuffer(const VertexType (&vertices)[N])
+	void InitVertexBuffer(const VertexType(&vertices)[N])
 	{
-		InitVertexBuffer(vertices, sizeof(VertexType), static_cast<UINT>(N), RENDERER.GetInputLayout<VertexType>());
-		
-		LocalVertices.clear();
-		LocalVertices.reserve(N);
-
-		for (size_t i = 0; i < N; ++i)
+		if (bOwnsMesh && mesh)
 		{
-			LocalVertices.push_back(FVector(vertices[i].x, vertices[i].y, vertices[i].z));
+			delete mesh;
+			mesh = nullptr;
 		}
+		mesh = new Mesh();
+		bOwnsMesh = true;
+		mesh->InitVertexBuffer(vertices);
 	}
 
-	//std::vector 정점 배열 초기화
+	// std::vector 정점 배열 초기화
 	template <typename VertexType>
 	void InitVertexBuffer(const std::vector<VertexType>& vertices)
 	{
-		if (vertices.empty()) return;
-
-		InitVertexBuffer(vertices.data(), sizeof(VertexType), static_cast<UINT>(vertices.size()), RENDERER.GetInputLayout<VertexType>());
-
-		LocalVertices.clear();
-		LocalVertices.reserve(vertices.size());
-
-		for (size_t i = 0; i < vertices.size(); ++i)
+		if (bOwnsMesh && mesh)
 		{
-			LocalVertices.push_back(FVector(vertices[i].x, vertices[i].y, vertices[i].z));
+			delete mesh;
+			mesh = nullptr;
 		}
+		mesh = new Mesh();
+		bOwnsMesh = true;
+		mesh->InitVertexBuffer(vertices);
 	}
 
-	//TArray 정점 배열 초기화
+	// TArray 정점 배열 초기화
 	template <typename VertexType>
 	void InitVertexBuffer(const TArray<VertexType>& vertices)
 	{
-		if (vertices.empty()) return;
-
-		InitVertexBuffer(vertices.data(), sizeof(VertexType), static_cast<UINT>(vertices.size()), RENDERER.GetInputLayout<VertexType>());
-
-		LocalVertices.clear();
-		LocalVertices.reserve(vertices.size());
-
-		for (size_t i = 0; i < vertices.size(); ++i)
+		if (bOwnsMesh && mesh)
 		{
-			LocalVertices.push_back(FVector(vertices[i].x, vertices[i].y, vertices[i].z));
+			delete mesh;
+			mesh = nullptr;
 		}
+		mesh = new Mesh();
+		bOwnsMesh = true;
+		mesh->InitVertexBuffer(vertices);
 	}
-	
 
-	bool bIsPicked(const FRay& worldRay, float& outDistance);
-	bool bIsPicked(const FRay& worldRay)
+	virtual bool bIsPicked(const FRay& worldRay, float& outDistance);
+	virtual bool bIsPicked(const FRay& worldRay)
 	{
 		float dummyDist = 0.0f;
 		return bIsPicked(worldRay, dummyDist);
 	}
+	bool IsSelected() const;
+	void DrawWithSelection(D3D11_PRIMITIVE_TOPOLOGY topology);
 
-	UINT GetNumVertices() const { return numVertices; }
 
 	virtual void Pressed() {}
 	virtual void Released() {}
@@ -112,13 +129,10 @@ public:
 public:
 	Transform transform;
 	EPrimitive Primitive = EPrimitive::Cube;
-	
 	MatrixBuffer* worldBuffer = nullptr;
-	VertexBuffer* vertexbuffer = nullptr;
-	ID3D11InputLayout* inputLayout = nullptr;
 	FLinearColor Color = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	UINT numVertices = 0;
-
-	TArray<FVector> LocalVertices;
+	Mesh* mesh = nullptr;
+	bool bOwnsMesh = false;
 };
+
 

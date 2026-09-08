@@ -62,15 +62,15 @@
     <ClInclude Include="AGizmo.h" />
     <ClInclude Include="ConstBuffer.h" />
     <ClInclude Include="Containers.h" />
-    <ClInclude Include="Cube.h" />
     <ClInclude Include="FLinearColor.h" />
     <ClInclude Include="GlobalBuffer.h" />
     <ClInclude Include="Intersection.h" />
     <ClInclude Include="SaveLoadManager.h" />
-    <ClInclude Include="USphere.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="AWorldAxises.h" />
     <ClInclude Include="AGrid.h" />
+    <ClInclude Include="CircleGenerator.h" />
+    <ClInclude Include="ConsoleWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Project1\AActor.cpp" />
@@ -114,19 +114,12 @@
     <ClCompile Include="PickingManager.cpp" />
     <ClCompile Include="AGizmo.cpp" />
     <ClCompile Include="ConstBuffer.cpp" />
-    <ClCompile Include="Cube.cpp" />
     <ClCompile Include="Intersection.cpp" />
     <ClCompile Include="SaveLoadManager.cpp" />
-    <ClCompile Include="USphere.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="AWorldAxises.cpp" />
     <ClCompile Include="AGrid.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Project1\ShaderW0.hlsl" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="CubeVertice.txt" />
+    <ClCompile Include="CircleGenerator.cpp" />
+    <ClCompile Include="ConsoleWindow.cpp" />
   </ItemGroup>
 </Project>

@@ -7,8 +7,6 @@ public:
     ~VertexBuffer();
 
     void IASet(D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    void Update(const void* data, UINT count);
-
 public:
     ID3D11Buffer* buffer = nullptr;
     UINT stride = 0;

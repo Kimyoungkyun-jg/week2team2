@@ -14,6 +14,7 @@ ConsoleWindow::ConsoleWindow()
 	Commands.Add("CLEAR");
 	Commands.Add("HISTORY");
 	Commands.Add("UE_LOG");
+	Commands.Add("TYPE");
 }
 
 ConsoleWindow::~ConsoleWindow()
@@ -159,8 +160,8 @@ void ConsoleWindow::DrawLogArea()
 			ImGui::PopStyleColor();
 	}
 
-	// AutoScroll이 켜져 있고 원래 맨 아래를 보고 있었을 때만 새 로그를 따라간다.
-	if (AutoScroll && WasAtBottom)
+	// AutoScroll이 켜져 있을 때만 새 로그를 따라간다.
+	if (AutoScroll)
 		ImGui::SetScrollHereY(1.0f);
 
 	ImGui::EndChild();
@@ -221,19 +222,32 @@ void ConsoleWindow::ExecuteCommand(const char* Input)
 		return;
 	}
 
-	if (Command.rfind("UE_LOG", 0) != 0)
+	if (Command.rfind("UE_LOG", 0) == 0)
 	{
-		AddLog("Unknown Command");
+		if (!ParseUELog(Command))
+		{
+			AddLog("Syntax Error");
+			return;
+		}
+
+		ExecuteUELog();
 		return;
 	}
 
-	if (!ParseUELog(Command))
+	if (Command.rfind("TYPE", 0) == 0)
 	{
-		AddLog("Syntax Error");
+		if (!ParseTypeCompare(Command))
+		{
+			AddLog("Syntax Error");
+			return;
+		}
+		ExecuteTypeCompare();
 		return;
 	}
 
-	ExecuteUELog();
+	AddLog("Unknown Command");
+	return;
+
 }
 
 void ConsoleWindow::ExecuteHelp()
@@ -365,6 +379,83 @@ void ConsoleWindow::ExecuteUELog()
 	}
 
 	AddLog("%s", Result.c_str());
+}
+
+bool ConsoleWindow::ParseTypeCompare(const FString& Input)
+{
+	ParsedArguments.Empty();
+
+	const FString Command = "TYPE";
+
+	// TYPE으로 시작하는지 확인.
+	if (Input.rfind(Command, 0) != 0)
+		return false;
+
+	// 명령 마지막에는 ;가 존재.
+	if (Input.empty() || Input.back() != ';')
+		return false;
+
+	// TYPE와 마지막 ;를 제거.
+	FString SubCommand = Input.substr(Command.length(), Input.length() - Command.length() - 1);
+
+	// 남은 부분은 반드시 (...) 형태.
+	if (SubCommand.length() < 2 || SubCommand.front() != '(' || SubCommand.back() != ')')
+		return false;
+
+	FString Arguments = SubCommand.substr(1, SubCommand.length() - 2);
+
+	if (Arguments.empty())
+		return false;
+
+	size_t CommaPos = Arguments.find(',');
+
+	if (CommaPos == FString::npos)
+		return false;
+	
+	FString First = Arguments.substr(0, CommaPos);
+	FString Second = Arguments.substr(CommaPos + 1);
+
+	First = Trim(First);
+	Second = Trim(Second);
+
+	if (First.empty() || Second.empty())
+		return false;
+
+	ParsedArguments.Add(First);
+	ParsedArguments.Add(Second);
+
+	return true;
+}
+
+void ConsoleWindow::ExecuteTypeCompare() {
+
+	if (ParsedArguments.Num() != 2) {
+		AddLog("ISA requires exactly 2 arguments.");
+		return;
+	}
+
+	auto& ClassMap = ObjectManager::GetInstance().AllClassInfoMap;
+
+	FString first = ParsedArguments[0];
+	FString second = ParsedArguments[1];
+
+	ClassInfo** FirstClass = ClassMap.Find(first);
+	ClassInfo** SecondClass = ClassMap.Find(second);
+
+	if (!FirstClass || !SecondClass)
+	{
+		AddLog("Class Not Found");
+		return;
+	}
+
+	bool Result = (*FirstClass)->IsA(*SecondClass);
+
+	FString Message = Result 
+		? first + " is a " + second
+		: first + " is not a " + second;
+
+	AddLog("%s", Message.c_str());
+
 }
 
 int ConsoleWindow::TextEditCallbackStub(ImGuiInputTextCallbackData* Data)
@@ -502,4 +593,18 @@ void ConsoleWindow::DrawSuggestions()
 			break;
 		}
 	}
+}
+
+FString ConsoleWindow::Trim(const FString& Str)
+{
+	size_t Start = 0;
+	size_t End = Str.length();
+
+	while (Start < End && Str[Start] == ' ')
+		++Start;
+
+	while (End > Start && Str[End - 1] == ' ')
+		--End;
+
+	return Str.substr(Start, End - Start);
 }

@@ -86,8 +86,8 @@
 
     FMatrix FMatrix::PerspectiveFov(float fovY, float aspectRatio, float nearZ, float farZ)
     {
-        float yScale = 1.0f / tanf(fovY/2.0f);
-        float xScale = yScale / aspectRatio ;
+        float xScale = 1.0f / tanf(fovY / 2.0f); 
+        float yScale = xScale * aspectRatio;     
 
         FMatrix result = {};
         result.M[0][0] = xScale;

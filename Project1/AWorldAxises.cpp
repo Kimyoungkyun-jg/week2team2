@@ -15,11 +15,13 @@ void AWorldAxises::Render()
 
 	SetWorldBuffer();
 
-	RENDERER.PrepareShader(inputLayout);
 	RENDERER.SetCustomColor({ 0.0f, 0.0f, 0.0f, 0.0f });
 
-	vertexbuffer->IASet(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-	DC->Draw(numVertices, 0);
+	if (mesh)
+	{
+		mesh->Render(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+	}
 }
+
 
 

@@ -12,7 +12,7 @@ class AGizmoAxis : public AActor
 	DECLARE_CLASS(AGizmoAxis, AActor)
 
 public:
-	AGizmoAxis(EGizmoAxis inAxis = EGizmoAxis::Y);
+	AGizmoAxis(EGizmoMode& mode, EGizmoAxis inAxis = EGizmoAxis::Y);
 	virtual ~AGizmoAxis();
 
 	void Update(float DeltaTime, const Transform& parentTransform);
@@ -25,24 +25,59 @@ public:
 	virtual void Pressed() override;
 	virtual void Released() override;
 
-	void SetTargetActor(Transform* targettf)
+	void SetTargetActor(AActor* inTarget)
 	{
-		Targettransform = targettf;
+		TargetActor = inTarget;
+		if (TargetActor)
+		{
+			transform.SetParent(&TargetActor->GetTransform(), false);
+		}
+		else
+		{
+			transform.SetParent(nullptr, false);
+		}
 	}
+	AActor* GetTargetActor() const { return TargetActor; }
+
 
 	void HighlightAxe();
+
+	void SetHovered(bool inHovered)
+	{
+		bHovered = inHovered;
+		if (bSelected || bHovered)
+		{
+			HighlightAxe();
+		}
+		else
+		{
+			SetColor(srcColor);
+		}
+	}
+	bool GetHovered() const { return bHovered; }
+
+	void SetIsLocal(bool inIsLocal) { bIsLocal = inIsLocal; }
+	bool GetIsLocal() const { return bIsLocal; }
 
 	FLinearColor srcColor;
 
 private:
 	EGizmoAxis Axis = EGizmoAxis::None;
-	Transform* Targettransform = nullptr;
+	AActor* TargetActor = nullptr;
 	FVector planeNormal; 
 	FVector currentAxisDir;
 	FVector dragStartPoint;
 	FVector dragStartActorLocation;
+	FVector dragStartActorRotation;
+	FVector dragStartActorScale;
 	bool bSelected = false;
+	bool bHovered = false;
+	bool bIsLocal = true;
+	float currentDragDist = 0.0f;
+
+	EGizmoMode* mode;
 };
+
 
 // 씬에 단 하나 생성되어 피킹된 액터에 부착되는 통합 기즈모 액터
 class AGizmo : public AActor
@@ -64,8 +99,9 @@ public:
 	void SetTargetActor(AActor* inTarget);
 	AActor* GetTargetActor() const { return TargetActor; }
 
-	void SetGizmoMode(EGizmoMode inMode) { Mode = inMode; }
-	EGizmoMode GetGizmoMode() const { return Mode; }
+	void SetGizmoMode(EGizmoMode inMode) { GizMode = inMode; }
+	EGizmoMode GetGizmoMode() const { return GizMode; }
+	void ChangeGizmoMode();
 
 	void SetSelectedAxis(EGizmoAxis inAxis) { SelectedAxis = inAxis; }
 	EGizmoAxis GetSelectedAxis() const { return SelectedAxis; }
@@ -77,13 +113,18 @@ public:
 	// 3개의 기즈모 축 객체 목록 반환
 	const TArray<AGizmoAxis*>& GetAxes() const { return Axes; }
 
+	bool GetIsLocal() const { return bIsLocal; }
+	void SetIsLocal(bool inIsLocal) { bIsLocal = inIsLocal; }
+
 private:
 	AActor* TargetActor = nullptr;
-	EGizmoMode Mode = EGizmoMode::Translation;
+	EGizmoMode GizMode = EGizmoMode::Translation;
 	EGizmoAxis SelectedAxis = EGizmoAxis::None;
+	bool bIsLocal = true;
 
 	// 3개의 기즈모 축 액터 (X, Y, Z)
 	TArray<AGizmoAxis*> Axes;
+
 
 
 };

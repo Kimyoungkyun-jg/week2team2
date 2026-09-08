@@ -20,6 +20,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
+	case WM_SIZE:
+	{
+		if (wParam != SIZE_MINIMIZED)
+		{
+			UINT width = LOWORD(lParam);
+			UINT height = HIWORD(lParam);
+
+			Renderer::GetInstance().Resize(width, height);
+		}
+		break;
+	}
 	default:
 		if (imguiHandled)
 			return true;
@@ -112,9 +123,6 @@ void App::Render()
 
 	// 프레임 버퍼 클리어 및 뷰포트/래스터라이저 설정
 	renderer.Prepare();
-
-	// ImGui 테스트 및 데모 윈도우 (상시 출력)
-	ImGui::ShowDemoWindow();
 
 	ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
 
