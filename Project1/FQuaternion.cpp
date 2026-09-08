@@ -102,19 +102,18 @@ FMatrix FQuaternion::ToMatrix() const
 
     FMatrix m;
 
-    // row-major 기준이므로 각 축은 열로 나타냄.
     m.M[0][0] = 1.0f - 2.0f * (yy + zz);
-    m.M[0][1] = 2.0f * (xy - wz);
-    m.M[0][2] = 2.0f * (xz + wy);
+    m.M[0][1] = 2.0f * (xy + wz);
+    m.M[0][2] = 2.0f * (xz - wy);
     m.M[0][3] = 0.0f;
 
-    m.M[1][0] = 2.0f * (xy + wz);
+    m.M[1][0] = 2.0f * (xy - wz);
     m.M[1][1] = 1.0f - 2.0f * (xx + zz);
-    m.M[1][2] = 2.0f * (yz - wx);
+    m.M[1][2] = 2.0f * (yz + wx);
     m.M[1][3] = 0.0f;
 
-    m.M[2][0] = 2.0f * (xz - wy);
-    m.M[2][1] = 2.0f * (yz + wx);
+    m.M[2][0] = 2.0f * (xz + wy);
+    m.M[2][1] = 2.0f * (yz - wx);
     m.M[2][2] = 1.0f - 2.0f * (xx + yy);
     m.M[2][3] = 0.0f;
 
@@ -160,6 +159,8 @@ FVector FQuaternion::ToEuler(const FQuaternion& q)
     if (fabsf(sinPitch) >= 1.0f)
     {
         pitch = copysignf(Global::PI / 2.0f, sinPitch);
+        roll = 0.0f;
+        yaw = atan2f(-2.0f * (q.x * q.z - q.w * q.y), 1.0f - 2.0f * (q.y * q.y + q.z * q.z));
     }
     else
     {
@@ -168,13 +169,13 @@ FVector FQuaternion::ToEuler(const FQuaternion& q)
 
     // Yaw
     float sinYawCosPitch = 2.0f * (q.w * q.y + q.x * q.z);
-    float cosYawSinPitch = 1.0f - 2.0f * (q.x * q.x + q.y * q.y);
-    yaw = atan2f(sinYawCosPitch, cosYawSinPitch);
-    
+    float cosYawCosPitch = 1.0f - 2.0f * (q.x * q.x + q.y * q.y);
+    yaw = atan2f(sinYawCosPitch, cosYawCosPitch);
+
     // Roll
     float sinRollCosPitch = 2.0f * (q.w * q.z + q.x * q.y);
-    float cosRollSinPitch = 1.0f - 2.0f * (q.y * q.y + q.z * q.z);
-    roll = atan2f(sinRollCosPitch, cosRollSinPitch);
+    float cosRollCosPitch = 1.0f - 2.0f * (q.x * q.x + q.z * q.z);
+    roll = atan2f(sinRollCosPitch, cosRollCosPitch);
 
     return FVector(pitch, yaw, roll);
 }

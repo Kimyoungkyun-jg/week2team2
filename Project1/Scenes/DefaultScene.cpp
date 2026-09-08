@@ -60,7 +60,7 @@ void DefaultScene::Render()
 	{
 		cam.SetLocation(camLoc);
 	}
-	FVector camRot = cam.GetRotation();
+	FQuaternion camRot = cam.GetRotation();
 	if (ImGui::DragFloat3("Cam Rot", &camRot.x, 0.01f, -3.14f, 3.14f))
 	{
 		cam.SetRotation(camRot);
@@ -73,7 +73,7 @@ void DefaultScene::Render()
 	if (ImGui::Button("Reset Camera"))
 	{
 		cam.SetLocation(FVector(3.336f, 3.282f, -4.715f));
-		cam.SetRotation(FVector(0.391f, -0.468f, 0.0f));
+		cam.SetRotation(FQuaternion::FromEuler(0.391f, -0.468f, 0.0f));
 	}
 	
 	FVector camFwd = cam.GetForward();
@@ -199,7 +199,7 @@ void DefaultScene::Render()
 			cube->SetScale(scale);
 		}
 
-		FVector rot = cube->GetRotation();
+		FQuaternion rot = cube->GetRotation();
 		bool bCubeChanged = false;
 		if (ImGui::DragFloat(("Rotation X" + uid).c_str(), &rot.x, 0.01f, -3.14f, 3.14f))
 		{
@@ -236,7 +236,7 @@ void DefaultScene::Render()
 			gizmo->SetScale(scale);
 		}
 
-		FVector rot = gizmo->GetRotation();
+		FQuaternion rot = gizmo->GetRotation();
 		bool bRotChanged = false;
 		if (ImGui::DragFloat("Rotation X", &rot.x, 0.01f, -3.14f, 3.14f))
 		{
@@ -297,7 +297,7 @@ void DefaultScene::Render()
 		}
 
 		// Rotation Editor
-		FVector rot = pickedActor->GetRotation();
+		FQuaternion rot = pickedActor->GetRotation();
 
 		bool bPrimChanged = false;
 		if (ImGui::DragFloat(("Rotation X" + uid).c_str(), &rot.x, 0.01f, -3.14f, 3.14f))

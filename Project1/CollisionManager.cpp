@@ -793,8 +793,12 @@ void CollisionManager::ResolvePosition(ACollider* a, ACollider* b, const Collisi
 
 		a->SetLocation(a->GetLocation() + normal * (correction * invMassA));
 		b->SetLocation(b->GetLocation() - normal * (correction * invMassB));
-		a->SetRotation(a->GetRotation().z + raxn * correction * invIA);
-		b->SetRotation(b->GetRotation().z - rbxn * correction * invIB);
+
+		FQuaternion deltaRotA = FQuaternion::FromAxisAngle(FVector(0.0f, 0.0f, 1.0f), raxn * correction * invIA);
+		a->SetRotation((deltaRotA * a->GetRotation()).Normalized());
+
+		FQuaternion deltaRotB = FQuaternion::FromAxisAngle(FVector(0.0f, 0.0f, 1.0f), -rbxn * correction * invIB);
+		b->SetRotation((deltaRotB * b->GetRotation()).Normalized());
 	}
 }
 

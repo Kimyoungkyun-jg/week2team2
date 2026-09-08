@@ -8,7 +8,7 @@ Camera::Camera()
 {
 	//기본 카메라 위치 및 회전 설정
 	transform.SetLocation(FVector(3.336f, 3.282f, -4.715f));
-	transform.SetRotation(FQuaternion(0.391f, -0.468f, 0.0f, 1.0f));
+	transform.SetRotation(FQuaternion::FromEuler(0.391f, -0.468f, 0.0f));
 
 	vpBuffer = new CameraBuffer();
 }
@@ -25,12 +25,16 @@ void Camera::Rotate(float deltaYaw, float deltaPitch)
 	//// 쿼터니언 ////
 	////////////////
 
-	FQuaternion deltaRot = FQuaternion::FromEuler(
-		deltaPitch * (Global::PI/180.0f),
-		deltaYaw * (Global::PI/180.0f),
-		0.0f
-	);
-	transform.SetRotation((deltaRot * transform.GetRotation()).Normalized());
+	float yawRad   = deltaYaw   * (Global::PI / 180.0f);
+	float pitchRad = deltaPitch * (Global::PI / 180.0f);
+
+	// yaw : 월드 Y축 기준
+	// pitch : 카메라 로컬 X축 기준
+	FQuaternion qYaw   = FQuaternion::FromAxisAngle(FVector(0.0f, 1.0f, 0.0f), yawRad);
+	FQuaternion qPitch = FQuaternion::FromAxisAngle(FVector(1.0f, 0.0f, 0.0f), pitchRad);
+
+	FQuaternion newRot = qYaw * transform.GetRotation() * qPitch;
+	transform.SetRotation(newRot.Normalized());
 }
 	///////////////
 	//// 오일러 ////
