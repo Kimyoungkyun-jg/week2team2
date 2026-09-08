@@ -314,13 +314,7 @@ AGizmo::AGizmo()
 
 AGizmo::~AGizmo()
 {
-	if (TargetActor)
-	{
-		TargetActor->SetSelected(false);
-		TargetActor = nullptr;
-	}
-
-	// 메인 기즈모 해제
+	//메인 기즈모 인스턴스 해제
 	if (MainGizmo == this)
 	{
 		MainGizmo = nullptr;
@@ -335,15 +329,9 @@ AGizmo::~AGizmo()
 
 void AGizmo::SetTargetActor(AActor* inTarget)
 {
-	if (TargetActor && TargetActor != inTarget)
-	{
-		TargetActor->SetSelected(false);
-	}
-
 	TargetActor = inTarget;
 	if (TargetActor)
 	{
-		TargetActor->SetSelected(true);
 		for (auto& it : Axes)
 		{
 			it->SetTargetActor(inTarget);

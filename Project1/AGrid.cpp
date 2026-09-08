@@ -5,7 +5,9 @@ AGrid::AGrid(EGridType InType)
 	: GridType(InType)
 {
 	CreateVertices();
-	InitVertexBuffer(vertices);
+	Mesh* newMesh = new Mesh();
+	newMesh->InitVertexBuffer(vertices);
+	SetMesh(newMesh, true);
 	SetPrimitive(EPrimitive::None);
 }
 
@@ -79,10 +81,11 @@ void AGrid::Render()
 
 	SetWorldBuffer();
 
-	RENDERER.SetCustomColor({ 0.0f, 0.0f, 0.0f, 0.0f });
-
-	DrawWithSelection(GridType == EGridType::Line ? D3D11_PRIMITIVE_TOPOLOGY_LINELIST
-		: D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	if (mesh)
+	{
+		mesh->Render(GridType == EGridType::Line ? D3D11_PRIMITIVE_TOPOLOGY_LINELIST
+			: D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	}
 }
 
 

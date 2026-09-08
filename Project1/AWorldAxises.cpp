@@ -4,9 +4,10 @@
 
 AWorldAxises::AWorldAxises()
 {
-	InitVertexBuffer(worldAxisVertices);
+	Mesh* newMesh = new Mesh();
+	newMesh->InitVertexBuffer(worldAxisVertices);
+	SetMesh(newMesh, true);
 	SetPrimitive(EPrimitive::None);
-
 }
 
 void AWorldAxises::Render()

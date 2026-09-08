@@ -7,7 +7,9 @@ class ASphere : public AActor
 
 public:
 	ASphere() {
-		InitVertexBuffer(sphere_vertices);
+		Mesh* newMesh = new Mesh();
+		newMesh->InitVertexBuffer(sphere_vertices);
+		SetMesh(newMesh, true);
 	}
 
 

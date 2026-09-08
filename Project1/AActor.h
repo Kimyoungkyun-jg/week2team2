@@ -52,61 +52,6 @@ public:
 	}
 	Mesh* GetMesh() const { return mesh; }
 
-	// 커스텀 정점 버퍼 초기화 함수 (독자 소유 메시 생성)
-	void InitVertexBuffer(const void* vertices, UINT stride, UINT inNumVertices, ID3D11InputLayout* inLayout = nullptr)
-	{
-		if (bOwnsMesh && mesh)
-		{
-			delete mesh;
-			mesh = nullptr;
-		}
-		mesh = new Mesh();
-		bOwnsMesh = true;
-		mesh->InitVertexBuffer(vertices, stride, inNumVertices, inLayout);
-	}
-
-	// 정점 배열을 넘기면 타입(VertexType), 정점 개수, InputLayout까지 자동 추론 및 저장!
-	template <typename VertexType, size_t N>
-	void InitVertexBuffer(const VertexType(&vertices)[N])
-	{
-		if (bOwnsMesh && mesh)
-		{
-			delete mesh;
-			mesh = nullptr;
-		}
-		mesh = new Mesh();
-		bOwnsMesh = true;
-		mesh->InitVertexBuffer(vertices);
-	}
-
-	// std::vector 정점 배열 초기화
-	template <typename VertexType>
-	void InitVertexBuffer(const std::vector<VertexType>& vertices)
-	{
-		if (bOwnsMesh && mesh)
-		{
-			delete mesh;
-			mesh = nullptr;
-		}
-		mesh = new Mesh();
-		bOwnsMesh = true;
-		mesh->InitVertexBuffer(vertices);
-	}
-
-	// TArray 정점 배열 초기화
-	template <typename VertexType>
-	void InitVertexBuffer(const TArray<VertexType>& vertices)
-	{
-		if (bOwnsMesh && mesh)
-		{
-			delete mesh;
-			mesh = nullptr;
-		}
-		mesh = new Mesh();
-		bOwnsMesh = true;
-		mesh->InitVertexBuffer(vertices);
-	}
-
 	virtual bool bIsPicked(const FRay& worldRay, float& outDistance);
 	virtual bool bIsPicked(const FRay& worldRay)
 	{
@@ -114,8 +59,6 @@ public:
 		return bIsPicked(worldRay, dummyDist);
 	}
 	bool IsSelected() const;
-	void DrawWithSelection(D3D11_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
 
 	virtual void Pressed() {}
 	virtual void Released() {}
@@ -131,7 +74,6 @@ public:
 	FLinearColor Color = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	Mesh* mesh = nullptr;
 	bool bOwnsMesh = false;
-	bool bIsSelected = false;
 };
 
 
