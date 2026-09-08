@@ -42,15 +42,27 @@ AActor* PickingManager::Pick()
 	//기즈모 축 피킹 우선 검사
 	if (AGizmo::MainGizmo && AGizmo::MainGizmo->GetTargetActor())
 	{
+		AGizmoAxis* closestAxis = nullptr;
+		float closestDist = FLT_MAX;
+
 		for (AGizmoAxis* axis : AGizmo::MainGizmo->GetAxes())
 		{
 			float axisDist = 0.0f;
 			if (axis->bIsPicked(ray, axisDist))
 			{
-				axis->Picked();
-				pickedObjcect = axis;
-				return axis;
+				if (axisDist > 0.0f && axisDist < closestDist)
+				{
+					closestDist = axisDist;
+					closestAxis = axis;
+				}
 			}
+		}
+
+		if (closestAxis)
+		{
+			closestAxis->Picked();
+			pickedObjcect = closestAxis;
+			return closestAxis;
 		}
 	}
 

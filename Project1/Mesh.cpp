@@ -82,10 +82,11 @@ bool Mesh::bIsPicked(const FRay& worldRay, const Transform& transform, float& ou
 
 	if (vertexbuffer != nullptr && numVertices > 0)
 	{
-		FMatrix invWorld = transform.WorldMat.InverseAffine();
+		// 비균등 스케일 및 회전에서도 오차가 없는 정확한 4x4 역행렬 사용
+		FMatrix invWorld = transform.WorldMat.Inverse();
 		FVector localOrigin = TransformPoint(worldRay.Origin, invWorld);
 		FVector localDir = TransformDirection(worldRay.Direction, invWorld);
-		localDir.Normalize();
+		
 
 		float closestDist = FLT_MAX;
 		bool bHit = false;
@@ -106,8 +107,8 @@ bool Mesh::bIsPicked(const FRay& worldRay, const Transform& transform, float& ou
 
 		if (bHit)
 		{
-			// 월드 거리 보정
-			outDistance = closestDist * transform.Scale.x;
+			// localDir을 정규화하지 않았으므로 closestDist가 곧바로 정확한 월드 거리
+			outDistance = closestDist;
 			return true;
 		}
 		return false;

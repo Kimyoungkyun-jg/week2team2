@@ -12,7 +12,7 @@ class AGizmoAxis : public AActor
 	DECLARE_CLASS(AGizmoAxis, AActor)
 
 public:
-	AGizmoAxis(EGizmoAxis inAxis = EGizmoAxis::Y);
+	AGizmoAxis(EGizmoMode& mode, EGizmoAxis inAxis = EGizmoAxis::Y);
 	virtual ~AGizmoAxis();
 
 	void Update(float DeltaTime, const Transform& parentTransform);
@@ -34,6 +34,20 @@ public:
 
 	void HighlightAxe();
 
+	void SetHovered(bool inHovered)
+	{
+		bHovered = inHovered;
+		if (bSelected || bHovered)
+		{
+			HighlightAxe();
+		}
+		else
+		{
+			SetColor(srcColor);
+		}
+	}
+	bool GetHovered() const { return bHovered; }
+
 	void SetIsLocal(bool inIsLocal) { bIsLocal = inIsLocal; }
 	bool GetIsLocal() const { return bIsLocal; }
 
@@ -46,8 +60,14 @@ private:
 	FVector currentAxisDir;
 	FVector dragStartPoint;
 	FVector dragStartActorLocation;
+	FVector dragStartActorRotation;
+	FVector dragStartActorScale;
 	bool bSelected = false;
+	bool bHovered = false;
 	bool bIsLocal = true;
+	float currentDragDist = 0.0f;
+
+	EGizmoMode* mode;
 };
 
 
@@ -71,8 +91,9 @@ public:
 	void SetTargetActor(AActor* inTarget);
 	AActor* GetTargetActor() const { return TargetActor; }
 
-	void SetGizmoMode(EGizmoMode inMode) { Mode = inMode; }
-	EGizmoMode GetGizmoMode() const { return Mode; }
+	void SetGizmoMode(EGizmoMode inMode) { GizMode = inMode; }
+	EGizmoMode GetGizmoMode() const { return GizMode; }
+	void ChangeGizmoMode();
 
 	void SetSelectedAxis(EGizmoAxis inAxis) { SelectedAxis = inAxis; }
 	EGizmoAxis GetSelectedAxis() const { return SelectedAxis; }
@@ -89,7 +110,7 @@ public:
 
 private:
 	AActor* TargetActor = nullptr;
-	EGizmoMode Mode = EGizmoMode::Translation;
+	EGizmoMode GizMode = EGizmoMode::Translation;
 	EGizmoAxis SelectedAxis = EGizmoAxis::None;
 	bool bIsLocal = true;
 

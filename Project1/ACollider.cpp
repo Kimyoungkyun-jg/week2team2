@@ -36,28 +36,28 @@ void ACollider::Released()
 ACube::ACube(const FLinearColor& inColor)
 	: ACollider(inColor)
 {
-	SetMesh(ObjectManager::GetInstance().GetOrCreateMesh("Cube", cube_vertices));
+	SetMesh(OBJECT.GetOrCreateMesh("Cube", cube_vertices));
 	Primitive = EPrimitive::Cube;
 }
 
 ASphere::ASphere(const FLinearColor& inColor)
 	: ACollider(inColor)
 {
-	SetMesh(ObjectManager::GetInstance().GetOrCreateMesh("Sphere", sphere_vertices));
+	SetMesh(OBJECT.GetOrCreateMesh("Sphere", sphere_vertices));
 	Primitive = EPrimitive::Sphere;
 }
 
 ATriangle::ATriangle(const FLinearColor& inColor)
 	: ACollider(inColor)
 {
-	SetMesh(ObjectManager::GetInstance().GetOrCreateMesh("Triangle", triangle_vertices));
+	SetMesh(OBJECT.GetOrCreateMesh("Triangle", triangle_vertices));
 	Primitive = EPrimitive::Triangle;
 }
 
 ARectangle::ARectangle(const FLinearColor& inColor)
 	: ACollider(inColor)
 {
-	SetMesh(ObjectManager::GetInstance().GetOrCreateMesh("Rectangle", rectangle_vertices));
+	SetMesh(OBJECT.GetOrCreateMesh("Rectangle", rectangle_vertices));
 	Primitive = EPrimitive::Rectangle;
 }
 
@@ -65,7 +65,7 @@ ACircle::ACircle(const FLinearColor& inColor)
 	: ACollider(inColor)
 {
 	TArray<FVertexColor> circle_vertices = CircleGenerator::MakeCircle(32, 1.0f, 1.0f, 0.0f, 1.0f);
-	SetMesh(ObjectManager::GetInstance().GetOrCreateMesh("Circle", circle_vertices));
+	SetMesh(OBJECT.GetOrCreateMesh("Circle", circle_vertices));
 	Primitive = EPrimitive::Circle;
 }
 

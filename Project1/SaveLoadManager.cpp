@@ -3,7 +3,6 @@
 #include "ObjectManager.h"
 #include "Containers.h"
 #include "AActor.h"
-#include "USphere.h"
 #include "UEngineStatics.h"
 #include <fstream> // file input stream
 #include <filesystem>

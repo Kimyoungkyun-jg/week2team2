@@ -145,13 +145,11 @@
     <ClInclude Include="ConsoleWindow.h" />
     <ClInclude Include="ConstBuffer.h" />
     <ClInclude Include="Containers.h" />
-    <ClInclude Include="Cube.h" />
     <ClInclude Include="FLinearColor.h" />
     <ClInclude Include="GlobalBuffer.h" />
     <ClInclude Include="Intersection.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="SaveLoadManager.h" />
-    <ClInclude Include="USphere.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="PickingManager.h" />
   </ItemGroup>
@@ -200,19 +198,14 @@
     <ClCompile Include="CircleGenerator.cpp" />
     <ClCompile Include="ConsoleWindow.cpp" />
     <ClCompile Include="ConstBuffer.cpp" />
-    <ClCompile Include="Cube.cpp" />
     <ClCompile Include="Intersection.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="SaveLoadManager.cpp" />
-    <ClCompile Include="USphere.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="PickingManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Project1\ShaderW0.hlsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="CubeVertice.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
