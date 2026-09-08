@@ -5,6 +5,8 @@
 AWorldAxises::AWorldAxises()
 {
 	InitVertexBuffer(worldAxisVertices);
+	SetPrimitive(EPrimitive::None);
+
 }
 
 void AWorldAxises::Render()

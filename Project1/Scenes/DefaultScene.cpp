@@ -15,7 +15,7 @@ DefaultScene::DefaultScene()
 	cube2 = FObjectFactory::SpawnColider<ACube>(FVector(5.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f });
 	cube2->SetColor(FLinearColor::Red);
 
-	sphere = FObjectFactory::SpawnActor<ASphere>(FVector(-5.0f, 0.0f, 0.0f));
+	sphere = FObjectFactory::SpawnColider<ASphere>(FVector(-5.0f, 0.0f, 0.0f));
 	sphere->SetColor(FLinearColor::Green);
 
 	// World Map Axis 생성
@@ -265,6 +265,12 @@ void DefaultScene::Render()
 	if (pickedActor)
 	{
 		string uid = std::to_string(pickedActor->GetID());
+		
+		// DEBUG
+		// OutputDebugStringA(uid.c_str());
+
+		ImGui::Text("UUID: %s", uid.c_str());
+
 
 		// Location Editor
 		FVector loc = pickedActor->GetLocation();
