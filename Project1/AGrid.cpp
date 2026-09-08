@@ -81,17 +81,8 @@ void AGrid::Render()
 
 	RENDERER.SetCustomColor({ 0.0f, 0.0f, 0.0f, 0.0f });
 
-	if (mesh)
-	{
-		if (GridType == EGridType::Line)
-		{
-			mesh->Render(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-		}
-		else
-		{
-			mesh->Render(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		}
-	}
+	DrawWithSelection(GridType == EGridType::Line ? D3D11_PRIMITIVE_TOPOLOGY_LINELIST
+		: D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 

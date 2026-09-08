@@ -113,8 +113,9 @@ public:
 		float dummyDist = 0.0f;
 		return bIsPicked(worldRay, dummyDist);
 	}
-	void SetSelected(bool inSelected) { bIsSelected = inSelected; }
-	bool IsSelected() const { return bIsSelected; }
+	bool IsSelected() const;
+	void DrawWithSelection(D3D11_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 
 	virtual void Pressed() {}
 	virtual void Released() {}
