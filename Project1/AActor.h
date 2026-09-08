@@ -116,7 +116,7 @@ public:
 		return bIsPicked(worldRay, dummyDist);
 	}
 	bool IsSelected() const;
-	void DrawWithSelection(D3D11_PRIMITIVE_TOPOLOGY topology);
+	void DrawWithSelection(D3D11_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 
 	virtual void Pressed() {}

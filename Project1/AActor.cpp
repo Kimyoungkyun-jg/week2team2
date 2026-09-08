@@ -48,14 +48,17 @@ bool AActor::IsSelected() const
 
 void AActor::DrawWithSelection(D3D11_PRIMITIVE_TOPOLOGY topology)
 {
-	vertexbuffer->IASet(topology);
+	if (!mesh) return;
+
+	mesh->GetVertexBuffer()->IASet(topology);
 
 	const bool bSelected = IsSelected();
 	if (bSelected) {
 		RENDERER.SetSelectedState();
 	}
 
-	RENDERER.GetDeviceContext()->Draw(numVertices, 0);
+	mesh->SetColor(Color);
+	mesh->Render(topology);
 
 	if (bSelected)
 		RENDERER.SetDefaultDepthState();
@@ -67,15 +70,27 @@ void AActor::Render()
 
 	SetWorldBuffer();
 
-	if (mesh)
-	{
-		mesh->SetColor(Color);
-		mesh->Render();
-	}
+	DrawWithSelection();
 }
 
 void AActor::Update(float Deltatime)
 {
 	UObject::Update(Deltatime);
+}
+
+void AActor::RenderOutline()
+{
+	RENDERER.PrepareShader(mesh->GetInputLayout());
+	RENDERER.SetCustomColor(FLinearColor::Yellow);
+	RENDERER.SetOutlineState();
+
+	mesh->GetVertexBuffer()->IASet();
+	FMatrix outlineWorld = FMatrix::Scale({ 1.05f, 1.05f, 1.05f }) * transform.WorldMat;
+	worldBuffer->SetMat(outlineWorld);	// 행렬 scale 높이기
+	worldBuffer->SetVSBuffer(0);		// b0에 저장
+
+	RENDERER.GetDeviceContext()->Draw(mesh->GetNumVertices(), 0);
+
+	RENDERER.SetDefaultDepthState();
 }
 
