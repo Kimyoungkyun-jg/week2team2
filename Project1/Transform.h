@@ -2,22 +2,34 @@
 
 #include "FVector.h"
 #include "Matrix.h"
+#include "FQuaternion.h"
 
 class Transform
 {
 public:
 	Transform()
 		: Location(0.0f, 0.0f, 0.0f)
-		, Rotation(0.0f, 0.0f, 0.0f)
+		, Rotation()
 		, Scale(1.0f, 1.0f, 1.0f)
 		, WorldMat(FMatrix::Identity())
 	{
 		UpdateWorldMatrix();
 	}
-
-	Transform(const FVector& InLocation, const FVector& InRotation = FVector(0.0f, 0.0f, 0.0f), const FVector& InScale = FVector(1.0f, 1.0f, 1.0f))
+	
+	// 쿼터니언을 입력으로 받는 생성자
+	Transform(const FVector& InLocation, const FQuaternion& InRotation, const FVector& InScale = FVector(1.0f, 1.0f, 1.0f))
 		: Location(InLocation)
 		, Rotation(InRotation)
+		, Scale(InScale)
+		, WorldMat(FMatrix::Identity())
+	{
+		UpdateWorldMatrix();
+	}
+
+	// 오일러를 입력으로 받는 생성자
+	Transform(const FVector& InLocation, const FVector& InRotation = FVector(0.0f, 0.0f, 0.0f), const FVector& InScale = FVector(1.0f, 1.0f, 1.0f))
+		: Location(InLocation)
+		, Rotation(FQuaternion::FromEuler(InRotation.x, InRotation.y, InRotation.z))
 		, Scale(InScale)
 		, WorldMat(FMatrix::Identity())
 	{
@@ -27,7 +39,7 @@ public:
 	void UpdateWorldMatrix()
 	{
 		FMatrix S = FMatrix::Scale(Scale);
-		FMatrix R = FMatrix::RotationZ(Rotation.z) * FMatrix::RotationX(Rotation.x) * FMatrix::RotationY(Rotation.y);
+		FMatrix R = Rotation.ToMatrix();
 		FMatrix T = FMatrix::Translation(Location);
 
 		WorldMat = S * R * T;
@@ -40,9 +52,7 @@ public:
 			}
 			else
 			{
-				FMatrix parentRot = FMatrix::RotationZ(Parent->Rotation.z) 
-				                  * FMatrix::RotationX(Parent->Rotation.x) 
-				                  * FMatrix::RotationY(Parent->Rotation.y);
+				FMatrix parentRot = Parent->Rotation.ToMatrix();
 				FMatrix parentTrans = FMatrix::Translation(Parent->Location);
 
 				WorldMat = WorldMat * (parentRot * parentTrans);
@@ -60,17 +70,21 @@ public:
 	const Transform* GetParent() const { return Parent; }
 
 	void SetLocation(const FVector& InLocation) { Location = InLocation; UpdateWorldMatrix(); }
-	void SetRotation(const FVector& InRotation) { Rotation = InRotation; UpdateWorldMatrix(); }
+	void SetRotationEuler(const FVector& InRotation)
+	{
+		Rotation = FQuaternion::FromEuler(InRotation.x, InRotation.y, InRotation.z);
+		UpdateWorldMatrix();
+	}
+	void SetRotation(const FQuaternion& InRotation) { Rotation = InRotation; UpdateWorldMatrix(); }
 	void SetScale(const FVector& InScale) { Scale = InScale; UpdateWorldMatrix(); }
 
 	const FVector& GetLocation() const { return Location; }
-	const FVector& GetRotation() const { return Rotation; }
+	const FQuaternion& GetRotation() const { return Rotation; }
+	FVector GetRotationEuler() const { return FQuaternion::ToEuler(Rotation); }
 	const FVector& GetScale() const { return Scale; }
 
 	void SetWorldMatrix(const FMatrix& InWorldMatrix) { WorldMat = InWorldMatrix; }
 	const FMatrix& GetWorldMatrix() const { return WorldMat; }
-
-
 
 	FVector Forward() const //현재 상태에서 앞 (+Z)
 	{
@@ -96,7 +110,8 @@ public:
 
 public:
 	FVector Location;
-	FVector Rotation;
+	// FVector Rotation;	// 오일러
+	FQuaternion Rotation; 	// 쿼터니언
 	FVector Scale;
 	FMatrix WorldMat;
 

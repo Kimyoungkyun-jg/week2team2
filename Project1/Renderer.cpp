@@ -5,6 +5,7 @@
 #include "UObject.h"
 #include "GlobalBuffer.h"
 #include "AActor.h"
+#include "FQuaternion.h"
 #include <d3dcompiler.h>
 
 #pragma comment(lib, "d3dcompiler.lib")
@@ -493,7 +494,7 @@ void Renderer::DrawOutline(AActor* targetActor)
 
 	// 메시보다 1.05배 큰 월드 행렬 구성
 	FMatrix S = FMatrix::Scale(transform.Scale * 1.05f);
-	FMatrix R = FMatrix::RotationZ(transform.Rotation.z) * FMatrix::RotationX(transform.Rotation.x) * FMatrix::RotationY(transform.Rotation.y);
+	FMatrix R = transform.Rotation.ToMatrix();
 	FMatrix T = FMatrix::Translation(transform.Location);
 	FMatrix outlineWorld = S * R * T;
 

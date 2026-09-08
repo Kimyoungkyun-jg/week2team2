@@ -18,7 +18,10 @@ void ACollider::Move(float deltaTime)
 	AngularVelocity *= 1.0f / (1.0f + deltaTime * AngularDamping);
 
 	transform.Location += Velocity * deltaTime;
-	transform.Rotation.z += AngularVelocity * deltaTime;
+	// transform.Rotation.z += AngularVelocity * deltaTime;
+
+	FQuaternion deltaRot = FQuaternion::FromAxisAngle(FVector(0.0f, 0.0f, 1.0f), AngularVelocity * deltaTime);
+	transform.SetRotation((deltaRot * transform.GetRotation()).Normalized());
 }
 
 void ACollider::Pressed()

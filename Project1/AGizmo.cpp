@@ -22,15 +22,15 @@ AGizmoAxis::AGizmoAxis(EGizmoMode& mode, EGizmoAxis inAxis)
 	{
 	case EGizmoAxis::X:
 		Color = FLinearColor::Red;
-		transform.SetRotation({ 0.0f, 0.0f, -DirectX::XM_PIDIV2 });
+		transform.SetRotationEuler({ 0.0f, 0.0f, -DirectX::XM_PIDIV2 });
 		break;
 	case EGizmoAxis::Y:
 		Color = FLinearColor::Green;
-		transform.SetRotation({ 0.0f, 0.0f, 0.0f });
+		transform.SetRotationEuler({ 0.0f, 0.0f, 0.0f });
 		break;
 	case EGizmoAxis::Z:
 		Color = FLinearColor::Blue;
-		transform.SetRotation({ DirectX::XM_PIDIV2, 0.0f, 0.0f });
+		transform.SetRotationEuler({ DirectX::XM_PIDIV2, 0.0f, 0.0f });
 		break;
 	default:
 		Color = FLinearColor::White;
@@ -71,7 +71,7 @@ void AGizmoAxis::Update(float DeltaTime, const Transform& parentTransform)
 	else
 	{
 		FMatrix S = FMatrix::Scale(transform.Scale);
-		FMatrix R = FMatrix::RotationZ(transform.Rotation.z) * FMatrix::RotationX(transform.Rotation.x) * FMatrix::RotationY(transform.Rotation.y);
+		FMatrix R = transform.Rotation.ToMatrix();
 		FMatrix localMat = S * R;
 		FMatrix parentTrans = FMatrix::Translation(parentTransform.Location);
 		transform.SetWorldMatrix(localMat * parentTrans);
@@ -234,7 +234,7 @@ void AGizmoAxis::Pressed()
 			}
 
 			// 축에 맞게 회전값 적용
-			FVector newRot = dragStartActorRotation;
+			FQuaternion newRot = dragStartActorRotation;
 			switch (Axis)
 			{
 			case EGizmoAxis::X: newRot.x += alpha; break;

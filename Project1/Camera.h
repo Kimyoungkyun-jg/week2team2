@@ -22,8 +22,8 @@ public:
 	const FVector& GetLocation() const { return transform.GetLocation(); }
 	void SetLocation(const FVector& loc) { transform.SetLocation(loc); }
 
-	const FVector& GetRotation() const { return transform.GetRotation(); }
-	void SetRotation(const FVector& rot) { transform.SetRotation(rot); }
+	const FQuaternion& GetRotation() const { return transform.GetRotation(); }
+	void SetRotation(const FQuaternion& rot) { transform.SetRotation(rot); }
 
 	FVector GetForward() const { return transform.Forward(); }
 	FVector GetRight() const { return transform.Right(); }
