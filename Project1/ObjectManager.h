@@ -4,6 +4,7 @@
 #include "CollisionManager.h"
 #include "string_view"
 #include "Mesh.h"
+#include <algorithm>
 
 //모든 UObject를 관리하는 클래스, Main 초기에 Get 호출
 class ObjectManager
@@ -27,6 +28,15 @@ public:
 	}
 
 	TArray<UObject*> AllObjects;
+
+	void AddObject(UObject* Obj)
+	{
+		auto it = std::upper_bound(AllObjects.begin(), AllObjects.end(), Obj,
+			[](const UObject* a, const UObject* b) {
+				return a->GetRenderPriority() < b->GetRenderPriority();
+			});
+		AllObjects.insert(it, Obj);
+	}
 	TMap<string_view, ClassInfo*> AllClassInfoMap;
 
 	ClassInfo* GetOrCreateClassInfo(string_view name, const ClassInfo* superClass = nullptr)

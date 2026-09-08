@@ -108,7 +108,7 @@ void SaveLoadManager::SaveScene(const FString& path)
     
     int index = 0;
 
-    for (UObject* obj : ObjectManager::GetInstance().AllObjects)
+    for (UObject* obj : OBJECT.AllObjects)
     {
         AActor* actor = dynamic_cast<ACollider*>(obj);
         if (!actor) continue;
@@ -182,7 +182,7 @@ TArray<UObject*> SaveLoadManager::LoadScene(const FString& path)
     }
 
     // 기존 Scene에 있던 Objects Clear
-    ObjectManager::GetInstance().DestroyAllColliders();
+    OBJECT.DestroyAllColliders();
 
     // Format Version Check
     int version = sceneJson["Version"].get<int>();

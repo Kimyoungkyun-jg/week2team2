@@ -10,9 +10,9 @@ AGizmoAxis::AGizmoAxis(EGizmoMode& mode, EGizmoAxis inAxis)
 {
 	Primitive = EPrimitive::Gizmo;
 	// ObjectManager를 통해 기즈모 화살표 메시 공유 및 LocalVertices 재활용
-	SetMesh(ObjectManager::GetInstance().GetOrCreateMesh("GizmoLocation", arrow_vertices));
-	SetMesh(ObjectManager::GetInstance().GetOrCreateMesh("GizmoRotate", rotate_ring_vertices));
-	SetMesh(ObjectManager::GetInstance().GetOrCreateMesh("GizmoScale", scale_axis_vertices));
+	SetMesh(OBJECT.GetOrCreateMesh("GizmoLocation", arrow_vertices));
+	SetMesh(OBJECT.GetOrCreateMesh("GizmoRotate", rotate_ring_vertices));
+	SetMesh(OBJECT.GetOrCreateMesh("GizmoScale", scale_axis_vertices));
 
 
 	transform.SetScale({ 0.7f, 0.7f, 0.7f });
@@ -109,15 +109,15 @@ void AGizmoAxis::Render()
 	switch (*mode)
 	{
 	case EGizmoMode::Translation:
-		SetMesh(ObjectManager::GetInstance().GetOrCreateMesh("GizmoLocation", arrow_vertices));
+		SetMesh(OBJECT.GetOrCreateMesh("GizmoLocation", arrow_vertices));
 
 		break;
 	case EGizmoMode::Rotation:
-		SetMesh(ObjectManager::GetInstance().GetOrCreateMesh("GizmoRotate", rotate_ring_vertices));
+		SetMesh(OBJECT.GetOrCreateMesh("GizmoRotate", rotate_ring_vertices));
 
 		break;
 	case EGizmoMode::Scale:
-		SetMesh(ObjectManager::GetInstance().GetOrCreateMesh("GizmoScale", scale_axis_vertices));
+		SetMesh(OBJECT.GetOrCreateMesh("GizmoScale", scale_axis_vertices));
 
 		break;
 	default:

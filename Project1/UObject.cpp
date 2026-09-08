@@ -24,7 +24,7 @@ void UObject::operator delete(void* ptr, size_t size) noexcept
 
 void UObject::Destroy()
 {
-	ObjectManager::GetInstance().Destroy(this);
+	OBJECT.Destroy(this);
 }
 
 void UObject::Update(float deltatime)

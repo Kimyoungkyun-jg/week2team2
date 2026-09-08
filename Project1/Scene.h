@@ -28,7 +28,7 @@ public:
     
     virtual void Update(float deltaTime)
     {
-        auto& objects = ObjectManager::GetInstance().AllObjects;
+        auto& objects = OBJECT.AllObjects;
         for (size_t i = 0; i < objects.size(); ++i)
         {
             if (objects[i] && objects[i]->GetIsActive())
@@ -42,7 +42,7 @@ public:
 
     virtual void Render()
     {
-        auto& objects = ObjectManager::GetInstance().AllObjects;
+        auto& objects = OBJECT.AllObjects;
         for (size_t i = 0; i < objects.size(); ++i)
         {
             if (objects[i] && objects[i]->GetIsActive())

@@ -66,7 +66,7 @@ void DefaultScene::Render()
 
 	// 카메라 디버그 섹션
 	ImGui::TextColored(ImVec4(0.2f, 1.0f, 0.4f, 1.0f), "[ Camera Controls ]");
-	Camera& cam = Camera::GetInstance();
+	Camera& cam = CAMERA;
 	FVector camLoc = cam.GetLocation();
 	if (ImGui::DragFloat3("Cam Pos", &camLoc.x, 0.05f, -20.0f, 20.0f))
 	{
@@ -112,8 +112,8 @@ void DefaultScene::Render()
 
 	// 난수 생성 및 범위 설정 -> spawn 위치 지정을 위해
 	// 화면 안에 spawn 되도록 수정
-	FVector camLocation = Camera::GetInstance().GetLocation();
-	FVector camForward = Camera::GetInstance().GetForward();
+	FVector camLocation = CAMERA.GetLocation();
+	FVector camForward = CAMERA.GetForward();
 
 	static std::mt19937 rng(std::random_device{}());
 	static std::uniform_real_distribution<float> distSide(-3.0f, 3.0f);   // 좌우 범위
@@ -163,7 +163,7 @@ void DefaultScene::Render()
 	ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.8f, 1.0f), "[ Save & Load Scene ]");
 	if (ImGui::Button("New Scene"))
 	{
-		ObjectManager::GetInstance().DestroyAllColliders();
+		OBJECT.DestroyAllColliders();
 		
 	}
 	
@@ -275,7 +275,7 @@ void DefaultScene::Render()
 
 	// Picked Primitive Editor
 	ImGui::TextColored(ImVec4(0.6f, 0.8f, 1.0f, 1.0f), "[ Picking Controls ]");
-	AActor* pickedActor = PickingManager::GetInstance().pickedObjcect;
+	AActor* pickedActor = PICK.pickedObjcect;
 
 	if (pickedActor)
 	{

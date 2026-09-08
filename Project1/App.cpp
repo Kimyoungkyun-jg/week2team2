@@ -27,7 +27,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			UINT width = LOWORD(lParam);
 			UINT height = HIWORD(lParam);
 
-			Renderer::GetInstance().Resize(width, height);
+			RENDERER.Resize(width, height);
 		}
 		break;
 	}
@@ -55,7 +55,7 @@ void App::Init(HINSTANCE hInstance)
 {
 	Initwindow(hInstance);
 
-	Renderer& renderer = Renderer::GetInstance();
+	Renderer& renderer = RENDERER;
 	renderer.Create(m_mainWindow);
 	renderer.CreateShader();
 
@@ -93,7 +93,7 @@ void App::InitImgui()
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_Init((void*)m_mainWindow);
-	ImGui_ImplDX11_Init(Renderer::GetInstance().Device, Renderer::GetInstance().DeviceContext);
+	ImGui_ImplDX11_Init(RENDERER.Device, RENDERER.DeviceContext);
 }
 
 void App::mainLoop()
@@ -113,13 +113,13 @@ void App::mainLoop()
 
 void App::Update()
 {
-	Camera::GetInstance().Update();
+	CAMERA.Update();
 	SCENE.Update(DELTA);
 }
 
 void App::Render()
 {
-	Renderer& renderer = Renderer::GetInstance();
+	Renderer& renderer = RENDERER;
 
 	// 프레임 버퍼 클리어 및 뷰포트/래스터라이저 설정
 	renderer.Prepare();
@@ -134,8 +134,8 @@ void App::Render()
 
 	ConsoleWindow::GetInstance().DrawConsole();
 
-	Renderer::GetInstance().UpdateFrameConstant();
-	Camera::GetInstance().SetVPBuffer(); // 카메라 안의 view, proj
+	RENDERER.UpdateFrameConstant();
+	CAMERA.SetVPBuffer(); // 카메라 안의 view, proj
 
 
 	//// 씬 오브젝트 렌더링 (Renderer를 통해 Draw)
@@ -157,7 +157,7 @@ void App::Render()
 void App::ReleaseAll()
 {
 	// 1. App::Instance가 살아있는 상태에서 모든 오브젝트 명시적 해제
-	ObjectManager::GetInstance().DestroyAllObjects();
+	OBJECT.DestroyAllObjects();
 
 	// 2. ImGui 종료
 	ImGui_ImplDX11_Shutdown();
@@ -165,7 +165,7 @@ void App::ReleaseAll()
 	ImGui::DestroyContext();
 
 	// 3. 렌더러 리소스 해제
-	Renderer& renderer = Renderer::GetInstance();
+	Renderer& renderer = RENDERER;
 	renderer.ReleaseShader();
 	renderer.Release();
 }

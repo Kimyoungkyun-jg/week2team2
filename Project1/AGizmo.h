@@ -94,6 +94,7 @@ public:
 
 	virtual void Update(float DeltaTime) override;
 	virtual void Render() override;
+	virtual int GetRenderPriority() const override { return 100; }
 
 	// 타겟 액터 설정 (피킹된 액터 연결)
 	void SetTargetActor(AActor* inTarget);

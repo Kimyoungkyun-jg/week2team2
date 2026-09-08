@@ -88,6 +88,7 @@ public:
 
 	virtual void Update(float deltatime);
 	virtual void Render() {}
+	virtual int GetRenderPriority() const { return 0; }
 
 	virtual void Destroy();
 	virtual void Tick(float deltaTime) {}

@@ -33,7 +33,7 @@ public:
 	static inline ClassInfo* GetStaticClassInfo()
 	{
 		string_view name = GetObjClassName<T>();
-		auto& map = ObjectManager::GetInstance().AllClassInfoMap;
+		auto& map = OBJECT.AllClassInfoMap;
 
 		auto it = map.find(name); //맵에서 찾으면 바로 리턴
 		if (it != map.end())
@@ -58,7 +58,7 @@ public:
 
 		T* Obj = new T(std::forward<Args>(args)...);
 		Obj->SetUUID(UEngineStatics::GetUUID());
-		ObjectManager::GetInstance().AllObjects.push_back(Obj);
+		OBJECT.AddObject(Obj);
 
 		ClassInfo* info = GetStaticClassInfo<T>();
 		Obj->SetClassInfo(info);

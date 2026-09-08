@@ -330,7 +330,7 @@ void Renderer::Prepare()
 
 void Renderer::UpdateFrameConstant()
 {
-	Camera& cam = Camera::GetInstance();
+	Camera& cam = CAMERA;
 	cam.vpBuffer->SetMat(cam.GetViewMatrix() * cam.GetProjectionMatrix(wAspectRatio), cam.GetLocation());
 }
 

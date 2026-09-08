@@ -11,12 +11,12 @@ FRay PickingManager::ScreenToWorldRay(float mouseX, float mouseY, float screenW,
 	float ndcX = 2.0f * mouseX / screenW - 1.0f;
 	float ndcY = -2.0f * mouseY / screenH + 1.0f;
 
-	FMatrix proj = Camera::GetInstance().GetProjectionMatrix(screenW / screenH);
+	FMatrix proj = CAMERA.GetProjectionMatrix(screenW / screenH);
 
 	float viewX = ndcX / proj.M[0][0];
 	float viewY = ndcY / proj.M[1][1];
 
-	FMatrix view = Camera::GetInstance().GetViewMatrix();
+	FMatrix view = CAMERA.GetViewMatrix();
 	FMatrix invView = view.InverseAffine();
 
 	// View -> World
@@ -24,7 +24,7 @@ FRay PickingManager::ScreenToWorldRay(float mouseX, float mouseY, float screenW,
 	FVector worldDirection = TransformDirection(viewDirection, invView);
 	worldDirection.Normalize();
 
-	FVector worldOrigin = Camera::GetInstance().GetLocation();
+	FVector worldOrigin = CAMERA.GetLocation();
 
 	return FRay{ worldOrigin, worldDirection };
 }
@@ -71,7 +71,7 @@ AActor* PickingManager::Pick()
 	AActor* closest = nullptr;
 	float closestDist = FLT_MAX;
 
-	for (auto object : ObjectManager::GetInstance().AllObjects) {
+	for (auto object : OBJECT.AllObjects) {
 		AActor* actor = Cast<AActor>(object);
 		if (actor == nullptr || Cast<AGizmo>(actor) || Cast<AWorldAxises>(actor)) continue;
 

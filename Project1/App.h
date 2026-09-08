@@ -26,8 +26,8 @@ public:
 	void ReleaseAll();
 
 	HWND GetMainWindow() const { return m_mainWindow; }
-	ID3D11Device* GetDevice() const { return Renderer::GetInstance().Device; }
-	ID3D11DeviceContext* GetDeviceContext() const { return Renderer::GetInstance().DeviceContext; }
+	ID3D11Device* GetDevice() const { return RENDERER.Device; }
+	ID3D11DeviceContext* GetDeviceContext() const { return RENDERER.DeviceContext; }
 
 
 

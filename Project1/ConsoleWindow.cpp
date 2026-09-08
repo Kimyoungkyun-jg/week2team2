@@ -434,7 +434,7 @@ void ConsoleWindow::ExecuteTypeCompare() {
 		return;
 	}
 
-	auto& ClassMap = ObjectManager::GetInstance().AllClassInfoMap;
+	auto& ClassMap = OBJECT.AllClassInfoMap;
 
 	FString first = ParsedArguments[0];
 	FString second = ParsedArguments[1];
