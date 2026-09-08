@@ -42,8 +42,7 @@ void Renderer::ReleaseColorBuffer()
 	}
 }
 
-void Renderer::SetCustomColor(const FLinearColor& color)
-
+void Renderer::SetCustomColor(const FLinearColor& color = { 0,0,0,0 })
 {
 	if (CustomColorBuffer)
 	{
@@ -393,6 +392,45 @@ void Renderer::CreateDepthStencil()
 	gizmoDesc.DepthEnable = FALSE;
 	gizmoDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 	Device->CreateDepthStencilState(&gizmoDesc, &dsGizmoState);
+
+	// 아웃라이너용 깊이 스텐실 상태 (1이 아니라면 아웃라이너 그리기)
+	D3D11_DEPTH_STENCIL_DESC selectedDesc = {};
+
+	selectedDesc.DepthEnable = TRUE;
+	selectedDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	selectedDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+
+	selectedDesc.StencilEnable = TRUE;
+	selectedDesc.StencilReadMask = 0xFF;
+	selectedDesc.StencilWriteMask = 0xFF;
+
+	selectedDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	selectedDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_REPLACE;		// stencil 실패시
+	selectedDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_REPLACE;	// stencil 통과, 깊이 실패
+	selectedDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;		// 둘다 통과시
+
+	selectedDesc.BackFace = selectedDesc.FrontFace;
+
+	Device->CreateDepthStencilState(&selectedDesc, &dsSelectedState);
+
+
+	// 아웃라이너용 깊이 스텐실 상태 (1이 아니라면 아웃라이너 그리기)
+	D3D11_DEPTH_STENCIL_DESC outlinerDesc = {};
+	outlinerDesc.DepthEnable = FALSE;
+	outlinerDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+	outlinerDesc.StencilEnable = TRUE;
+	outlinerDesc.StencilReadMask = 0xFF;
+	outlinerDesc.StencilWriteMask = 0xFF;
+
+	outlinerDesc.FrontFace.StencilFunc = D3D11_COMPARISON_NOT_EQUAL;	// 통과 조건: 새값!=기존값이면 통과!
+	outlinerDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;		// stencil 실패시
+	outlinerDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;	// stencil 통과, 깊이 실패
+	outlinerDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;		// 둘다 통과시
+
+	outlinerDesc.BackFace = outlinerDesc.FrontFace;
+
+	Device->CreateDepthStencilState(&outlinerDesc, &dsOutlineState);
 }
 
 void Renderer::ReleaseDepthStencil()
@@ -426,6 +464,18 @@ void Renderer::SetGizmoDepthState()
 {
 	UINT stencilRef = 1;
 	DeviceContext->OMSetDepthStencilState(dsGizmoState, stencilRef);
+}
+
+void Renderer::SetSelectedState()
+{
+	UINT stencilRef = 1;
+	DeviceContext->OMSetDepthStencilState(dsSelectedState, stencilRef);
+}
+
+void Renderer::SetOutlineState()
+{
+	UINT stencilRef = 1;
+	DeviceContext->OMSetDepthStencilState(dsOutlineState, stencilRef);
 }
 
 void Renderer::SwapBuffer()

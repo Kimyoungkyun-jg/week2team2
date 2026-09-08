@@ -24,6 +24,7 @@ public:
 	virtual void Render() override;
 	virtual void Update(float Deltatime) override;
 
+	void RenderOutline();
 
 	void SetLocation(const FVector& loc) { transform.SetLocation(loc); }
 	void SetRotation(const FVector& _Rotation) { transform.SetRotation(_Rotation); }
@@ -114,6 +115,9 @@ public:
 		float dummyDist = 0.0f;
 		return bIsPicked(worldRay, dummyDist);
 	}
+	bool IsSelected() const;
+	void DrawWithSelection(D3D11_PRIMITIVE_TOPOLOGY topology);
+
 
 	virtual void Pressed() {}
 	virtual void Released() {}
