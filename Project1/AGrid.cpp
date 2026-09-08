@@ -79,13 +79,7 @@ void AGrid::Render()
 	SetWorldBuffer();
 
 	RENDERER.PrepareShader(inputLayout);
-	if (GridType == EGridType::Line)
-	{
-		vertexbuffer->IASet(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-	}
-	else
-	{
-		vertexbuffer->IASet(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	}
-	DC->Draw(numVertices, 0);
+	RENDERER.SetCustomColor(Color);
+	DrawWithSelection(GridType ==EGridType::Line ? D3D11_PRIMITIVE_TOPOLOGY_LINELIST: D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 }

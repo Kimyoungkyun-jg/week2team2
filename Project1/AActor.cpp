@@ -87,6 +87,26 @@ void AActor::SetWorldBuffer()
 	worldBuffer->SetVSBuffer(0);
 }
 
+bool AActor::IsSelected() const
+{
+	return AGizmo::MainGizmo && this == AGizmo::MainGizmo->GetTargetActor();
+}
+
+void AActor::DrawWithSelection(D3D11_PRIMITIVE_TOPOLOGY topology)
+{
+	vertexbuffer->IASet(topology);
+
+	const bool bSelected = IsSelected();
+	if (bSelected) {
+		RENDERER.SetSelectedState();
+	}
+
+	RENDERER.GetDeviceContext()->Draw(numVertices, 0);
+
+	if (bSelected)
+		RENDERER.SetDefaultDepthState();
+}
+
 void AActor::Render()
 {
 	UObject::Render();
@@ -99,7 +119,7 @@ void AActor::Render()
 		RENDERER.SetCustomColor(Color);
 		vertexbuffer->IASet();
 
-		bool bSelected = AGizmo::MainGizmo && this == AGizmo::MainGizmo->GetTargetActor();
+		bool bSelected = IsSelected();
 		if (bSelected) {
 			RENDERER.SetSelectedState();
 		}

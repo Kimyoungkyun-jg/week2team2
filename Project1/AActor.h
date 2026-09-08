@@ -100,10 +100,9 @@ public:
 		float dummyDist = 0.0f;
 		return bIsPicked(worldRay, dummyDist);
 	}
+	bool IsSelected() const;
+	void DrawWithSelection(D3D11_PRIMITIVE_TOPOLOGY topology);
 
-
-	void SetOutlineState();
-	void SetDefaultState();
 
 	UINT GetNumVertices() const { return numVertices; }
 
