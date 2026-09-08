@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "TemplateLibrary.h"
 #include "AGizmo.h"
+#include "AWorldAxises.h"
 
 FRay PickingManager::ScreenToWorldRay(float mouseX, float mouseY, float screenW, float screenH) const
 {
@@ -60,7 +61,7 @@ AActor* PickingManager::Pick()
 
 	for (auto object : ObjectManager::GetInstance().AllObjects) {
 		AActor* actor = Cast<AActor>(object);
-		if (actor == nullptr || Cast<AGizmo>(actor)) continue;
+		if (actor == nullptr || Cast<AGizmo>(actor) || Cast<AWorldAxises>(actor)) continue;
 
 		float dist = 0.0f;
 		if (actor->bIsPicked(ray, dist) && dist < closestDist)
