@@ -10,17 +10,16 @@
 
 DefaultScene::DefaultScene()
 {
-	cube = FObjectFactory::SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f }, 1.0f, FLinearColor::Cyan);
+	// cube = FObjectFactory::SpawnColider<ACube>(FVector(0.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f }, 1.0f, FLinearColor::Cyan);
 
-	cube2 = FObjectFactory::SpawnColider<ACube>(FVector(5.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f }, 1.0f, FLinearColor::Magenta);
+	// cube2 = FObjectFactory::SpawnColider<ACube>(FVector(5.0f, 0.0f, 0.0f), { 1.0f, 1.0f, 1.0f }, 1.0f, FLinearColor::Magenta);
 
 
-	sphere = FObjectFactory::SpawnActor<ASphere>(
-		FVector(-5.0f, 0.0f, 0.0f),
-		FVector(1.0f, 1.0f, 1.0f),
-		FLinearColor::Red
-	);
-
+	// sphere = FObjectFactory::SpawnActor<ASphere>(
+	// 	FVector(-5.0f, 0.0f, 0.0f),
+	// 	FVector(1.0f, 1.0f, 1.0f),
+	// 	FLinearColor::Red
+	// );
 
 	// World Map Axis 생성
 	worldAxises = FObjectFactory::SpawnActor<AWorldAxises>();
@@ -179,13 +178,13 @@ void DefaultScene::Render()
 	if (ImGui::Button("Load Scene"))
 	{
 		// World Map Axis 생성
-		worldAxises = FObjectFactory::SpawnActor<AWorldAxises>();
+		// worldAxises = FObjectFactory::SpawnActor<AWorldAxises>();
 
-		// Grid 생성
-		grid = FObjectFactory::SpawnActor<AGrid>(EGridType::Triangle);
+		// // Grid 생성
+		// grid = FObjectFactory::SpawnActor<AGrid>(EGridType::Triangle);
 
-		// Gizmo 생성
-		gizmo = FObjectFactory::SpawnActor<AGizmo>();
+		// // Gizmo 생성
+		// gizmo = FObjectFactory::SpawnActor<AGizmo>();
 
 		// "./SceneData/MyScene.Scene" 에서 로드됨
 		TArray<UObject*> loadedObj = SaveLoadManager::LoadScene("./SceneData/MyScene.Scene");
