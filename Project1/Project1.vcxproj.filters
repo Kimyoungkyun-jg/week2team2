@@ -69,6 +69,8 @@
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="AWorldAxises.h" />
     <ClInclude Include="AGrid.h" />
+    <ClInclude Include="CircleGenerator.h" />
+    <ClInclude Include="ConsoleWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Project1\AActor.cpp" />
@@ -117,9 +119,7 @@
     <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="AWorldAxises.cpp" />
     <ClCompile Include="AGrid.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Project1\ShaderW0.hlsl" />
-    <None Include="packages.config" />
+    <ClCompile Include="CircleGenerator.cpp" />
+    <ClCompile Include="ConsoleWindow.cpp" />
   </ItemGroup>
 </Project>

@@ -89,6 +89,23 @@ public:
 		}
 	}
 
+	// new Scene 만들 때 사용하는 Colliders 삭제 함수
+	void DestroyAllColliders()
+	{
+		for (int32 i = static_cast<int32>(AllObjects.size()) - 1; i >= 0; --i)
+		{
+			ACollider* Actor = dynamic_cast<ACollider*>(AllObjects[i]);
+			if(!Actor) continue;
+
+			CollisionManager::GetInstance().DeleteColider(Actor->GetID());
+
+			UObject* temp = AllObjects[i];
+			swap(AllObjects[i], AllObjects.back());
+			AllObjects.pop_back();
+			delete(temp);
+		}
+	}
+
 	UObject* Find(uint32 ID)
 	{
 		for (UObject* Obj : AllObjects)

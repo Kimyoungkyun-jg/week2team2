@@ -34,6 +34,10 @@ private:
 	bool ParseUELog(const FString& Input);
 	void ExecuteUELog();
 
+	// ISA 처리
+	bool ParseTypeCompare(const FString& Input);
+	void ExecuteTypeCompare();
+
 	// InputText Callback
 	static int TextEditCallbackStub(ImGuiInputTextCallbackData* Data);
 	int TextEditCallback(ImGuiInputTextCallbackData* Data);
@@ -43,6 +47,8 @@ private:
 	void HandleCompletion(ImGuiInputTextCallbackData* Data);
 	void HandleSuggestionNavigation(ImGuiInputTextCallbackData* Data);
 	void UpdateSuggestions(const FString& Input);
+	
+	FString Trim(const FString& Str);
 
 private:
 	TArray<FString> Logs;
@@ -61,5 +67,8 @@ private:
 
 	bool AutoScroll = true;
 };
+
+
+
 
 #define UE_LOG(...) ConsoleWindow::GetInstance().AddLog(__VA_ARGS__)

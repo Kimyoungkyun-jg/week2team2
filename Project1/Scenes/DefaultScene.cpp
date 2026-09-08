@@ -21,10 +21,13 @@ DefaultScene::DefaultScene()
 	);
 
 
+	// World Map Axis 생성
 	worldAxises = FObjectFactory::SpawnActor<AWorldAxises>();
 
+	// Grid 생성
 	grid = FObjectFactory::SpawnActor<AGrid>(EGridType::Triangle);
 
+	// Gizmo 생성
 	gizmo = FObjectFactory::SpawnActor<AGizmo>();
 }
 
@@ -96,15 +99,28 @@ void DefaultScene::Render()
 	ImGui::Combo("##Primitives", &selected_item, items, IM_ARRAYSIZE(items));
 
 	// 난수 생성 및 범위 설정 -> spawn 위치 지정을 위해
+	// 화면 안에 spawn 되도록 수정
+	FVector camLocation = Camera::GetInstance().GetLocation();
+	FVector camForward = Camera::GetInstance().GetForward();
+
 	static std::mt19937 rng(std::random_device{}());
-	static std::uniform_real_distribution<float> dist(-5.0f, 5.0f);
+	static std::uniform_real_distribution<float> distSide(-3.0f, 3.0f);   // 좌우 범위
+	static std::uniform_real_distribution<float> distUp(0.0f, 2.0f);      // 상하 범위 (Grid 위로 한정)
+
+	float spawnDistance = 8.0f; // 카메라 앞으로 얼마나 떨어뜨릴지
+
+	// 카메라의 오른쪽 벡터 (forward와 up의 외적)
+	FVector worldUp(0.0f, 1.0f, 0.0f);
+	FVector camRight = FVector::Cross3D(camForward, worldUp).Normalized();
+
+	FVector spawnCenter = camLocation + camForward * spawnDistance;
+
+	FVector randomLoc = spawnCenter + camRight * distSide(rng) + worldUp * distUp(rng);
 
 	if (ImGui::Button("Spawn"))
 	{
 		for (int i=0; i<spawnCount; i++)
-		{
-			FVector randomLoc(dist(rng), dist(rng), dist(rng));
-	
+		{	
 			switch(selected_item)
 			{
 				case 0 :
@@ -131,14 +147,15 @@ void DefaultScene::Render()
 
 	ImGui::Separator();
 
-	// Save 버튼
+	// Collider만 삭제 (Grid, World Axis Gizmo 삭제되지 않도록)
 	ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.8f, 1.0f), "[ Save & Load Scene ]");
 	if (ImGui::Button("New Scene"))
 	{
-		// Todo : DestroyAllActors
-
+		ObjectManager::GetInstance().DestroyAllColliders();
+		
 	}
 	
+	// Save 버튼
 	if (ImGui::Button("Save Scene"))
 	{
 		// "./SceneData/MyScene.Scene" 으로 저장됨
@@ -148,22 +165,18 @@ void DefaultScene::Render()
 	// Load 버튼
 	if (ImGui::Button("Load Scene"))
 	{
+		// World Map Axis 생성
+		worldAxises = FObjectFactory::SpawnActor<AWorldAxises>();
+
+		// Grid 생성
+		grid = FObjectFactory::SpawnActor<AGrid>(EGridType::Triangle);
+
+		// Gizmo 생성
+		gizmo = FObjectFactory::SpawnActor<AGizmo>();
+
 		// "./SceneData/MyScene.Scene" 에서 로드됨
 		TArray<UObject*> loadedObj = SaveLoadManager::LoadScene("./SceneData/MyScene.Scene");
-		
-		// 기존 cube는 이미 삭제됐으므로 일단 무효화
-		cube = nullptr;
 
-		for (UObject* obj : loadedObj)
-		{
-			// Todo: 객체 여러 개 소환되면 객체 type (Sphere, Cube 별로 Load)
-			// 현재는 객체가 하나라는 가정 하에, 혹은 여러 개 중 첫번째 것이 cube인 경우만 구현함.
-			if (ACube* c = dynamic_cast<ACube*>(obj) )
-			{
-				cube = c;
-				break;
-			}
-		}
 	}
 	
 	ImGui::Separator();
@@ -247,7 +260,58 @@ void DefaultScene::Render()
 	ImGui::End();
 
 	ImGui::Begin("Picking Primitive Property", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-	ImGui::Text("This is the info. of property picked!");
+
+	// Picked Primitive Editor
+	ImGui::TextColored(ImVec4(0.6f, 0.8f, 1.0f, 1.0f), "[ Picking Controls ]");
+	AActor* pickedActor = PickingManager::GetInstance().pickedObjcect;
+
+	if (pickedActor)
+	{
+		string uid = std::to_string(pickedActor->GetID());
+		
+		// DEBUG
+		// OutputDebugStringA(uid.c_str());
+
+		ImGui::Text("UUID: %s", uid.c_str());
+
+
+		// Location Editor
+		FVector loc = pickedActor->GetLocation();
+		if (ImGui::DragFloat3(("Pos##" + uid).c_str(), &loc.x, 0.01f, -10.0f, 10.0f))
+		{
+			pickedActor->SetLocation(loc);
+		}
+
+		// Scale Editor
+		FVector scale = pickedActor->GetScale();
+		if (ImGui::DragFloat3(("Scale##" + uid).c_str(), &scale.x, 0.01f, 0.01f, 5.0f))
+		{
+			pickedActor->SetScale(scale);
+		}
+
+		// Rotation Editor
+		FVector rot = pickedActor->GetRotation();
+
+		bool bPrimChanged = false;
+		if (ImGui::DragFloat(("Rotation X" + uid).c_str(), &rot.x, 0.01f, -3.14f, 3.14f))
+		{
+			bPrimChanged = true;
+		}
+		if (ImGui::DragFloat(("Rotation Y" + uid).c_str(), &rot.y, 0.01f, -3.14f, 3.14f))
+		{
+			bPrimChanged = true;
+		}
+		if (ImGui::DragFloat(("Rotation Z" + uid).c_str(), &rot.z, 0.01f, -3.14f, 3.14f))
+		{
+			bPrimChanged = true;
+		}
+		// 수정했으면 Rotation 재설정
+		if (bPrimChanged)
+		{
+			pickedActor->SetRotation(rot);
+		}
+	}
+
 	ImGui::End();
 
 

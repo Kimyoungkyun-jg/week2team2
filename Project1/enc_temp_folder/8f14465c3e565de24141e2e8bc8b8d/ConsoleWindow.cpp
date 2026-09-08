@@ -451,8 +451,8 @@ void ConsoleWindow::ExecuteTypeCompare() {
 	bool Result = (*FirstClass)->IsA(*SecondClass);
 
 	FString Message = Result 
-		? first + " is a " + second
-		: first + " is not a " + second;
+		? first + "is a " + second
+		: first + "is not a " + second;
 
 	AddLog("%s", Message.c_str());
 

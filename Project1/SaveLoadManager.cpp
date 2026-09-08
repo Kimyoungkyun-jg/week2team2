@@ -10,10 +10,13 @@
 // Version 상수 처리 
 constexpr int CURRENT_SCENE_VERSION = 1;
 
-
 // 1. vs - 솔루션탐색기 - 프로젝트 우클릭 - NuGet 패키지 관리
 // 2. nlohmann.json 검색 후 설치
 // 추후 json.hpp 파일을 다운로드 후 ThirdParty 폴더에 업로드해 놓을 예정 (설치 불필요하도록)
+/////////////////////////
+/////// 반영 완료! ///////
+/////////////////////////
+
 #include <nlohmann/json.hpp>
 
 // 알파벳 순서가 아닌 input 순서로 push하기 위함
@@ -43,29 +46,29 @@ TMap<string, SaveLoadManager::CreatorFunc>& SaveLoadManager::GetActorCreatorRegi
             return actor;
         };
 
-        // // "Circle" -> 원 생성
-        // registry["Circle"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
-        // {
-        //     AActor* actor = FObjectFactory::SpawnColider<ACircle>(loc, sc);
-        //     actor->SetRotation(rot);
-        //     return actor;
-        // };
+        // "Circle" -> 원 생성
+        registry["Circle"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
+        {
+            AActor* actor = FObjectFactory::SpawnColider<ACircle>(loc, sc);
+            actor->SetRotation(rot);
+            return actor;
+        };
 
-        // // "Rectangle" -> 사각형 생성
-        // registry["Rectangle"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
-        // {
-        //     AActor* actor = FObjectFactory::SpawnColider<ARec>(loc, sc);
-        //     actor->SetRotation(rot);
-        //     return actor;
-        // };
+        // "Rectangle" -> 사각형 생성
+        registry["Rectangle"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
+        {
+            AActor* actor = FObjectFactory::SpawnColider<ARectangle>(loc, sc);
+            actor->SetRotation(rot);
+            return actor;
+        };
 
-        // // "Triangle" -> 삼각형 생성
-        // registry["Triangle"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
-        // {
-        //     AActor* actor = FObjectFactory::SpawnColider<ATri>(loc, sc);
-        //     actor->SetRotation(rot);
-        //     return actor;
-        // };
+        // "Triangle" -> 삼각형 생성
+        registry["Triangle"] = [](FVector loc, FVector rot, FVector sc) -> AActor *
+        {
+            AActor* actor = FObjectFactory::SpawnColider<ATriangle>(loc, sc);
+            actor->SetRotation(rot);
+            return actor;
+        };
     }
     
     return registry;
@@ -107,14 +110,14 @@ void SaveLoadManager::SaveScene(const FString& path)
 
     for (UObject* obj : ObjectManager::GetInstance().AllObjects)
     {
-        AActor* actor = dynamic_cast<AActor*>(obj);
+        AActor* actor = dynamic_cast<ACollider*>(obj);
         if (!actor) continue;
         
         FVector location = actor->GetLocation();    // location 저장
         FVector rotation = actor->GetRotation();    // rotation 저장
         FVector scale = actor->GetScale();          // scale 저장
         EPrimitive type = actor->GetPrimitive();    // type 저장
-        // if (type == EPrimitive::Gizmo) continue; // Gizmo면 pass
+        if (type == EPrimitive::Gizmo) continue; // Gizmo면 pass
         
         json objJson;
         // objJson["UUID"]     = actor->GetID();
@@ -179,7 +182,7 @@ TArray<UObject*> SaveLoadManager::LoadScene(const FString& path)
     }
 
     // 기존 Scene에 있던 Objects Clear
-    ObjectManager::GetInstance().DestroyAllActors();
+    ObjectManager::GetInstance().DestroyAllColliders();
 
     // Format Version Check
     int version = sceneJson["Version"].get<int>();
@@ -209,8 +212,6 @@ TArray<UObject*> SaveLoadManager::LoadScene(const FString& path)
         FVector rat(rotation[0].get<float>(), rotation[1].get<float>(), rotation[2].get<float>());
         FVector sc(scale[0].get<float>(), scale[1].get<float>(), scale[2].get<float>());
         
-        // EPrimitive prim = static_cast<EPrimitive>(objJson["Type"].get<int>());
-
         AActor* actor = it->second(loc, rat, sc);
         loadedObjects.push_back(actor);
 

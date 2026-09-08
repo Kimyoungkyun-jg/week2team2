@@ -185,6 +185,9 @@ public:
 
 	void SwapBuffer();
 
+	//창 크기 변경 시 조절
+	void Resize(UINT width, UINT height);
+
 private:
 	// 타입 식별자 (const void*) 기반 InputLayout TMap
 	TMap<const void*, ID3D11InputLayout*> InputLayoutMap;

@@ -6,6 +6,7 @@ AGrid::AGrid(EGridType InType)
 {
 	CreateVertices();
 	InitVertexBuffer(vertices);
+	SetPrimitive(EPrimitive::None);
 }
 
 void AGrid::CreateVertices()
