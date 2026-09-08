@@ -289,65 +289,89 @@ void DefaultScene::Render()
 			pickedActor = gizmo->GetTargetActor();
 		}
 
-
-		string uid = std::to_string(pickedActor->GetID());
-		string cid = string(pickedActor->GetClass()->Name);
-		// DEBUG
-		// OutputDebugStringA(uid.c_str());
-		ImGui::Text("UUID: %s", uid.c_str());
-		ImGui::Text("ClassName: %s", cid.c_str());
-
-
-		// Location Editor
-		FVector loc = pickedActor->GetLocation();
-		if (ImGui::DragFloat3(("Pos##" + uid).c_str(), &loc.x, 0.01f, -10.0f, 10.0f))
+		if (pickedActor)
 		{
-			pickedActor->SetLocation(loc);
-		}
+			string uid = std::to_string(pickedActor->GetID());
+			string cid = string(pickedActor->GetClass()->Name);
+			// 디버그 정보 표시
+			ImGui::Text("UUID: %s", uid.c_str());
+			ImGui::Text("ClassName: %s", cid.c_str());
 
-		// Scale Editor
-		FVector scale = pickedActor->GetScale();
-		if (ImGui::DragFloat3(("Scale##" + uid).c_str(), &scale.x, 0.01f, 0.01f, 5.0f))
-		{
-			pickedActor->SetScale(scale);
-		}
+			// 선형 색상 편집
+			FLinearColor color = pickedActor->GetColor();
+			if (color.a <= 0.0f)
+			{
+				color = FLinearColor(1.0f, 1.0f, 1.0f, 1.0f);
+			}
 
-		// Rotation Editor (오일러로 표시, 편집하되 내부 데이터만 쿼터니언)
-		static string s_RotEditedActorID; // 회전 수정한 Actor ID
-		static float s_euler[3] = { 0.0f, 0.0f, 0.0f }
-;		FQuaternion rot = pickedActor->GetRotation();
+			if (ImGui::ColorEdit4(("Linear Color##" + uid).c_str(), &color.r, ImGuiColorEditFlags_Float))
+			{
+				if (color.a <= 0.0f)
+				{
+					color.a = 1.0f;
+				}
+				pickedActor->SetColor(color);
+				if (pickedActor->GetMesh())
+				{
+					pickedActor->GetMesh()->SetColor(color);
+				}
+				if (PICK.pickedObjcect && !dynamic_cast<AGizmoAxis*>(PICK.pickedObjcect.Get()))
+				{
+					PICK.pickedObjcect->SetColor(color);
+				}
+			}
 
-		if (uid != s_RotEditedActorID)
-		{
-			FVector eulerRad = FQuaternion::ToEuler(pickedActor->GetRotation());
-			s_euler[0] = eulerRad.x * (180 / Global::PI);
-			s_euler[1] = eulerRad.y * (180 / Global::PI);
-			s_euler[2] = eulerRad.z * (180 / Global::PI);
-			s_RotEditedActorID = uid;
-		}
+			// 위치 편집
+			FVector loc = pickedActor->GetLocation();
+			if (ImGui::DragFloat3(("Pos##" + uid).c_str(), &loc.x, 0.01f, -10.0f, 10.0f))
+			{
+				pickedActor->SetLocation(loc);
+			}
 
-		bool bPrimChanged = false;
-		if (ImGui::DragFloat(("Rotation X" + uid).c_str(), &s_euler[0], 5.0f, -180.0f, 180.0f))
-		{
-			bPrimChanged = true;
-		}
-		if (ImGui::DragFloat(("Rotation Y" + uid).c_str(), &s_euler[1], 5.0f, -180.0f, 180.0f))
-		{
-			bPrimChanged = true;
-		}
-		if (ImGui::DragFloat(("Rotation Z" + uid).c_str(), &s_euler[2], 5.0f, -180.0f, 180.0f))
-		{
-			bPrimChanged = true;
-		}
-		// 수정했으면 Rotation 재설정
-		if (bPrimChanged)
-		{
-			FQuaternion newRot = FQuaternion::FromEuler(
-				s_euler[0] * (180 / Global::PI),
-				s_euler[1] * (180 / Global::PI),
-				s_euler[2] * (180 / Global::PI)
-			);
-			pickedActor->SetRotation(newRot);
+			// Scale Editor
+			FVector scale = pickedActor->GetScale();
+			if (ImGui::DragFloat3(("Scale##" + uid).c_str(), &scale.x, 0.01f, 0.01f, 5.0f))
+			{
+				pickedActor->SetScale(scale);
+			}
+
+			// Rotation Editor (오일러로 표시, 편집하되 내부 데이터만 쿼터니언)
+			static string s_RotEditedActorID; // 회전 수정한 Actor ID
+			static float s_euler[3] = { 0.0f, 0.0f, 0.0f };
+			FQuaternion rot = pickedActor->GetRotation();
+
+			if (uid != s_RotEditedActorID)
+			{
+				FVector eulerRad = FQuaternion::ToEuler(pickedActor->GetRotation());
+				s_euler[0] = eulerRad.x * (180 / Global::PI);
+				s_euler[1] = eulerRad.y * (180 / Global::PI);
+				s_euler[2] = eulerRad.z * (180 / Global::PI);
+				s_RotEditedActorID = uid;
+			}
+
+			bool bPrimChanged = false;
+			if (ImGui::DragFloat(("Rotation X" + uid).c_str(), &s_euler[0], 5.0f, -180.0f, 180.0f))
+			{
+				bPrimChanged = true;
+			}
+			if (ImGui::DragFloat(("Rotation Y" + uid).c_str(), &s_euler[1], 5.0f, -180.0f, 180.0f))
+			{
+				bPrimChanged = true;
+			}
+			if (ImGui::DragFloat(("Rotation Z" + uid).c_str(), &s_euler[2], 5.0f, -180.0f, 180.0f))
+			{
+				bPrimChanged = true;
+			}
+			// 수정했으면 Rotation 재설정
+			if (bPrimChanged)
+			{
+				FQuaternion newRot = FQuaternion::FromEuler(
+					s_euler[0] * (180 / Global::PI),
+					s_euler[1] * (180 / Global::PI),
+					s_euler[2] * (180 / Global::PI)
+				);
+				pickedActor->SetRotation(newRot);
+			}
 		}
 	}
 
