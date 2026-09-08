@@ -504,6 +504,7 @@ void Renderer::DrawOutline(AActor* targetActor)
 	}
 
 	//그리는 건 mesh에서만 진행
+	mesh->SetColor(FLinearColor::Yellow);
 	mesh->Render();
 
 	//원래 월드 행렬 및 기본 깊이 복원
