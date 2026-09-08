@@ -111,7 +111,7 @@ void SaveLoadManager::SaveScene(const FString& path)
 
     for (UObject* obj : ObjectManager::GetInstance().AllObjects)
     {
-        AActor* actor = dynamic_cast<AActor*>(obj);
+        AActor* actor = dynamic_cast<ACollider*>(obj);
         if (!actor) continue;
         
         FVector location = actor->GetLocation();    // location 저장
