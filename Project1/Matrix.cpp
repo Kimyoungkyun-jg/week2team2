@@ -160,7 +160,7 @@
     /////////////////////////////////////
 
     // 역행렬 (Normal) - 어떤 행렬이든 계산 가능 (But 연산량 주의) 
-    FMatrix FMatrix::Inverse() const
+    FMatrix FMatrix::Inverse(bool* bOutSuccess) const
     {
         const float* m = &M[0][0];  // 포인터로 접근 row-major 이므로 1행 -> 2행 -> ...
         float inv[16];              // 4x4
@@ -180,11 +180,14 @@
         // 행렬식 계산
         float det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
         
-        // Singular Matrix (역행렬 없음)
+        // 역행렬 없음 처리
         if (fabsf(det) < 1e-6f)
         {
-            assert(false && "Warn: Inverse Mtx. does not exists!");
-            return Identity();  // 단위 행렬 반환
+            if (bOutSuccess)
+            {
+                *bOutSuccess = false;
+            }
+            return Identity();
         }
         
         // Second Column
@@ -234,6 +237,11 @@
         for (int i = 0; i < 16; ++i)
             out[i] = inv[i] * invDet;
         
+        if (bOutSuccess)
+        {
+            *bOutSuccess = true;
+        }
+
         return result;
     }
 

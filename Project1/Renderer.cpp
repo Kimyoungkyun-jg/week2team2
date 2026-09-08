@@ -5,7 +5,6 @@
 #include "UObject.h"
 #include "GlobalBuffer.h"
 #include "AActor.h"
-#include "FQuaternion.h"
 #include <d3dcompiler.h>
 
 #pragma comment(lib, "d3dcompiler.lib")
@@ -494,7 +493,7 @@ void Renderer::DrawOutline(AActor* targetActor)
 
 	//메시보다 1.05배 큰 월드 행렬 구성
 	FMatrix S = FMatrix::Scale(transform.Scale * 1.05f);
-	FMatrix R = transform.Rotation.ToMatrix();
+	FMatrix R = FMatrix::RotationZ(transform.Rotation.z) * FMatrix::RotationX(transform.Rotation.x) * FMatrix::RotationY(transform.Rotation.y);
 	FMatrix T = FMatrix::Translation(transform.Location);
 	FMatrix outlineWorld = S * R * T;
 
@@ -505,10 +504,9 @@ void Renderer::DrawOutline(AActor* targetActor)
 	}
 
 	//그리는 건 mesh에서만 진행
-	mesh->SetColor(FLinearColor::Yellow);
 	mesh->Render();
 
-	// 원래 월드 행렬 및 기본 깊이 복원
+	//원래 월드 행렬 및 기본 깊이 복원
 	targetActor->SetWorldBuffer();
 	SetDefaultDepthState();
 }

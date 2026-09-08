@@ -82,8 +82,13 @@ bool Mesh::bIsPicked(const FRay& worldRay, const Transform& transform, float& ou
 
 	if (vertexbuffer != nullptr && numVertices > 0)
 	{
-		// 비균등 스케일 및 회전에서도 오차가 없는 정확한 4x4 역행렬 사용
-		FMatrix invWorld = transform.WorldMat.Inverse();
+		bool bSuccess = false;
+		FMatrix invWorld = transform.WorldMat.Inverse(&bSuccess);
+		if (!bSuccess)
+		{
+			return false;
+		}
+
 		FVector localOrigin = TransformPoint(worldRay.Origin, invWorld);
 		FVector localDir = TransformDirection(worldRay.Direction, invWorld);
 		

@@ -33,7 +33,7 @@ struct FMatrix
     FVector ExtractTranslation() const;
 
     //역행렬
-    FMatrix Inverse() const;
+    FMatrix Inverse(bool* bOutSuccess = nullptr) const;
     FMatrix InverseAffine() const;
 
 };
