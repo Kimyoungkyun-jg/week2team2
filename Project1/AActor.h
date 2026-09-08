@@ -24,8 +24,6 @@ public:
 	virtual void Render() override;
 	virtual void Update(float Deltatime) override;
 
-	void RenderOutline();
-
 	void SetLocation(const FVector& loc) { transform.SetLocation(loc); }
 	void SetRotation(const FVector& _Rotation) { transform.SetRotation(_Rotation); }
 	void SetScale(const FVector& _Scale) { transform.SetScale(_Scale); }
@@ -115,9 +113,8 @@ public:
 		float dummyDist = 0.0f;
 		return bIsPicked(worldRay, dummyDist);
 	}
-	bool IsSelected() const;
-	void DrawWithSelection(D3D11_PRIMITIVE_TOPOLOGY topology);
-
+	void SetSelected(bool inSelected) { bIsSelected = inSelected; }
+	bool IsSelected() const { return bIsSelected; }
 
 	virtual void Pressed() {}
 	virtual void Released() {}
@@ -133,6 +130,7 @@ public:
 	FLinearColor Color = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	Mesh* mesh = nullptr;
 	bool bOwnsMesh = false;
+	bool bIsSelected = false;
 };
 
 

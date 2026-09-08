@@ -109,6 +109,8 @@ bool Mesh::bIsPicked(const FRay& worldRay, const Transform& transform, float& ou
 		{
 			// localDir을 정규화하지 않았으므로 closestDist가 곧바로 정확한 월드 거리
 			outDistance = closestDist;
+
+
 			return true;
 		}
 		return false;

@@ -80,8 +80,12 @@ AActor* PickingManager::Pick()
 		{
 			closestDist = dist;
 			closest = actor;
-			AGizmo::MainGizmo->SetTargetActor(closest);
 		}
+	}
+
+	if (AGizmo::MainGizmo)
+	{
+		AGizmo::MainGizmo->SetTargetActor(closest);
 	}
 
 	pickedObjcect = closest;

@@ -3,7 +3,6 @@
 #include "Renderer.h"
 #include "PickingManager.h"
 #include "Intersection.h"
-#include "AGizmo.h"
 
 AActor::AActor(const FLinearColor& inColor)
 	: Color(inColor)
@@ -41,26 +40,6 @@ void AActor::SetWorldBuffer()
 	worldBuffer->SetVSBuffer(0);
 }
 
-bool AActor::IsSelected() const
-{
-	return AGizmo::MainGizmo && this == AGizmo::MainGizmo->GetTargetActor();
-}
-
-void AActor::DrawWithSelection(D3D11_PRIMITIVE_TOPOLOGY topology)
-{
-	vertexbuffer->IASet(topology);
-
-	const bool bSelected = IsSelected();
-	if (bSelected) {
-		RENDERER.SetSelectedState();
-	}
-
-	RENDERER.GetDeviceContext()->Draw(numVertices, 0);
-
-	if (bSelected)
-		RENDERER.SetDefaultDepthState();
-}
-
 void AActor::Render()
 {
 	UObject::Render();
@@ -69,8 +48,34 @@ void AActor::Render()
 
 	if (mesh)
 	{
-		mesh->SetColor(Color);
-		mesh->Render();
+		if (bIsSelected)
+		{
+			// 본체 렌더 및 스텐실 마킹
+			RENDERER.SetSelectedState();
+			mesh->SetColor(Color);
+			mesh->Render();
+
+			// 외곽선 렌더
+			RENDERER.SetOutlineState();
+
+			FMatrix S = FMatrix::Scale(transform.Scale * 1.04f);
+			FMatrix R = FMatrix::RotationZ(transform.Rotation.z) * FMatrix::RotationX(transform.Rotation.x) * FMatrix::RotationY(transform.Rotation.y);
+			FMatrix T = FMatrix::Translation(transform.Location);
+			worldBuffer->SetMat(S * R * T);
+			worldBuffer->SetVSBuffer(0);
+
+			mesh->SetColor(FLinearColor(1.0f, 0.6f, 0.0f, 1.0f));
+			mesh->Render();
+
+			// 버퍼 및 깊이 복원
+			SetWorldBuffer();
+			RENDERER.SetDefaultDepthState();
+		}
+		else
+		{
+			mesh->SetColor(Color);
+			mesh->Render();
+		}
 	}
 }
 

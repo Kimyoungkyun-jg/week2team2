@@ -5,7 +5,7 @@
 #include "Camera.h"
 #include "Renderer.h"
 #include "PickingManager.h"
-#include "AGizmo.h"
+#include "AActor.h"
 
 struct FFadeOverlay
 {
@@ -37,7 +37,7 @@ public:
             }
         }
 
-        PICK.Update();//pickmanager
+        PICK.Update(); // pickmanager
     }
 
     virtual void Render()
@@ -48,12 +48,6 @@ public:
             if (objects[i] && objects[i]->GetIsActive())
             {
                 objects[i]->Render();
-            }
-        }
-        if (AGizmo::MainGizmo) {
-            AActor* selected = AGizmo::MainGizmo->GetTargetActor();
-            if (selected) {
-                selected->RenderOutline();
             }
         }
     }
