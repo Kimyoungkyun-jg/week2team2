@@ -183,7 +183,7 @@
         // Singular Matrix (역행렬 없음)
         if (fabsf(det) < 1e-6f)
         {
-            assert(false, "Warn: Inverse Mtx. does not exists!");
+            assert(false && "Warn: Inverse Mtx. does not exists!");
             return Identity();  // 단위 행렬 반환
         }
         

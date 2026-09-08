@@ -50,10 +50,11 @@ public:
                 objects[i]->Render();
             }
         }
+
         if (AGizmo::MainGizmo) {
             AActor* selected = AGizmo::MainGizmo->GetTargetActor();
             if (selected) {
-                selected->RenderOutline();
+                RENDERER.DrawOutline(selected);
             }
         }
     }

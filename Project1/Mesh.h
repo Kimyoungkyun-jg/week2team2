@@ -75,10 +75,13 @@ public:
 	void IASet(D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	bool bIsPicked(const FRay& worldRay, const Transform& transform, float& outDistance);
+	bool IsSelected() const;
 
 	UINT GetNumVertices() const { return numVertices; }
 	ID3D11InputLayout* GetInputLayout() const { return inputLayout; }
 	VertexBuffer* GetVertexBuffer() const { return vertexbuffer; }
+
+	void DrawWithSelection(D3D11_PRIMITIVE_TOPOLOGY topology);
 
 public:
 	VertexBuffer* vertexbuffer = nullptr;

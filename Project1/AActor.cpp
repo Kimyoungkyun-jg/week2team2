@@ -46,21 +46,6 @@ bool AActor::IsSelected() const
 	return AGizmo::MainGizmo && this == AGizmo::MainGizmo->GetTargetActor();
 }
 
-void AActor::DrawWithSelection(D3D11_PRIMITIVE_TOPOLOGY topology)
-{
-	vertexbuffer->IASet(topology);
-
-	const bool bSelected = IsSelected();
-	if (bSelected) {
-		RENDERER.SetSelectedState();
-	}
-
-	RENDERER.GetDeviceContext()->Draw(numVertices, 0);
-
-	if (bSelected)
-		RENDERER.SetDefaultDepthState();
-}
-
 void AActor::Render()
 {
 	UObject::Render();
@@ -69,8 +54,19 @@ void AActor::Render()
 
 	if (mesh)
 	{
+		const bool bSelected = IsSelected();
+		if (bSelected)
+		{
+			RENDERER.SetSelectedState();
+		}
+
 		mesh->SetColor(Color);
 		mesh->Render();
+
+		if (bSelected)
+		{
+			RENDERER.SetDefaultDepthState();
+		}
 	}
 }
 

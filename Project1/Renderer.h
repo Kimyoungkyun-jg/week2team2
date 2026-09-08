@@ -86,6 +86,9 @@ public:
 	void SetSelectedState();
 	void SetOutlineState();
 
+	// 선택 액터 아웃라인 렌더링
+	void DrawOutline(class AActor* targetActor);
+
 
 	void CreateDeviceAndSwapChain(HWND hWindow);
 	void ReleaseDeviceAndSwapChain();
