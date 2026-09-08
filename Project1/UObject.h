@@ -50,7 +50,8 @@ struct ClassInfo //클래스 정보를 담는 메타 데이터 클래스
 class UObject
 {
 public:
-	UObject() : UUID(0) {
+	// 고유 식별자 기본 발급
+	UObject() : UUID(UEngineStatics::GetUUID()) {
 		
 	}
 	virtual ~UObject() {}

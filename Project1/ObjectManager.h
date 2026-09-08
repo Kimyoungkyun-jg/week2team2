@@ -127,16 +127,8 @@ public:
 		return nullptr;
 	}
 
-	bool IsValidObject(const UObject* Target, uint32 UUID) const
-	{
-		if (!Target || UUID == 0) return false;
-		for (const UObject* Obj : AllObjects)
-		{
-			if (Obj == Target && Obj->GetID() == UUID)
-				return true;
-		}
-		return false;
-	}
+	// 객체 유효성 검사
+	bool IsValidObject(const UObject* Target, uint32 UUID) const;
 
 	static ObjectManager& GetInstance()
 	{
