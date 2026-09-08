@@ -486,12 +486,12 @@ void Renderer::DrawOutline(AActor* targetActor)
 	Mesh* mesh = targetActor->GetMesh();
 	const Transform& transform = targetActor->GetTransform();
 
-	// 셰이더 및 아웃라인 상태 설정
+	//셰이더 및 아웃라인 상태 설정
 	PrepareShader(mesh->GetInputLayout());
 	SetCustomColor(FLinearColor::Yellow);
 	SetOutlineState();
 
-	// 메시보다 1.05배 큰 월드 행렬 구성
+	//메시보다 1.05배 큰 월드 행렬 구성
 	FMatrix S = FMatrix::Scale(transform.Scale * 1.05f);
 	FMatrix R = FMatrix::RotationZ(transform.Rotation.z) * FMatrix::RotationX(transform.Rotation.x) * FMatrix::RotationY(transform.Rotation.y);
 	FMatrix T = FMatrix::Translation(transform.Location);
@@ -503,10 +503,12 @@ void Renderer::DrawOutline(AActor* targetActor)
 		targetActor->worldBuffer->SetVSBuffer(0);
 	}
 
-	//그리는 건 mesh에서만 진행
-	mesh->Render();
+	// 노란색 외곽선 렌더 및 원래 색상 복원
+	FLinearColor originalColor = mesh->GetColor();
+	mesh->Render(FLinearColor::Yellow);
+	mesh->SetColor(originalColor);
 
-	//원래 월드 행렬 및 기본 깊이 복원
+	// 원래 월드 행렬 및 기본 깊이 복원
 	targetActor->SetWorldBuffer();
 	SetDefaultDepthState();
 }
