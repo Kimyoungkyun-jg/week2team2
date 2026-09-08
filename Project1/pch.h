@@ -89,12 +89,13 @@ typedef string FString;
 
 #include "Containers.h"
 
-//Scene Header
-#include "Scene.h"
-#include "SceneManager.h"
-
 //카메라
 #include "Camera.h"
 
-#include "PickingManager.h"
 #include "ObjectManager.h"
+#include "WeakObjectPtr.h"
+#include "PickingManager.h"
+
+//Scene Header
+#include "Scene.h"
+#include "SceneManager.h"

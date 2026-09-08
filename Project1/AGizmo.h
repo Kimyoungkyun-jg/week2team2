@@ -1,5 +1,6 @@
 #pragma once
 
+#include "WeakObjectPtr.h"
 #include "AActor.h"
 #include "FVertexSimple.h"
 #include "Sphere.h"
@@ -63,7 +64,7 @@ public:
 
 private:
 	EGizmoAxis Axis = EGizmoAxis::None;
-	AActor* TargetActor = nullptr;
+	TWeakObjectPtr<AActor> TargetActor;
 	FVector planeNormal; 
 	FVector currentAxisDir;
 	FVector dragStartPoint;
@@ -118,7 +119,7 @@ public:
 	void SetIsLocal(bool inIsLocal) { bIsLocal = inIsLocal; }
 
 private:
-	AActor* TargetActor = nullptr;
+	TWeakObjectPtr<AActor> TargetActor;
 	EGizmoMode GizMode = EGizmoMode::Translation;
 	EGizmoAxis SelectedAxis = EGizmoAxis::None;
 	bool bIsLocal = true;

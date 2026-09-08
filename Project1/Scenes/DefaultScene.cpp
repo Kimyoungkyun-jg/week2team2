@@ -164,7 +164,11 @@ void DefaultScene::Render()
 	if (ImGui::Button("New Scene"))
 	{
 		OBJECT.DestroyAllColliders();
-		
+		PICK.pickedObjcect = nullptr;
+		if (AGizmo::MainGizmo)
+		{
+			AGizmo::MainGizmo->SetTargetActor(nullptr);
+		}
 	}
 	
 	// Save 버튼

@@ -16,9 +16,9 @@ public:
 	virtual void Update(float deltatime) override;
 	virtual void Render() override;
 
-	ACube* cube = nullptr;
-	ACube* cube2 = nullptr;
-	ASphere* sphere = nullptr;
+	TWeakObjectPtr<ACube> cube;
+	TWeakObjectPtr<ACube> cube2;
+	TWeakObjectPtr<ASphere> sphere;
 	AGizmo* gizmo = nullptr;
 
 	AWorldAxises* worldAxises;

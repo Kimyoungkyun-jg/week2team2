@@ -1,5 +1,7 @@
 #pragma once
 
+#include "WeakObjectPtr.h"
+
 struct FRay {
 	FVector Origin;
 	FVector Direction;
@@ -29,7 +31,7 @@ public:
 	void Update();
 
 
-	AActor* pickedObjcect;
+	TWeakObjectPtr<AActor> pickedObjcect;
 private:
 	PickingManager() {};
 };

@@ -1,6 +1,8 @@
 #pragma once
 #include "Transform.h"
 
+class CameraBuffer;
+
 
 class Camera
 {

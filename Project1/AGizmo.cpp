@@ -338,6 +338,7 @@ AGizmo::~AGizmo()
 
 void AGizmo::SetTargetActor(AActor* inTarget)
 {
+
 	TargetActor = inTarget;
 	if (TargetActor)
 	{
