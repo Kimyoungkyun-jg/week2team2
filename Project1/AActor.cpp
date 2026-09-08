@@ -3,6 +3,7 @@
 #include "Renderer.h"
 #include "PickingManager.h"
 #include "Intersection.h"
+#include "AGizmo.h"
 
 AActor::AActor()
 {
@@ -86,6 +87,26 @@ void AActor::SetWorldBuffer()
 	worldBuffer->SetVSBuffer(0);
 }
 
+bool AActor::IsSelected() const
+{
+	return AGizmo::MainGizmo && this == AGizmo::MainGizmo->GetTargetActor();
+}
+
+void AActor::DrawWithSelection(D3D11_PRIMITIVE_TOPOLOGY topology)
+{
+	vertexbuffer->IASet(topology);
+
+	const bool bSelected = IsSelected();
+	if (bSelected) {
+		RENDERER.SetSelectedState();
+	}
+
+	RENDERER.GetDeviceContext()->Draw(numVertices, 0);
+
+	if (bSelected)
+		RENDERER.SetDefaultDepthState();
+}
+
 void AActor::Render()
 {
 	UObject::Render();
@@ -99,13 +120,39 @@ void AActor::Render()
 
 		RENDERER.SetCustomColor(Color);
 		vertexbuffer->IASet();
+
+		bool bSelected = IsSelected();
+		if (bSelected) {
+			RENDERER.SetSelectedState();
+		}
+			
+
 		RENDERER.GetDeviceContext()->Draw(numVertices, 0);
+
+		if (bSelected)
+			RENDERER.SetDefaultDepthState();
 	}
 }
 
+void AActor::RenderOutline()
+{
+	RENDERER.PrepareShader(inputLayout);
+	RENDERER.SetCustomColor(FLinearColor::Yellow);
+	RENDERER.SetOutlineState();
+
+	vertexbuffer->IASet();
+	FMatrix outlineWorld = FMatrix::Scale({ 1.05f, 1.05f, 1.05f }) * transform.WorldMat;
+	worldBuffer->SetMat(outlineWorld);	// 행렬 scale 높이기
+	worldBuffer->SetVSBuffer(0);		// b0에 저장
+
+	RENDERER.GetDeviceContext()->Draw(numVertices, 0);
+
+	RENDERER.SetDefaultDepthState();
+}
 
 
 void AActor::Update(float Deltatime)
 {
 	UObject::Update(Deltatime);
 }
+
