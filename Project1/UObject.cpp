@@ -4,6 +4,8 @@
 
 void* UObject::operator new(size_t size)
 {
+	OutputDebugStringA("UObject::operator new 호출됨\n"); // 또는 printf
+
 	OBJECT.TotalAllocationBytes += static_cast<uint32>(size);
 	OBJECT.TotalAllocationCount++;
 
