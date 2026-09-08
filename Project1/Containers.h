@@ -38,6 +38,20 @@ public:
     void push_back(const T& item) { ArrayData.push_back(item); }
     void push_back(T&& item) { ArrayData.push_back(std::move(item)); }
     
+    // 요소 삽입
+    typename std::vector<T>::iterator insert(typename std::vector<T>::iterator it, const T& item)
+    {
+        return ArrayData.insert(it, item);
+    }
+    typename std::vector<T>::iterator Insert(typename std::vector<T>::iterator it, const T& item)
+    {
+        return ArrayData.insert(it, item);
+    }
+    void InsertAt(int idx, const T& item)
+    {
+        ArrayData.insert(ArrayData.begin() + idx, item);
+    }
+    
     // 요소 삭제           
     void Remove(const T& item)
     {
