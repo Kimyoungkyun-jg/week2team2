@@ -434,3 +434,28 @@ void Renderer::SwapBuffer()
 	
 }
 
+void Renderer::Resize(UINT width, UINT height)
+{
+	if (!SwapChain || width == 0 || height == 0)
+		return;
+
+	// 기존 RenderTarget 연결 해제
+	DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+
+	// 기존 화면 크기에 의존하는 리소스 제거
+	ReleaseDepthStencil();
+	ReleaseFrameBuffer();
+
+	// SwapChain 자체 크기 변경
+	SwapChain->ResizeBuffers(
+		0,
+		width,
+		height,
+		DXGI_FORMAT_UNKNOWN,
+		0
+	);
+
+	// 새로운 크기로 다시 생성
+	CreateFrameBuffer();
+	CreateDepthStencil();
+}

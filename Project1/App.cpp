@@ -20,6 +20,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
+	case WM_SIZE:
+	{
+		if (wParam != SIZE_MINIMIZED)
+		{
+			UINT width = LOWORD(lParam);
+			UINT height = HIWORD(lParam);
+
+			Renderer::GetInstance().Resize(width, height);
+		}
+		break;
+	}
 	default:
 		if (imguiHandled)
 			return true;
