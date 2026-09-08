@@ -60,6 +60,7 @@ public:
 
 	virtual string_view GetObjClassName() const { return "UObject"; } //자식들이 매크로를 통해 오버라이딩해야됨
 	virtual string_view GetSuperClassName() const { return "None"; } 
+	
 
 	void SetClassInfo(const ClassInfo* inClassInfo) {
 		classinfo = inClassInfo;

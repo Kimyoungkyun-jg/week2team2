@@ -51,6 +51,18 @@ void DefaultScene::Render()
 	Scene::Render();
 
 	ImGui::SetNextWindowPos(ImVec2(20.0f, 20.0f), ImGuiCond_FirstUseEver);
+
+
+	//////////////////////////////
+	/////// 메모리&객체 Stat ////// 
+	/////////////////////////////
+	ImGui::Begin("Memory & Object Status", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+
+	ImGui::Text("[ Used Memory ] %u bytes", OBJECT.TotalAllocationBytes);
+	ImGui::Text("[ No. of Obj. ] %u", OBJECT.TotalAllocationCount);
+	
+	ImGui::End();
+
 	ImGui::Begin("Scene & Camera Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
 	// 카메라 디버그 섹션
