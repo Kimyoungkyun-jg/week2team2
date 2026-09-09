@@ -54,3 +54,29 @@ float4 mainPS(PS_INPUT input) : SV_TARGET // Pixel Shader
     return input.color;
 }
 
+PS_INPUT mainVS_Outline(VS_INPUT input)
+{
+    PS_INPUT output;
+    
+    float outlinePixels = CustomColor.x;
+    float screenWidth = CustomColor.y;
+    float screenHeight = CustomColor.z;
+    
+    // 얼추맞는 값이기 때문에 100% 맞진 않음
+    // 정확하게 하고 싶다면 normal 성분도 같이 올려보내야 함.
+    float3 pseudoNormal = input.position.xyz;
+    float len = length(pseudoNormal);
+    pseudoNormal = (len > 0.0001f) ? (pseudoNormal / len) : float3(0.0f, 1.0f, 0.0f);
+
+    float4 clipPos = mul(mul(input.position, World), VP);
+    float4 clipNormal = mul(mul(float4(pseudoNormal, 0.0f), World), VP);
+    
+    float2 offsetDir = normalize(clipNormal.xy + 0.00001f);
+    float2 pixelToNdc = float2(outlinePixels * 2.0f / screenWidth, outlinePixels * 2.0f / screenHeight);
+    
+    clipPos.xy += offsetDir * pixelToNdc * clipPos.w;
+    
+    output.position = clipPos;
+    output.color = float4(1.0f, 1.0f, 0.0f, 1.0f);
+    return output;
+}
