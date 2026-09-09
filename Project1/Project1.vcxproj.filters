@@ -1,125 +1,348 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="ImGui">
-      <UniqueIdentifier>{C0FF640D-2C14-8DBE-F595-301E616989EF}</UniqueIdentifier>
+    <Filter Include="Actor">
+      <UniqueIdentifier>{1946C81C-7D67-1EE8-E6E4-4149845270A3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor\Gizmo">
+      <UniqueIdentifier>{261C6E1D-19D6-C58D-7333-627E0727A51C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App">
+      <UniqueIdentifier>{343F86AC-616E-9A8F-959B-5C95D5D28941}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{6C8E1683-89B2-32D7-CC78-427B51F93153}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library">
+      <UniqueIdentifier>{4B25704D-8E3A-C32B-8B61-47FA6EE813BE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library\DirectXTex">
+      <UniqueIdentifier>{F0B11013-9F25-166C-0E10-CFE95689F2B4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library\ImGui">
+      <UniqueIdentifier>{7FAA66C1-C262-D31D-BE9F-ADC9477F9DBE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library\json">
+      <UniqueIdentifier>{C7BD737F-CDDC-D71D-FBD1-AED8F41B738D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library\json\nlohmann">
+      <UniqueIdentifier>{9098522B-4405-18D3-086D-21EFFC1EB55E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{AA5099A4-7C04-9222-E989-E368A97A3AAE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics">
+      <UniqueIdentifier>{E999AE50-54C3-C246-580E-4B540B0FD104}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Render">
+      <UniqueIdentifier>{A50D525E-1F34-EC2F-6D3B-BFE7EF357922}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Render\Buffer">
+      <UniqueIdentifier>{DDD5AB86-92D2-ACCD-E161-1E382E672CD1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{C250CFDD-9492-41D4-4F3F-7C1BBC892CB5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Geometry">
+      <UniqueIdentifier>{F60384EF-6FE6-E70C-C5FB-163017395B6F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Shader">
+      <UniqueIdentifier>{FC092799-1647-E538-CFC8-01B92B877647}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scenes">
-      <UniqueIdentifier>{86EEB3D0-7290-DEA6-5B4B-F2FA478C65F7}</UniqueIdentifier>
+      <UniqueIdentifier>{02F634BB-5AE4-BC9F-B2CD-FEE7A48673FC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{5271FF71-156D-86DB-EB50-FCAC245D183B}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Project1\AActor.h" />
-    <ClInclude Include="..\Project1\ACollider.h" />
-    <ClInclude Include="..\Project1\App.h" />
-    <ClInclude Include="..\Project1\CollisionManager.h" />
-    <ClInclude Include="..\Project1\FConstants.h" />
-    <ClInclude Include="..\Project1\FPixelConstant.h" />
-    <ClInclude Include="..\Project1\FVector.h" />
-    <ClInclude Include="..\Project1\FVertexSimple.h" />
-    <ClInclude Include="..\Project1\Global.h" />
-    <ClInclude Include="..\Project1\ImGui\imconfig.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Project1\ImGui\imgui.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Project1\ImGui\imgui_impl_dx11.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Project1\ImGui\imgui_impl_win32.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Project1\ImGui\imgui_internal.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Project1\ImGui\imstb_rectpack.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Project1\ImGui\imstb_textedit.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Project1\ImGui\imstb_truetype.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Project1\ObjectManager.h" />
-    <ClInclude Include="..\Project1\Renderer.h" />
-    <ClInclude Include="..\Project1\Scene.h" />
-    <ClInclude Include="..\Project1\SceneManager.h" />
     <ClInclude Include="..\Project1\Scenes\DefaultScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="..\Project1\Sphere.h" />
-    <ClInclude Include="..\Project1\TemplateLibrary.h" />
-    <ClInclude Include="..\Project1\UObject.h" />
-    <ClInclude Include="..\Project1\UEngineStatics.h" />
-    <ClInclude Include="..\Project1\enums.h" />
     <ClInclude Include="..\Project1\pch.h" />
-    <ClInclude Include="..\Project1\Camera.h" />
-    <ClInclude Include="..\Project1\Transform.h" />
-    <ClInclude Include="..\Project1\Matrix.h" />
-    <ClInclude Include="PickingManager.h" />
-    <ClInclude Include="AGizmo.h" />
-    <ClInclude Include="ConstBuffer.h" />
-    <ClInclude Include="Containers.h" />
-    <ClInclude Include="FLinearColor.h" />
-    <ClInclude Include="GlobalBuffer.h" />
-    <ClInclude Include="Intersection.h" />
-    <ClInclude Include="SaveLoadManager.h" />
-    <ClInclude Include="VertexBuffer.h" />
-    <ClInclude Include="AWorldAxises.h" />
-    <ClInclude Include="AGrid.h" />
-    <ClInclude Include="CircleGenerator.h" />
-    <ClInclude Include="ConsoleWindow.h" />
+    <ClInclude Include="Actor\AActor.h">
+      <Filter>Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\ASkySphere.h">
+      <Filter>Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\ASphere.h">
+      <Filter>Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\AWorldAxises.h">
+      <Filter>Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Gizmo\AGizmo.h">
+      <Filter>Actor\Gizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="App\ConsoleWindow.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="App\GameManager.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Containers.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\enums.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Global.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ObjectManager.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\TemplateLibrary.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\UEngineStatics.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\UObject.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\WeakObjectPtr.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\DirectXTex\DirectXTex.h">
+      <Filter>Library\DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\imconfig.h">
+      <Filter>Library\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\imgui.h">
+      <Filter>Library\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\imgui_impl_dx11.h">
+      <Filter>Library\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\imgui_impl_win32.h">
+      <Filter>Library\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\imgui_internal.h">
+      <Filter>Library\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\imstb_rectpack.h">
+      <Filter>Library\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\imstb_textedit.h">
+      <Filter>Library\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\imstb_truetype.h">
+      <Filter>Library\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\json\nlohmann\json.hpp">
+      <Filter>Library\json\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\FQuaternion.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\FVector.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Intersection.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Matrix.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Transform.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\ACollider.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\CollisionManager.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Buffer\ConstBuffer.h">
+      <Filter>Render\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Buffer\FConstants.h">
+      <Filter>Render\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Buffer\FLinearColor.h">
+      <Filter>Render\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Buffer\FPixelConstant.h">
+      <Filter>Render\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Buffer\FVertexSimple.h">
+      <Filter>Render\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Buffer\GlobalBuffer.h">
+      <Filter>Render\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Buffer\VertexBuffer.h">
+      <Filter>Render\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Camera.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Mesh.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\PickingManager.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Renderer.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\UGrid.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\Geometry\CircleGenerator.h">
+      <Filter>Resources\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\Geometry\Sphere.h">
+      <Filter>Resources\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\SaveLoadManager.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\Scene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\SceneManager.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\IUIPanel.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UIManager.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UIPanel.h">
+      <Filter>UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Project1\AActor.cpp" />
-    <ClCompile Include="..\Project1\ACollider.cpp" />
-    <ClCompile Include="..\Project1\App.cpp" />
-    <ClCompile Include="..\Project1\CollisionManager.cpp" />
-    <ClCompile Include="..\Project1\FVector.cpp" />
-    <ClCompile Include="..\Project1\ImGui\imgui.cpp">
-      <Filter>ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Project1\ImGui\imgui_demo.cpp">
-      <Filter>ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Project1\ImGui\imgui_draw.cpp">
-      <Filter>ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Project1\ImGui\imgui_impl_dx11.cpp">
-      <Filter>ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Project1\ImGui\imgui_impl_win32.cpp">
-      <Filter>ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Project1\ImGui\imgui_tables.cpp">
-      <Filter>ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Project1\ImGui\imgui_widgets.cpp">
-      <Filter>ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Project1\ObjectManager.cpp" />
-    <ClCompile Include="..\Project1\Renderer.cpp" />
-    <ClCompile Include="..\Project1\Scene.cpp" />
-    <ClCompile Include="..\Project1\SceneManager.cpp" />
     <ClCompile Include="..\Project1\Scenes\DefaultScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="..\Project1\UObject.cpp" />
-    <ClCompile Include="..\Project1\main.cpp" />
     <ClCompile Include="..\Project1\pch.cpp" />
-    <ClCompile Include="..\Project1\Camera.cpp" />
-    <ClCompile Include="..\Project1\Matrix.cpp" />
-    <ClCompile Include="PickingManager.cpp" />
-    <ClCompile Include="AGizmo.cpp" />
-    <ClCompile Include="ConstBuffer.cpp" />
-    <ClCompile Include="Intersection.cpp" />
-    <ClCompile Include="SaveLoadManager.cpp" />
-    <ClCompile Include="VertexBuffer.cpp" />
-    <ClCompile Include="AWorldAxises.cpp" />
-    <ClCompile Include="AGrid.cpp" />
-    <ClCompile Include="CircleGenerator.cpp" />
-    <ClCompile Include="ConsoleWindow.cpp" />
+    <ClCompile Include="Actor\AActor.cpp">
+      <Filter>Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\ASkySphere.cpp">
+      <Filter>Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\AWorldAxises.cpp">
+      <Filter>Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Gizmo\AGizmo.cpp">
+      <Filter>Actor\Gizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="App\ConsoleWindow.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="App\GameManager.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\ObjectManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\UObject.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ImGui\imgui.cpp">
+      <Filter>Library\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ImGui\imgui_demo.cpp">
+      <Filter>Library\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ImGui\imgui_draw.cpp">
+      <Filter>Library\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ImGui\imgui_impl_dx11.cpp">
+      <Filter>Library\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ImGui\imgui_impl_win32.cpp">
+      <Filter>Library\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ImGui\imgui_tables.cpp">
+      <Filter>Library\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ImGui\imgui_widgets.cpp">
+      <Filter>Library\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Math\FQuaternion.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\FVector.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Intersection.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Matrix.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\ACollider.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\CollisionManager.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Buffer\ConstBuffer.cpp">
+      <Filter>Render\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Buffer\VertexBuffer.cpp">
+      <Filter>Render\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Camera.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Mesh.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\PickingManager.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Renderer.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\UGrid.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\Geometry\CircleGenerator.cpp">
+      <Filter>Resources\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\SaveLoadManager.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\Scene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\SceneManager.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UIManager.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UIPanel.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Library\DirectXTex\DirectXTex.inl">
+      <Filter>Library\DirectXTex</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Resources\Shader\GridShader.hlsl">
+      <Filter>Resources\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shader\ShaderW0.hlsl">
+      <Filter>Resources\Shader</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="Library\DirectXTex\DirectXTex.lib">
+      <Filter>Library\DirectXTex</Filter>
+    </Library>
   </ItemGroup>
 </Project>

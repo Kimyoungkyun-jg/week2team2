@@ -4,9 +4,8 @@
 #include "AGizmo.h"
 #include "AWorldAxises.h"
 #include "PickingManager.h"
-#include "AGrid.h"
 #include "ASkySphere.h"
-
+#include "UGrid.h"
 
 class DefaultScene : public Scene
 {
@@ -23,8 +22,7 @@ public:
 
 	AWorldAxises* worldAxises;
 
-
-	AGrid* grid;
+	UGrid Ugrid;
 
 	ASkySphere* skysphere;
 
