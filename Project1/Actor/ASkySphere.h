@@ -43,7 +43,7 @@ public:
 		}
 
 		// 스카이스피어 전용 셰이더 및 파이프라인 설정
-		RENDERER.PrepareSkyShader(mesh->GetInputLayout());
+		RENDERER.PrepareSkyShader();
 		RENDERER.SetSkyDepthState();
 
 		// 버텍스 버퍼 바인딩 및 렌더링

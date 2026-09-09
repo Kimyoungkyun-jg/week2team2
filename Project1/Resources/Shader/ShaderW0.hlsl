@@ -21,20 +21,19 @@ SamplerState MainSampler : register(s0);
 
 struct VS_INPUT
 {
-    float4 position : POSITION;
+    float3 position : POSITION;
     float4 color : COLOR;
-};
-
-struct VS_INPUT_SIMPLE
-{
-    float4 position : POSITION;
+    float2 uv : TEXCOORD0;
+    float3 normal : NORMAL;
 };
 
 struct PS_INPUT
 {
     float4 position : SV_POSITION;
     float4 color : COLOR;
-    float3 worldPosition : TEXCOORD0;
+    float2 uv : TEXCOORD0;
+    float3 normal : NORMAL;
+    float3 worldPosition : TEXCOORD1;
 };
 
 // 일반 버텍스 셰이더
@@ -42,7 +41,11 @@ PS_INPUT mainVS(VS_INPUT input)
 {
     PS_INPUT output;
     
-    output.position = mul(mul(input.position, World), VP);
+    float4 worldPos = mul(float4(input.position, 1.0f), World);
+    output.position = mul(worldPos, VP);
+    output.worldPosition = worldPos.xyz;
+    output.uv = input.uv;
+    output.normal = normalize(mul(input.normal, (float3x3)World));
     
     if (CustomColor.a > 0.0f)
     {
@@ -59,7 +62,12 @@ PS_INPUT mainVS(VS_INPUT input)
 // 일반 픽셀 셰이더
 float4 mainPS(PS_INPUT input) : SV_TARGET
 {
-    return input.color;
+    float4 finalColor = input.color;
+    if (UseTexture != 0)
+    {
+        finalColor = MainTexture.Sample(MainSampler, input.uv);
+    }
+    return finalColor;
 }
 
 // 스카이스피어 전용 셰이더 구조체
@@ -76,9 +84,9 @@ PS_INPUT_SKY mainVS_Sky(VS_INPUT input)
 {
     PS_INPUT_SKY output;
     
-    float4 clipPos = mul(mul(input.position, World), VP);
+    float4 clipPos = mul(mul(float4(input.position, 1.0f), World), VP);
     output.position = clipPos.xyww;
-    output.localPos = input.position.xyz;
+    output.localPos = input.position;
     
     return output;
 }
@@ -106,24 +114,24 @@ PS_INPUT mainVS_Outline(VS_INPUT input)
     float screenWidth = CustomColor.y;
     float screenHeight = CustomColor.z;
     
-    // 얼추맞는 값이기 때문에 100% 맞진 않음
-    // 정확하게 하고 싶다면 normal 성분도 같이 올려보내야 함.
-    float3 pseudoNormal = input.position.xyz;
-    float len = length(pseudoNormal);
-    pseudoNormal = (len > 0.0001f) ? (pseudoNormal / len) : float3(0.0f, 1.0f, 0.0f);
+    float3 norm = length(input.normal) > 0.001f ? input.normal : input.position;
+    float len = length(norm);
+    norm = (len > 0.0001f) ? (norm / len) : float3(0.0f, 1.0f, 0.0f);
 
-    float4 clipPos = mul(mul(input.position, World), VP);
-    float4 clipNormal = mul(mul(float4(pseudoNormal, 0.0f), World), VP);
+    float4 clipPos = mul(mul(float4(input.position, 1.0f), World), VP);
+    float4 clipNormal = mul(mul(float4(norm, 0.0f), World), VP);
     
     float2 offsetDir = normalize(clipNormal.xy + 0.00001f);
     float2 pixelToNdc = float2(outlinePixels * 2.0f / screenWidth, outlinePixels * 2.0f / screenHeight);
     
     clipPos.xy += offsetDir * pixelToNdc * clipPos.w;
     
-    float4 worldPos = mul(input.position, World);
+    float4 worldPos = mul(float4(input.position, 1.0f), World);
 
     output.position = clipPos;
     output.worldPosition = worldPos.xyz;
     output.color = float4(1.0f, 1.0f, 0.0f, 1.0f);
+    output.uv = input.uv;
+    output.normal = norm;
     return output;
 }

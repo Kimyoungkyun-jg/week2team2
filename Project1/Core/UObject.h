@@ -2,7 +2,6 @@
 
 #include "FVector.h"
 #include "GameManager.h"
-#include "Renderer.h"
 #include "UEngineStatics.h"
 #include "enums.h"
 #include <cstdint>

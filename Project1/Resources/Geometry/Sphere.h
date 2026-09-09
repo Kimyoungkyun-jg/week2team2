@@ -5,14 +5,14 @@
 #include <cmath>
 
 // 구체 정점 동적 계산 생성 함수 (bInward: true면 안쪽(하늘), false면 바깥쪽(일반 구체))
-inline std::vector<FVertexColor> CreateSphereVertices(float radius = 0.5f, int slices = 20, int stacks = 20, bool bInward = false)
+inline std::vector<FVertexData> CreateSphereVertices(float radius = 0.5f, int slices = 20, int stacks = 20, bool bInward = false)
 {
-	std::vector<FVertexColor> vertices;
+	std::vector<FVertexData> vertices;
 	vertices.reserve(stacks * slices * 6);
 
 	const float pi = 3.14159265358979323846f;
 
-	auto GetVertex = [radius, pi](float phi, float theta) -> FVertexColor
+	auto GetVertex = [radius, pi](float phi, float theta) -> FVertexData
 	{
 		float y = radius * cosf(phi);
 		float r = radius * sinf(phi);
@@ -23,10 +23,17 @@ inline std::vector<FVertexColor> CreateSphereVertices(float radius = 0.5f, int s
 		float cg = (y / radius) * 0.5f + 0.5f;
 		float cb = (z / radius) * 0.5f + 0.5f;
 
-		return { x, y, z, cr, cg, cb, 1.0f };
+		float nx = x / radius;
+		float ny = y / radius;
+		float nz = z / radius;
+
+		float u = theta / (2.0f * pi);
+		float v = phi / pi;
+
+		return { x, y, z, cr, cg, cb, 1.0f, u, v, nx, ny, nz };
 	};
 
-	auto AddTri = [&vertices, bInward](const FVertexColor& v0, const FVertexColor& v1, const FVertexColor& v2)
+	auto AddTri = [&vertices, bInward](const FVertexData& v0, const FVertexData& v1, const FVertexData& v2)
 	{
 		if (bInward)
 		{
@@ -54,10 +61,10 @@ inline std::vector<FVertexColor> CreateSphereVertices(float radius = 0.5f, int s
 			float theta0 = 2.0f * pi * float(j) / float(slices);
 			float theta1 = 2.0f * pi * float(j + 1) / float(slices);
 
-			FVertexColor p0 = GetVertex(phi0, theta0);
-			FVertexColor p1 = GetVertex(phi0, theta1);
-			FVertexColor p2 = GetVertex(phi1, theta0);
-			FVertexColor p3 = GetVertex(phi1, theta1);
+			FVertexData p0 = GetVertex(phi0, theta0);
+			FVertexData p1 = GetVertex(phi0, theta1);
+			FVertexData p2 = GetVertex(phi1, theta0);
+			FVertexData p3 = GetVertex(phi1, theta1);
 
 			if (i == 0)
 			{
@@ -78,14 +85,14 @@ inline std::vector<FVertexColor> CreateSphereVertices(float radius = 0.5f, int s
 	return vertices;
 }
 
-inline FVertexColor triangle_vertices[] =
+inline FVertexData triangle_vertices[] =
 {
 	{  0.0f,  1.0f, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f }, // Top vertex (red)
 	{ -1.0f, -1.0f, 0.0f,  0.0f, 0.0f, 1.0f, 1.0f },  // Bottom-left vertex (blue)
 	{  1.0f, -1.0f, 0.0f,  0.0f, 1.0f, 0.0f, 1.0f } // Bottom-right vertex (green)
 };
 
-inline FVertexColor cube_vertices[] =
+inline FVertexData cube_vertices[] =
 {
 	// Front face (Z+) - 빨강 (Red)
 	{ -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 1.0f },
@@ -137,7 +144,7 @@ inline FVertexColor cube_vertices[] =
 };
 
 // 안쪽을 바라보는 스카이스피어용 정점 배열
-inline FVertexColor skysphere_vertices[] = {
+inline FVertexData skysphere_vertices[] = {
 	{ 0.000000f, 0.500000f, 0.000000f, 0.500000f, 1.000000f, 0.500000f, 1.000000f },
 	{ 0.078217f, 0.493844f, 0.000000f, 0.578217f, 0.993844f, 0.500000f, 1.000000f },
 	{ 0.074389f, 0.493844f, 0.024171f, 0.574389f, 0.993844f, 0.524170f, 1.000000f },
@@ -2543,8 +2550,8 @@ inline FVertexColor skysphere_vertices[] = {
 // 기존 정적 구체 정점 참조
 inline auto& sphere_vertices = skysphere_vertices;
 
-// 3D 입체 화살표 (원통 기둥 + 원뿔 머리) - 순수 Position 3D 좌표 (FVertexSimple)
-inline FVertexSimple arrow_vertices[] =
+// 3D 입체 화살표 (원통 기둥 + 원뿔 머리) - 순수 Position 3D 좌표 (FVertexData)
+inline FVertexData arrow_vertices[] =
 {
 	// ==========================================
 	// 1. 원통 바닥 뚜껑 (y = 0.0f) - 아래를 향함 (시계 반대 방향)
@@ -2727,7 +2734,7 @@ inline FVertexSimple arrow_vertices[] =
 	{  0.0900f, 0.70f,  0.0000f }
 };
 
-inline FVertexColor rectangle_vertices[] =
+inline FVertexData rectangle_vertices[] =
 {
     // Triangle A
     { -1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f }, // Bottom-left (green)
@@ -2742,7 +2749,7 @@ inline FVertexColor rectangle_vertices[] =
 
 
 const float INF_DIST = 10000.0f; // 우주 끝까지 거리
-inline FVertexColor worldAxisVertices[] =
+inline FVertexData worldAxisVertices[] =
 {
 	// X축 (빨간색 선: -10000 ~ +10000)
 	{ 0, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f },
@@ -2756,7 +2763,7 @@ inline FVertexColor worldAxisVertices[] =
 };
 
 // 3D Scale 기즈모 축 (원통 기둥 + 상단 정육면체 큐브 머리 - Unreal 스타일)
-inline FVertexSimple scale_axis_vertices[] =
+inline FVertexData scale_axis_vertices[] =
 
 {
     // 원통 밑면 (y = 0.0f)
@@ -2806,7 +2813,7 @@ inline FVertexSimple scale_axis_vertices[] =
 };
 
 // 3D Rotate 기즈모 원형 링 (언리얼 스타일 3D 튜브 링, XZ 평면 중심반지름 1.0f)
-inline FVertexSimple rotate_ring_vertices[] =
+inline FVertexData rotate_ring_vertices[] =
 {
     // Segment 0 - Top
     { 0.9750f, 0.0125f, 0.0000f }, { 1.0250f, 0.0125f, 0.0000f }, { 1.0094f, 0.0125f, 0.1780f },

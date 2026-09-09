@@ -15,10 +15,9 @@ Mesh::~Mesh()
     }
 }
 
-void Mesh::InitVertexBuffer(const void* vertices, UINT stride, UINT inNumVertices, ID3D11InputLayout* inLayout)
+void Mesh::InitVertexBuffer(const void* vertices, UINT stride, UINT inNumVertices)
 {
 	numVertices = inNumVertices;
-	inputLayout = inLayout;
 
 	if (vertexbuffer)
 	{
@@ -36,7 +35,7 @@ void Mesh::Render()
 {
 	if (vertexbuffer != nullptr && numVertices > 0)
 	{
-		RENDERER.PrepareShader(inputLayout);
+		RENDERER.PrepareShader();
 		RENDERER.SetCustomColor(CurrentColor);
 		if (TextureSRV)
 		{
@@ -57,7 +56,7 @@ void Mesh::Render(D3D11_PRIMITIVE_TOPOLOGY topology)
 {
 	if (vertexbuffer != nullptr && numVertices > 0)
 	{
-		RENDERER.PrepareShader(inputLayout);
+		RENDERER.PrepareShader();
 		RENDERER.SetCustomColor(CurrentColor);
 		if (TextureSRV)
 		{

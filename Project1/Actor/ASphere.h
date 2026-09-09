@@ -8,7 +8,7 @@ class ASphere : public AActor
 public:
 	ASphere() {
 		// 구체 정점 최초 계산 후 캐시
-		static const std::vector<FVertexColor> sphereVertices = CreateSphereVertices(0.5f, 20, 20, false);
+		static const std::vector<FVertexData> sphereVertices = CreateSphereVertices(0.5f, 20, 20, false);
 		SetMesh(OBJECT.GetOrCreateMesh("Sphere", sphereVertices));
 	}
 

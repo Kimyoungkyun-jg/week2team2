@@ -35,13 +35,13 @@ public:
 	}
 
 	// 커스텀 정점 버퍼 초기화 함수
-	void InitVertexBuffer(const void* vertices, UINT stride, UINT inNumVertices, ID3D11InputLayout* inLayout = nullptr);
+	void InitVertexBuffer(const void* vertices, UINT stride, UINT inNumVertices);
 
-	// 정점 배열을 넘기면 타입(VertexType), 정점 개수, InputLayout까지 자동 추론 및 저장!
+	// 정점 배열을 넘기면 타입(VertexType), 정점 개수 자동 추론 및 저장
 	template <typename VertexType, size_t N>
 	void InitVertexBuffer(const VertexType(&vertices)[N])
 	{
-		InitVertexBuffer(vertices, sizeof(VertexType), static_cast<UINT>(N), RENDERER.GetInputLayout<VertexType>());
+		InitVertexBuffer(vertices, sizeof(VertexType), static_cast<UINT>(N));
 
 		LocalVertices.clear();
 		LocalVertices.reserve(N);
@@ -58,7 +58,7 @@ public:
 	{
 		if (vertices.empty()) return;
 
-		InitVertexBuffer(vertices.data(), sizeof(VertexType), static_cast<UINT>(vertices.size()), RENDERER.GetInputLayout<VertexType>());
+		InitVertexBuffer(vertices.data(), sizeof(VertexType), static_cast<UINT>(vertices.size()));
 
 		LocalVertices.clear();
 		LocalVertices.reserve(vertices.size());
@@ -75,7 +75,7 @@ public:
 	{
 		if (vertices.empty()) return;
 
-		InitVertexBuffer(vertices.data(), sizeof(VertexType), static_cast<UINT>(vertices.size()), RENDERER.GetInputLayout<VertexType>());
+		InitVertexBuffer(vertices.data(), sizeof(VertexType), static_cast<UINT>(vertices.size()));
 
 		LocalVertices.clear();
 		LocalVertices.reserve(vertices.size());
@@ -103,12 +103,10 @@ public:
 	bool bIsPicked(const FRay& worldRay, const Transform& transform, float& outDistance);
 
 	UINT GetNumVertices() const { return numVertices; }
-	ID3D11InputLayout* GetInputLayout() const { return inputLayout; }
 	VertexBuffer* GetVertexBuffer() const { return vertexbuffer; }
 
 public:
 	VertexBuffer* vertexbuffer = nullptr;
-	ID3D11InputLayout* inputLayout = nullptr;
 	ID3D11ShaderResourceView* TextureSRV = nullptr;
 	UINT numVertices = 0;
 	FLinearColor CurrentColor = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f);

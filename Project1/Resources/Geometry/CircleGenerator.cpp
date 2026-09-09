@@ -3,9 +3,9 @@
 #include "Global.h"
 #include <cmath>
 
-TArray<FVertexColor> CircleGenerator::MakeCircle(int segmentCount, float r, float g, float b, float a)
+TArray<FVertexData> CircleGenerator::MakeCircle(int segmentCount, float r, float g, float b, float a)
 {
-    TArray<FVertexColor> vertices;
+    TArray<FVertexData> vertices;
     vertices.Reserve(segmentCount * 3);
 
     for (int i = 0; i < segmentCount; ++i)

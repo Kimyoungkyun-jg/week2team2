@@ -13,6 +13,9 @@ cbuffer FrameConstants : register(b1)
 struct VS_INPUT
 {
     float3 position : POSITION;
+    float4 color : COLOR;
+    float2 uv : TEXCOORD0;
+    float3 normal : NORMAL;
 };
 
 struct PS_INPUT

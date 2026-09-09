@@ -50,7 +50,7 @@ ACube::ACube(const FLinearColor &inColor) : ACollider(inColor) {
 
 ASphere::ASphere(const FLinearColor &inColor) : ACollider(inColor) {
   // 구체 정점 최초 계산 후 캐시
-  static const std::vector<FVertexColor> sphereVertices =
+  static const std::vector<FVertexData> sphereVertices =
       CreateSphereVertices(0.5f, 20, 20, false);
   SetMesh(OBJECT.GetOrCreateMesh("Sphere", sphereVertices));
   Primitive = EPrimitive::Sphere;
@@ -67,7 +67,7 @@ ARectangle::ARectangle(const FLinearColor &inColor) : ACollider(inColor) {
 }
 
 ACircle::ACircle(const FLinearColor &inColor) : ACollider(inColor) {
-  TArray<FVertexColor> circle_vertices =
+  TArray<FVertexData> circle_vertices =
       CircleGenerator::MakeCircle(32, 1.0f, 1.0f, 0.0f, 1.0f);
   SetMesh(OBJECT.GetOrCreateMesh("Circle", circle_vertices));
   Primitive = EPrimitive::Circle;
