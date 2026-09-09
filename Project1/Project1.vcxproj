@@ -143,7 +143,7 @@ copy /B /Y "$(ProjectDir)Resources\Shader\GridShader.hlsl" "$(TargetDir)GridShad
     <ClInclude Include="Math\FQuaternion.h" />
     <ClInclude Include="Math\FVector.h" />
     <ClInclude Include="Math\Intersection.h" />
-    <ClInclude Include="Math\Matrix.h" />
+    <ClInclude Include="Math\FMatrix.h" />
     <ClInclude Include="Math\Transform.h" />
     <ClInclude Include="Physics\ACollider.h" />
     <ClInclude Include="Physics\CollisionManager.h" />
@@ -206,7 +206,7 @@ copy /B /Y "$(ProjectDir)Resources\Shader\GridShader.hlsl" "$(TargetDir)GridShad
     <ClCompile Include="Math\FQuaternion.cpp" />
     <ClCompile Include="Math\FVector.cpp" />
     <ClCompile Include="Math\Intersection.cpp" />
-    <ClCompile Include="Math\Matrix.cpp" />
+    <ClCompile Include="Math\FMatrix.cpp" />
     <ClCompile Include="Physics\ACollider.cpp" />
     <ClCompile Include="Physics\CollisionManager.cpp" />
     <ClCompile Include="Render\Buffer\ConstBuffer.cpp" />
