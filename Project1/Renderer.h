@@ -46,6 +46,7 @@ public:
 	ID3D11VertexShader* SimpleVertexShader = nullptr;
 	ID3D11PixelShader* SimplePixelShader = nullptr;
 	ID3D11InputLayout* SimpleInputLayout = nullptr;
+	ID3D11VertexShader* OutlineVertexShader = nullptr;
 
 
 	// Direct2D & WIC Management
@@ -85,6 +86,7 @@ public:
 	void SetDepthState();
 	void SetSelectedState();
 	void SetOutlineState();
+	void SetOutlineParams(float pixels);
 
 	// 선택 액터 아웃라인 렌더링
 	void DrawOutline(class AActor* targetActor);
@@ -133,6 +135,8 @@ public:
 		//기본 상태: 커스텀 컬러 버퍼 미사용(정점 컬러 우선)
 		SetCustomColor({ 0.0f, 0.0f, 0.0f, 0.0f });
 	}
+	
+	void PrepareOutlineShader(ID3D11InputLayout* layout = nullptr);
 
 
 	// [핵심] 타입만 넘기면 FVertexTraits를 통해 자동으로 InputLayout을 생성하고 TMap에 등록하는 템플릿 함수
