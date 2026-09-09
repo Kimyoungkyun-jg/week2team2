@@ -1,4 +1,5 @@
 #pragma once
+#include "FVertexSimple.h"
 
 class UGrid
 {
@@ -20,7 +21,7 @@ private:
     float GridSize = 2000.0f;
     float CellSize = 1.0f;
 
-    TArray<FVector> Vertices;
+    TArray<FVertexSimple> Vertices;
     Mesh* GridMesh = nullptr;
 
     FVector Location = FVector(0, 0, 0);

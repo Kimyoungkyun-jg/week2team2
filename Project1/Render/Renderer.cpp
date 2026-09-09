@@ -377,15 +377,20 @@ void Renderer::CreateShader()
 	CreateVertexShader(shaderPath, "mainVS_Sky", &SkyVertexShader);
 	CreatePixelShader(shaderPath, "mainPS_Sky", &SkyPixelShader);
 
-	//정점 타입만 넘기면 FVertexTraits를 통해 자동으로 InputLayout을 생성하고 TMap에 등록
-	RegisterInputLayout<FVertexSimple>(vsBlob);
+	// 포지션 전용 레이아웃 등록
+	RegisterInputLayout<FVertexSimple>(gridVSBlob);
+
+	// 컬러 및 텍스처 레이아웃 등록
 	RegisterInputLayout<FVertexColor>(vsBlob);
 	RegisterInputLayout<FVertexUV>(vsBlob);
-
 
 	if (vsBlob)
 	{
 		vsBlob->Release();
+	}
+	if (gridVSBlob)
+	{
+		gridVSBlob->Release();
 	}
 }
 

@@ -26,15 +26,15 @@ void UGrid::CreateVertices()
             float z0 = z * CellSize;
             float z1 = (z + 1) * CellSize;
 
-            // 삼각형 1
-            Vertices.Add(FVector(x0, 0.0f, z0));
-            Vertices.Add(FVector(x0, 0.0f, z1));
-            Vertices.Add(FVector(x1, 0.0f, z1));
+            // 첫번째 삼각형
+            Vertices.Add(FVertexSimple{ x0, 0.0f, z0 });
+            Vertices.Add(FVertexSimple{ x0, 0.0f, z1 });
+            Vertices.Add(FVertexSimple{ x1, 0.0f, z1 });
 
-            // 삼각형 2
-            Vertices.Add(FVector(x0, 0.0f, z0));
-            Vertices.Add(FVector(x1, 0.0f, z1));
-            Vertices.Add(FVector(x1, 0.0f, z0));
+            // 두번째 삼각형
+            Vertices.Add(FVertexSimple{ x0, 0.0f, z0 });
+            Vertices.Add(FVertexSimple{ x1, 0.0f, z1 });
+            Vertices.Add(FVertexSimple{ x1, 0.0f, z0 });
         }
     }
 }
