@@ -3,6 +3,10 @@
 
 class CameraBuffer;
 
+enum {
+	Perspective,
+	Orthographic,
+};
 
 class Camera
 {
@@ -48,9 +52,16 @@ public:
 	float& GetRotationSpeedRef() { return rotationSpeed; }
 
 	float GetFOV() const { return fov; }
+	void SetFOV(float inFov) { fov = inFov; }
 
 	FMatrix GetViewMatrix() const;
 	FMatrix GetProjectionMatrix(float aspectRatio) const;
+
+	void SetProjectionMode(int mode) { ProjectionMode = mode; }
+	int GetProjectionMode() { return ProjectionMode; }
+
+	void SetOrthoWidth(float w) { OrthoWidth = w; }
+	float GetOrthWidth() { return OrthoWidth; }
 
 	void Update();
 	void SetVPBuffer();
@@ -58,6 +69,9 @@ public:
 	CameraBuffer* vpBuffer;
 private:
 	Transform transform;
+
+	int ProjectionMode = Perspective;
+	float OrthoWidth = 10.0f;
 
 	float fov = 60.0f;
 	float NearZ = 0.1f;
