@@ -26,5 +26,7 @@ public:
 	FRay ray;
 
 	AGrid* grid;
+
+	bool bPrimChanged = false;
 };
 

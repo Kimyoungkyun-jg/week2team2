@@ -506,6 +506,7 @@ void Renderer::DrawOutline(AActor* targetActor)
 {
 	if (!targetActor || !targetActor->GetMesh()) return;
 
+	Transform trans = targetActor->GetTransform();
 	Mesh* mesh = targetActor->GetMesh();
 
 	//셰이더 및 아웃라인 상태 설정
@@ -514,9 +515,9 @@ void Renderer::DrawOutline(AActor* targetActor)
 	SetOutlineState();
 
 	//메시보다 1.05배 큰 월드 행렬 구성
-	FMatrix S = FMatrix::Scale(transform.Scale * 1.05f);
-	FMatrix R = transform.Rotation.ToMatrix();
-	FMatrix T = FMatrix::Translation(transform.Location);
+	FMatrix S = FMatrix::Scale(trans.Scale * 1.05f);
+	FMatrix R = trans.Rotation.ToMatrix();
+	FMatrix T = FMatrix::Translation(trans.Location);
 	FMatrix outlineWorld = S * R * T;
 
 	if (targetActor->worldBuffer)
@@ -526,12 +527,9 @@ void Renderer::DrawOutline(AActor* targetActor)
 	}
 
 	//그리는 건 mesh에서만 진행
+	mesh->SetColor(FLinearColor::Yellow);
 	mesh->Render();
 
-	//원래 월드 행렬 및 기본 깊이 복원
-	targetActor->SetWorldBuffer();
-
-	mesh->IASet();
 	DeviceContext->Draw(mesh->GetNumVertices(), 0);
 	SetDefaultDepthState();
 }

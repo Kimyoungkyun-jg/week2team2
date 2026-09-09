@@ -335,40 +335,39 @@ void DefaultScene::Render()
 				pickedActor->SetScale(scale);
 			}
 
-			// Rotation Editor (오일러로 표시, 편집하되 내부 데이터만 쿼터니언)
-			static string s_RotEditedActorID; // 회전 수정한 Actor ID
+			// 회전 편집 및 실시간 동기화
 			static float s_euler[3] = { 0.0f, 0.0f, 0.0f };
-			FQuaternion rot = pickedActor->GetRotation();
+			static string s_lastActorID;
+			static bool s_isEditingInImGui = false;
 
-			if (uid != s_RotEditedActorID)
+			// 대상 변경 또는 위젯 미조작 시 기즈모 변환값 실시간 반영
+			if (uid != s_lastActorID || !s_isEditingInImGui)
 			{
 				FVector eulerRad = FQuaternion::ToEuler(pickedActor->GetRotation());
-				s_euler[0] = eulerRad.x * (180 / Global::PI);
-				s_euler[1] = eulerRad.y * (180 / Global::PI);
-				s_euler[2] = eulerRad.z * (180 / Global::PI);
-				s_RotEditedActorID = uid;
+				s_euler[0] = eulerRad.x * (180.0f / Global::PI);
+				s_euler[1] = eulerRad.y * (180.0f / Global::PI);
+				s_euler[2] = eulerRad.z * (180.0f / Global::PI);
+				s_lastActorID = uid;
 			}
 
-			bool bPrimChanged = false;
-			if (ImGui::DragFloat(("Rotation X" + uid).c_str(), &s_euler[0], 5.0f, -180.0f, 180.0f))
-			{
-				bPrimChanged = true;
-			}
-			if (ImGui::DragFloat(("Rotation Y" + uid).c_str(), &s_euler[1], 5.0f, -180.0f, 180.0f))
-			{
-				bPrimChanged = true;
-			}
-			if (ImGui::DragFloat(("Rotation Z" + uid).c_str(), &s_euler[2], 5.0f, -180.0f, 180.0f))
-			{
-				bPrimChanged = true;
-			}
-			// 수정했으면 Rotation 재설정
-			if (bPrimChanged)
+			bool bChangedX = ImGui::DragFloat(("Rotation X##" + uid).c_str(), &s_euler[0], 1.0f, -180.0f, 180.0f);
+			bool bActiveX = ImGui::IsItemActive();
+
+			bool bChangedY = ImGui::DragFloat(("Rotation Y##" + uid).c_str(), &s_euler[1], 1.0f, -180.0f, 180.0f);
+			bool bActiveY = ImGui::IsItemActive();
+
+			bool bChangedZ = ImGui::DragFloat(("Rotation Z##" + uid).c_str(), &s_euler[2], 1.0f, -180.0f, 180.0f);
+			bool bActiveZ = ImGui::IsItemActive();
+
+			s_isEditingInImGui = bActiveX || bActiveY || bActiveZ;
+
+			// 위젯 조작 시에만 각도를 라디안으로 변환하여 적용
+			if (bChangedX || bChangedY || bChangedZ)
 			{
 				FQuaternion newRot = FQuaternion::FromEuler(
-					s_euler[0] * (180 / Global::PI),
-					s_euler[1] * (180 / Global::PI),
-					s_euler[2] * (180 / Global::PI)
+					s_euler[0] * (Global::PI / 180.0f),
+					s_euler[1] * (Global::PI / 180.0f),
+					s_euler[2] * (Global::PI / 180.0f)
 				);
 				pickedActor->SetRotation(newRot);
 			}
