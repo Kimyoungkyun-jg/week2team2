@@ -66,3 +66,6 @@ Thumbs.db
 $RECYCLE.BIN/
 *.lnk
 .DS_Store
+Project1/PresentationImages/1_Core_Architecture.jpg
+Project1/PresentationImages/2_Renderer_Actor_Mesh.jpg
+Project1/PresentationImages/3_Picking_Gizmo.jpg

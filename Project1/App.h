@@ -1,34 +1,3 @@
 #pragma once
-#include "FVertexSimple.h"
-#include "Renderer.h"
-#include "ConsoleWindow.h"
-
-class App
-{
-private:
-	HWND m_mainWindow = nullptr;
-	
-	void Initwindow(HINSTANCE hInstance);
-
-	void InitImgui();
-
-	void Update();
-	void Render();
-	
-public:
-	App();
-	~App();
-
-	static App* Instance;
-
-	void Init(HINSTANCE hInstance);
-	void mainLoop();
-	void ReleaseAll();
-
-	HWND GetMainWindow() const { return m_mainWindow; }
-	ID3D11Device* GetDevice() const { return RENDERER.Device; }
-	ID3D11DeviceContext* GetDeviceContext() const { return RENDERER.DeviceContext; }
-
-
-
-};
+// 게임매니저 헤더 참조
+#include "GameManager.h"

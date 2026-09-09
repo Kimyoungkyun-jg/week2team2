@@ -12,6 +12,7 @@
     <ClInclude Include="..\Project1\AActor.h" />
     <ClInclude Include="..\Project1\ACollider.h" />
     <ClInclude Include="..\Project1\App.h" />
+    <ClInclude Include="..\Project1\GameManager.h" />
     <ClInclude Include="..\Project1\CollisionManager.h" />
     <ClInclude Include="..\Project1\FConstants.h" />
     <ClInclude Include="..\Project1\FPixelConstant.h" />
@@ -75,7 +76,7 @@
   <ItemGroup>
     <ClCompile Include="..\Project1\AActor.cpp" />
     <ClCompile Include="..\Project1\ACollider.cpp" />
-    <ClCompile Include="..\Project1\App.cpp" />
+    <ClCompile Include="..\Project1\GameManager.cpp" />
     <ClCompile Include="..\Project1\CollisionManager.cpp" />
     <ClCompile Include="..\Project1\FVector.cpp" />
     <ClCompile Include="..\Project1\ImGui\imgui.cpp">

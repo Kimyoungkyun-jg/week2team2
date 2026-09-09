@@ -78,6 +78,7 @@ using namespace std;
 
 #define PICK PickingManager::GetInstance()
 #define OBJECT ObjectManager::GetInstance()
+#define GM GameManager::GetInstance()
 
 
 #define WIN_WIDTH 1920	
