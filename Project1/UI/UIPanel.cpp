@@ -176,7 +176,7 @@ void UIPanel_Picking::Render()
     
     if (pickedActor)
     {
-    	AGizmoAxis* gizmo = dynamic_cast<AGizmoAxis*>(pickedActor);
+    	AGizmoAxis* gizmo = dynamic_cast<AGizmoAxis*>(pickedActor); //기즈모는 uid 없어서 해야됨
     	if (gizmo)
     	{
     		pickedActor = gizmo->GetTargetActor();
@@ -271,6 +271,18 @@ void UIPanel_Picking::Render()
     			);
     			pickedActor->SetRotation(newRot);
     		}
+
+            // 삭제버튼
+            if (ImGui::Button("Delete"))
+            {
+                pickedActor->Destroy();
+
+                PICK.pickedObjcect = nullptr;
+                if (AGizmo::MainGizmo)
+                {
+                    AGizmo::MainGizmo->SetTargetActor(nullptr);
+                }
+            }
     	}
     }
     
