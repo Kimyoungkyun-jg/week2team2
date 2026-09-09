@@ -14,7 +14,7 @@ public:
 		// 오브젝트 매니저를 통해 스카이스피어 메시 생성 및 캐시
 		SetMesh(OBJECT.GetOrCreateMesh("SkySphere", skysphere_vertices));
 
-		mesh->SetTexture(L"Textures/Sky.jpg");
+		mesh->SetTexture(L"Resources/Textures/Sky.jpg");
 
 		// 카메라를 둘러싸는 기본 크기 설정
 		SetScale(FVector(500.0f, 500.0f, 500.0f));

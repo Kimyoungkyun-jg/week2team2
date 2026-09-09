@@ -362,8 +362,8 @@ bool Renderer::CreateInputLayout(const D3D11_INPUT_ELEMENT_DESC* layoutDesc, UIN
 
 void Renderer::CreateShader()
 {
-	LPCWSTR shaderPath = L"ShaderW0.hlsl";
-	LPCWSTR GridshaderPath = L"GridShader.hlsl";
+	LPCWSTR shaderPath = L"Resources/Shader/ShaderW0.hlsl";
+	LPCWSTR GridshaderPath = L"Resources/Shader/GridShader.hlsl";
 
 	//Vertex & Pixel Shader 컴파일 및 생성
 	ID3DBlob* vsBlob = nullptr;
