@@ -43,5 +43,4 @@ void DefaultScene::Render()
 {
 	Scene::Render();
 	IMGUI.RenderAll();
-
 }

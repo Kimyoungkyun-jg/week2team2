@@ -99,6 +99,18 @@
         return result;
     }
 
+    FMatrix FMatrix::Orthographic(float width, float hegiht, float nearZ, float farZ)
+    {
+        FMatrix result = {};
+        result.M[0][0] = 2.0f / width;
+        result.M[1][1] = 2.0f / hegiht;
+        result.M[2][2] = 1.0f / (farZ - nearZ);
+        result.M[3][2] = -nearZ / (farZ - nearZ);
+        result.M[3][3] = 1.0f;
+
+        return result;
+    }
+
     FMatrix FMatrix::operator*(const FMatrix& other) const
     {
         FMatrix result = {};

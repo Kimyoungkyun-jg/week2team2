@@ -46,7 +46,9 @@ ACube::ACube(const FLinearColor& inColor)
 ASphere::ASphere(const FLinearColor& inColor)
 	: ACollider(inColor)
 {
-	SetMesh(OBJECT.GetOrCreateMesh("Sphere", sphere_vertices));
+	// 구체 정점 최초 계산 후 캐시
+	static const std::vector<FVertexColor> sphereVertices = CreateSphereVertices(0.5f, 20, 20, false);
+	SetMesh(OBJECT.GetOrCreateMesh("Sphere", sphereVertices));
 	Primitive = EPrimitive::Sphere;
 }
 
