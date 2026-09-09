@@ -277,3 +277,13 @@ void UIPanel_Picking::Render()
     ImGui::End();
 }
 	
+void UIPanel_FPS::Render()
+{
+    
+    ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
+
+    ImGui::Begin("Engine Main Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::Text("DirectX 11 & ImGui Active");
+    ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
+    ImGui::End();
+}

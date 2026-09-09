@@ -2,6 +2,12 @@
 #include "IUIPanel.h"
 #include <string>
 
+// FPS
+class UIPanel_FPS : public IUIPanel
+{
+public:
+    void Render() override;
+};
 
 // 메모리 스탯창
 class UIPanel_Memory : public IUIPanel
