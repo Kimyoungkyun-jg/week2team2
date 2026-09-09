@@ -7,9 +7,8 @@ class ASphere : public AActor
 
 public:
 	ASphere() {
-		Mesh* newMesh = new Mesh();
-		newMesh->InitVertexBuffer(sphere_vertices);
-		SetMesh(newMesh, true);
+		// 오브젝트 매니저를 통해 구 메시 캐시 사용
+		SetMesh(OBJECT.GetOrCreateMesh("Sphere", sphere_vertices));
 	}
 
 

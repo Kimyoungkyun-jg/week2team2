@@ -5,6 +5,7 @@
 #include "UObject.h"
 #include "GlobalBuffer.h"
 #include "AActor.h"
+#include "VertexBuffer.h"
 #include <d3dcompiler.h>
 
 #pragma comment(lib, "d3dcompiler.lib")
@@ -17,10 +18,13 @@ void Renderer::Create(HWND hWindow)
 	CreateRasterizerState();
 	CreateShader();
 	CreateColorBuffer();
+	CreateSamplerState();
 }
 
 void Renderer::Release()
 {
+	ReleaseTextures();
+	ReleaseSamplerState();
 	ReleaseColorBuffer();
 	ReleaseDepthStencil();
 	ReleaseShader();
@@ -43,7 +47,7 @@ void Renderer::ReleaseColorBuffer()
 	}
 }
 
-void Renderer::SetCustomColor(const FLinearColor& color = { 0,0,0,0 })
+void Renderer::SetCustomColor(const FLinearColor& color)
 {
 	if (CustomColorBuffer)
 	{
@@ -51,6 +55,134 @@ void Renderer::SetCustomColor(const FLinearColor& color = { 0,0,0,0 })
 		CustomColorBuffer->SetVSBuffer(2);
 		CustomColorBuffer->SetPSBuffer(2);
 	}
+}
+
+void Renderer::CreateSamplerState()
+{
+	D3D11_SAMPLER_DESC sampDesc = {};
+	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sampDesc.MinLOD = 0.0f;
+	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	Device->CreateSamplerState(&sampDesc, &SamplerState);
+}
+
+void Renderer::ReleaseSamplerState()
+{
+	if (SamplerState)
+	{
+		SamplerState->Release();
+		SamplerState = nullptr;
+	}
+}
+
+void Renderer::ReleaseTextures()
+{
+	for (auto& pair : TextureMap)
+	{
+		if (pair.second)
+		{
+			pair.second->Release();
+		}
+	}
+	TextureMap.clear();
+	CurrentTextureSRV = nullptr;
+}
+
+ID3D11ShaderResourceView* Renderer::LoadTexture(const std::wstring& filePath)
+{
+	auto it = TextureMap.find(filePath);
+	if (it != TextureMap.end())
+	{
+		return it->second;
+	}
+
+	std::filesystem::path p(filePath);
+	
+	// 실행 디렉토리나 상대 경로에 따른 파일 경로 탐색
+	if (!std::filesystem::exists(p))
+	{
+		std::filesystem::path alt1 = std::filesystem::path(L"Project1") / p;
+		std::filesystem::path alt2 = std::filesystem::path(L"../Project1") / p;
+		if (std::filesystem::exists(alt1))
+		{
+			p = alt1;
+		}
+		else if (std::filesystem::exists(alt2))
+		{
+			p = alt2;
+		}
+	}
+
+	std::wstring ext = p.extension().wstring();
+	std::transform(ext.begin(), ext.end(), ext.begin(), ::towlower);
+
+	DirectX::ScratchImage image;
+	HRESULT hr = S_OK;
+
+	if (ext == L".dds")
+	{
+		hr = DirectX::LoadFromDDSFile(p.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, image);
+	}
+	else
+	{
+		hr = DirectX::LoadFromWICFile(p.c_str(), DirectX::WIC_FLAGS_NONE, nullptr, image);
+	}
+
+	if (FAILED(hr))
+	{
+		return nullptr;
+	}
+
+	ID3D11ShaderResourceView* srv = nullptr;
+	hr = DirectX::CreateShaderResourceView(
+		Device,
+		image.GetImages(),
+		image.GetImageCount(),
+		image.GetMetadata(),
+		&srv
+	);
+
+	if (FAILED(hr) || !srv)
+	{
+		return nullptr;
+	}
+
+	TextureMap[filePath] = srv;
+	return srv;
+}
+
+void Renderer::SetTexture(ID3D11ShaderResourceView* srv)
+{
+	CurrentTextureSRV = srv;
+	if (srv)
+	{
+		DeviceContext->PSSetShaderResources(0, 1, &srv);
+		if (CustomColorBuffer)
+		{
+			CustomColorBuffer->SetUseTexture(1);
+			CustomColorBuffer->SetPSBuffer(2);
+		}
+	}
+	else
+	{
+		ID3D11ShaderResourceView* nullSRV = nullptr;
+		DeviceContext->PSSetShaderResources(0, 1, &nullSRV);
+		if (CustomColorBuffer)
+		{
+			CustomColorBuffer->SetUseTexture(0);
+			CustomColorBuffer->SetPSBuffer(2);
+		}
+	}
+}
+
+void Renderer::SetTexture(const std::wstring& filePath)
+{
+	SetTexture(LoadTexture(filePath));
 }
 
 void Renderer::CreateDeviceAndSwapChain(HWND hWindow)
@@ -135,7 +267,7 @@ void Renderer::CreateRasterizerState()
 {
 	D3D11_RASTERIZER_DESC rasterizerdesc = {};
 	rasterizerdesc.FillMode = D3D11_FILL_SOLID;
-	rasterizerdesc.CullMode = D3D11_CULL_NONE;
+	rasterizerdesc.CullMode = D3D11_CULL_BACK;
 	rasterizerdesc.FrontCounterClockwise = FALSE;
 	rasterizerdesc.DepthClipEnable = TRUE;
 
@@ -231,6 +363,8 @@ void Renderer::CreateShader()
 	CreateVertexShader(shaderPath, "mainVS", &SimpleVertexShader, &vsBlob);
 	CreatePixelShader(shaderPath, "mainPS", &SimplePixelShader);
 	CreateVertexShader(shaderPath, "mainVS_Outline", &OutlineVertexShader);
+	CreateVertexShader(shaderPath, "mainVS_Sky", &SkyVertexShader);
+	CreatePixelShader(shaderPath, "mainPS_Sky", &SkyPixelShader);
 
 	//정점 타입만 넘기면 FVertexTraits를 통해 자동으로 InputLayout을 생성하고 TMap에 등록
 	RegisterInputLayout<FVertexSimple>(vsBlob);
@@ -256,6 +390,18 @@ void Renderer::ReleaseShader()
 
 	InputLayoutMap.clear();
 	SimpleInputLayout = nullptr;
+
+	if (SkyPixelShader)
+	{
+		SkyPixelShader->Release();
+		SkyPixelShader = nullptr;
+	}
+
+	if (SkyVertexShader)
+	{
+		SkyVertexShader->Release();
+		SkyVertexShader = nullptr;
+	}
 
 	if (SimplePixelShader)
 	{
@@ -330,8 +476,18 @@ void Renderer::Prepare()
 	DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, depthStencilView);
 	DeviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff);
 
-	UINT stencilRef = 1; // 스텐실에 기록할 기준값
+	UINT stencilRef = 1; // 스텐실 기준값
 	DeviceContext->OMSetDepthStencilState(dsState, stencilRef);
+
+	// 샘플러 바인딩 및 텍스처 초기화
+	if (SamplerState)
+	{
+		DeviceContext->PSSetSamplers(0, 1, &SamplerState);
+	}
+	SetTexture(nullptr);
+
+	// 입력 레이아웃 캐시 초기화
+	CurrentInputLayout = nullptr;
 }
 
 void Renderer::PrepareOutlineShader(ID3D11InputLayout* layout)
@@ -343,6 +499,17 @@ void Renderer::PrepareOutlineShader(ID3D11InputLayout* layout)
 	}
 	DeviceContext->VSSetShader(OutlineVertexShader, nullptr, 0);
 	DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
+}
+
+void Renderer::PrepareSkyShader(ID3D11InputLayout* layout)
+{
+	ID3D11InputLayout* targetLayout = layout ? layout : SimpleInputLayout;
+	if (CurrentInputLayout != targetLayout) {
+		CurrentInputLayout = targetLayout;
+		DeviceContext->IASetInputLayout(targetLayout);
+	}
+	DeviceContext->VSSetShader(SkyVertexShader, nullptr, 0);
+	DeviceContext->PSSetShader(SkyPixelShader, nullptr, 0);
 }
 
 
@@ -361,99 +528,149 @@ void Renderer::Update()
 
 void Renderer::CreateDepthStencil()
 {
-	//깊이 버퍼용 텍스쳐 생성
-	D3D11_TEXTURE2D_DESC descDepth = {};
-	descDepth.Width = (UINT)ViewportInfo.Width;
-	descDepth.Height = (UINT)ViewportInfo.Height;
-	descDepth.MipLevels = 1;
-	descDepth.ArraySize = 1;
-	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; // Depth 24비트, Stencil 8비트
-	descDepth.SampleDesc.Count = 1;
-	descDepth.SampleDesc.Quality = 0;
-	descDepth.Usage = D3D11_USAGE_DEFAULT;
-	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	{//깊이 버퍼용 텍스쳐 생성
+		
+		D3D11_TEXTURE2D_DESC descDepth = {};
+		descDepth.Width = (UINT)ViewportInfo.Width;
+		descDepth.Height = (UINT)ViewportInfo.Height;
+		descDepth.MipLevels = 1;
+		descDepth.ArraySize = 1;
+		descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; // Depth 24비트, Stencil 8비트
+		descDepth.SampleDesc.Count = 1;
+		descDepth.SampleDesc.Quality = 0;
+		descDepth.Usage = D3D11_USAGE_DEFAULT;
+		descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
-	ID3D11Texture2D* depthStencilBuffer = nullptr;
-	HRESULT hr = Device->CreateTexture2D(&descDepth, nullptr, &depthStencilBuffer);
-	if (SUCCEEDED(hr) && depthStencilBuffer)
-	{
-		Device->CreateDepthStencilView(depthStencilBuffer, nullptr, &depthStencilView);
-		depthStencilBuffer->Release();
+		ID3D11Texture2D* depthStencilBuffer = nullptr;
+		HRESULT hr = Device->CreateTexture2D(&descDepth, nullptr, &depthStencilBuffer);
+		if (SUCCEEDED(hr) && depthStencilBuffer)
+		{
+			Device->CreateDepthStencilView(depthStencilBuffer, nullptr, &depthStencilView);
+			depthStencilBuffer->Release();
+		}
+
 	}
 
-	//
+	{ //기본 
+		D3D11_DEPTH_STENCIL_DESC dsDesc = {};
 
-	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
+		// 깊이 테스트 설정
+		dsDesc.DepthEnable = TRUE;
+		dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL; // Z 버퍼 기록 허용
+		dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;     // 가까운 것만 통과
 
-	// 깊이 테스트 설정
-	dsDesc.DepthEnable = TRUE;
-	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL; // Z 버퍼 기록 허용
-	dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;     // 가까운 것만 통과
+		// 스텐실 테스트 설정
+		dsDesc.StencilEnable = FALSE;
+		dsDesc.StencilReadMask = 0xFF;
+		dsDesc.StencilWriteMask = 0xFF;
 
-	// 스텐실 테스트 설정
-	dsDesc.StencilEnable = FALSE;
-	dsDesc.StencilReadMask = 0xFF;
-	dsDesc.StencilWriteMask = 0xFF;
+		// 전면 폴리곤(Front Face) 스텐실 규칙
+		dsDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		dsDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE; // 통과 시 Ref 값으로 기록
+		dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;    // 무조건 통과 (마스킹 단계)
 
-	// 전면 폴리곤(Front Face) 스텐실 규칙
-	dsDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	dsDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-	dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE; // 통과 시 Ref 값으로 기록
-	dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;    // 무조건 통과 (마스킹 단계)
+		// 후면 폴리곤(Back Face) 스텐실 규칙
+		dsDesc.BackFace = dsDesc.FrontFace;
 
-	// 후면 폴리곤(Back Face) 스텐실 규칙
-	dsDesc.BackFace = dsDesc.FrontFace;
+		Device->CreateDepthStencilState(&dsDesc, &dsState);
+	}
 
-	Device->CreateDepthStencilState(&dsDesc, &dsState);
+	{//기즈모용 깊이 스텐실
+		//(깊이 테스트 비활성화로 항상 최상단 렌더링, 스텐실 마킹으로 외곽선 침범 방지)
+		D3D11_DEPTH_STENCIL_DESC gizmoDesc = {};
+		gizmoDesc.DepthEnable = FALSE;
+		gizmoDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 
-	// 기즈모용 깊이 스텐실 상태 (깊이 테스트 비활성화로 항상 최상단 렌더링)
-	D3D11_DEPTH_STENCIL_DESC gizmoDesc = {};
-	gizmoDesc.DepthEnable = FALSE;
-	gizmoDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-	Device->CreateDepthStencilState(&gizmoDesc, &dsGizmoState);
+		// 기즈모 영역도 스텐실 1로 마킹하여 외곽선이 덮지 못하게 보호
+		gizmoDesc.StencilEnable = TRUE;
+		gizmoDesc.StencilReadMask = 0xFF;
+		gizmoDesc.StencilWriteMask = 0xFF;
 
-	// 아웃라이너용 깊이 스텐실 상태 (1이 아니라면 아웃라이너 그리기)
-	D3D11_DEPTH_STENCIL_DESC selectedDesc = {};
+		gizmoDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		gizmoDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		gizmoDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+		gizmoDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-	selectedDesc.DepthEnable = TRUE;
-	selectedDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	selectedDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-
-	selectedDesc.StencilEnable = TRUE;
-	selectedDesc.StencilReadMask = 0xFF;
-	selectedDesc.StencilWriteMask = 0xFF;
-
-	selectedDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-	selectedDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_REPLACE;		// stencil 실패시
-	selectedDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_REPLACE;	// stencil 통과, 깊이 실패
-	selectedDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;		// 둘다 통과시
-
-	selectedDesc.BackFace = selectedDesc.FrontFace;
-
-	Device->CreateDepthStencilState(&selectedDesc, &dsSelectedState);
+		gizmoDesc.BackFace = gizmoDesc.FrontFace;
+		
+		Device->CreateDepthStencilState(&gizmoDesc, &dsGizmoState);
+	}
 
 
-	// 아웃라이너용 깊이 스텐실 상태 (1이 아니라면 아웃라이너 그리기)
-	D3D11_DEPTH_STENCIL_DESC outlinerDesc = {};
-	outlinerDesc.DepthEnable = FALSE;
-	outlinerDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	{// 아웃라이너용
+		//깊이 스텐실 상태 (1이 아니라면 아웃라이너 그리기)
+		D3D11_DEPTH_STENCIL_DESC outlinerDesc = {};
+		outlinerDesc.DepthEnable = FALSE;
+		outlinerDesc.DepthFunc = D3D11_COMPARISON_LESS;
 
-	outlinerDesc.StencilEnable = TRUE;
-	outlinerDesc.StencilReadMask = 0xFF;
-	outlinerDesc.StencilWriteMask = 0xFF;
+		outlinerDesc.StencilEnable = TRUE;
+		outlinerDesc.StencilReadMask = 0xFF;
+		outlinerDesc.StencilWriteMask = 0xFF;
 
-	outlinerDesc.FrontFace.StencilFunc = D3D11_COMPARISON_NOT_EQUAL;	// 통과 조건: 새값!=기존값이면 통과!
-	outlinerDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;		// stencil 실패시
-	outlinerDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;	// stencil 통과, 깊이 실패
-	outlinerDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;		// 둘다 통과시
+		outlinerDesc.FrontFace.StencilFunc = D3D11_COMPARISON_NOT_EQUAL;	// 통과 조건: 새값!=기존값이면 통과!
+		outlinerDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;		// stencil 실패시
+		outlinerDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;	// stencil 통과, 깊이 실패
+		outlinerDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;		// 둘다 통과시
 
-	outlinerDesc.BackFace = outlinerDesc.FrontFace;
+		outlinerDesc.BackFace = outlinerDesc.FrontFace;
 
-	Device->CreateDepthStencilState(&outlinerDesc, &dsOutlineState);
+		Device->CreateDepthStencilState(&outlinerDesc, &dsOutlineState);
+	}
+
+	{// 스카이스피어용 깊이 상태
+		
+		D3D11_DEPTH_STENCIL_DESC skyDesc = {};
+		skyDesc.DepthEnable = TRUE;
+		skyDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+		skyDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+		skyDesc.StencilEnable = FALSE;
+
+		Device->CreateDepthStencilState(&skyDesc, &dsSkyState);
+	}
+
+	{// 선택된 액터용 스텐실 마킹 상태
+		D3D11_DEPTH_STENCIL_DESC selectedDesc = {};
+		selectedDesc.DepthEnable = TRUE;
+		selectedDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		selectedDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+
+		selectedDesc.StencilEnable = TRUE;
+		selectedDesc.StencilReadMask = 0xFF;
+		selectedDesc.StencilWriteMask = 0xFF;
+
+		selectedDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		selectedDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		selectedDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+		selectedDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+		selectedDesc.BackFace = selectedDesc.FrontFace;
+
+		Device->CreateDepthStencilState(&selectedDesc, &dsSelectedState);
+	}
+
 }
 
 void Renderer::ReleaseDepthStencil()
 {
+	if (dsSelectedState)
+	{
+		dsSelectedState->Release();
+		dsSelectedState = nullptr;
+	}
+
+	if (dsOutlineState)
+	{
+		dsOutlineState->Release();
+		dsOutlineState = nullptr;
+	}
+
+	if (dsSkyState)
+	{
+		dsSkyState->Release();
+		dsSkyState = nullptr;
+	}
+
 	if (dsGizmoState)
 	{
 		dsGizmoState->Release();
@@ -495,6 +712,12 @@ void Renderer::SetOutlineState()
 {
 	UINT stencilRef = 1;
 	DeviceContext->OMSetDepthStencilState(dsOutlineState, stencilRef);
+}
+
+void Renderer::SetSkyDepthState()
+{
+	UINT stencilRef = 1;
+	DeviceContext->OMSetDepthStencilState(dsSkyState, stencilRef);
 }
 
 void Renderer::SetOutlineParams(float pixels)

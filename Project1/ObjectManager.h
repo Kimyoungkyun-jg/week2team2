@@ -157,8 +157,7 @@ public:
 		if (it != AllMeshMap.end())
 			return it->second;
 
-		Mesh* newMesh = new Mesh();
-		newMesh->InitVertexBuffer(vertices);
+		Mesh* newMesh = new Mesh(vertices);
 		AllMeshMap[name] = newMesh;
 		return newMesh;
 	}
@@ -170,8 +169,19 @@ public:
 		if (it != AllMeshMap.end())
 			return it->second;
 
-		Mesh* newMesh = new Mesh();
-		newMesh->InitVertexBuffer(vertices);
+		Mesh* newMesh = new Mesh(vertices);
+		AllMeshMap[name] = newMesh;
+		return newMesh;
+	}
+
+	template <typename VertexType>
+	Mesh* GetOrCreateMesh(const FString& name, const std::vector<VertexType>& vertices)
+	{
+		auto it = AllMeshMap.find(name);
+		if (it != AllMeshMap.end())
+			return it->second;
+
+		Mesh* newMesh = new Mesh(vertices);
 		AllMeshMap[name] = newMesh;
 		return newMesh;
 	}

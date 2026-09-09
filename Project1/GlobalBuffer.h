@@ -32,6 +32,7 @@ private:
     struct Data
     {
         FLinearColor color = FLinearColor(0,0,0,0);
+        int32 useTextrue = 0;
     };
     
     Data data;
@@ -44,6 +45,11 @@ public:
     void SetColor(FLinearColor col)
     {
         data.color = col;
+    }
+
+    void SetUseTexture(int32 usetexture)
+    {
+        data.useTextrue = usetexture;
     }
 };
 

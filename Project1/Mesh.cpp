@@ -38,6 +38,10 @@ void Mesh::Render()
 	{
 		RENDERER.PrepareShader(inputLayout);
 		RENDERER.SetCustomColor(CurrentColor);
+		if (TextureSRV)
+		{
+			RENDERER.SetTexture(TextureSRV);
+		}
 		vertexbuffer->IASet();
 		RENDERER.GetDeviceContext()->Draw(numVertices, 0);
 	}
@@ -55,6 +59,10 @@ void Mesh::Render(D3D11_PRIMITIVE_TOPOLOGY topology)
 	{
 		RENDERER.PrepareShader(inputLayout);
 		RENDERER.SetCustomColor(CurrentColor);
+		if (TextureSRV)
+		{
+			RENDERER.SetTexture(TextureSRV);
+		}
 		vertexbuffer->IASet(topology);
 		RENDERER.GetDeviceContext()->Draw(numVertices, 0);
 	}

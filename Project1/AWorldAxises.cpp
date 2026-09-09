@@ -4,9 +4,8 @@
 
 AWorldAxises::AWorldAxises()
 {
-	Mesh* newMesh = new Mesh();
-	newMesh->InitVertexBuffer(worldAxisVertices);
-	SetMesh(newMesh, true);
+	// 오브젝트 매니저를 통해 축선 메시 캐시 사용
+	SetMesh(OBJECT.GetOrCreateMesh("WorldAxises", worldAxisVertices));
 	SetPrimitive(EPrimitive::None);
 }
 

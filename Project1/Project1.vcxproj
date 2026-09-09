@@ -142,6 +142,7 @@
     <ClInclude Include="..\Project1\pch.h" />
     <ClInclude Include="AGizmo.h" />
     <ClInclude Include="AGrid.h" />
+    <ClInclude Include="ASkySphere.h" />
     <ClInclude Include="AWorldAxises.h" />
     <ClInclude Include="CircleGenerator.h" />
     <ClInclude Include="ConsoleWindow.h" />
@@ -198,6 +199,7 @@
     </ClCompile>
     <ClCompile Include="AGizmo.cpp" />
     <ClCompile Include="AGrid.cpp" />
+    <ClCompile Include="ASkySphere.cpp" />
     <ClCompile Include="AWorldAxises.cpp" />
     <ClCompile Include="CircleGenerator.cpp" />
     <ClCompile Include="ConsoleWindow.cpp" />

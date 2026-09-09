@@ -13,6 +13,27 @@ public:
 	Mesh();
 	~Mesh();
 
+	// 정점 배열을 받아 바로 초기화하는 생성자
+	template <typename VertexType, size_t N>
+	Mesh(const VertexType(&vertices)[N])
+	{
+		InitVertexBuffer(vertices);
+	}
+
+	// 정점 벡터를 받아 바로 초기화하는 생성자
+	template <typename VertexType>
+	Mesh(const std::vector<VertexType>& vertices)
+	{
+		InitVertexBuffer(vertices);
+	}
+
+	// 정점 TArray를 받아 바로 초기화하는 생성자
+	template <typename VertexType>
+	Mesh(const TArray<VertexType>& vertices)
+	{
+		InitVertexBuffer(vertices);
+	}
+
 	// 커스텀 정점 버퍼 초기화 함수
 	void InitVertexBuffer(const void* vertices, UINT stride, UINT inNumVertices, ID3D11InputLayout* inLayout = nullptr);
 
@@ -68,6 +89,11 @@ public:
 	void SetColor(const FLinearColor& inColor) { CurrentColor = inColor; }
 	const FLinearColor& GetColor() const { return CurrentColor; }
 
+	// 텍스처 설정 및 조회
+	void SetTexture(ID3D11ShaderResourceView* inSRV) { TextureSRV = inSRV; }
+	void SetTexture(const std::wstring& path) { TextureSRV = RENDERER.LoadTexture(path); }
+	ID3D11ShaderResourceView* GetTexture() const { return TextureSRV; }
+
 	void Render();
 	void Render(const FLinearColor& color);
 	void Render(D3D11_PRIMITIVE_TOPOLOGY topology);
@@ -83,6 +109,7 @@ public:
 public:
 	VertexBuffer* vertexbuffer = nullptr;
 	ID3D11InputLayout* inputLayout = nullptr;
+	ID3D11ShaderResourceView* TextureSRV = nullptr;
 	UINT numVertices = 0;
 	FLinearColor CurrentColor = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	TArray<FVector> LocalVertices; // 마우스 피킹용 로컬 정점 데이터

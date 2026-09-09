@@ -11,7 +11,13 @@ cbuffer FrameConstants : register(b1) // FFrameConstants
 cbuffer ColorConstants : register(b2)
 {
     float4 CustomColor;
+    int UseTexture;
+    float3 ColorPad;
 };
+
+// 텍스처 및 샘플러 레지스터
+Texture2D MainTexture : register(t0);
+SamplerState MainSampler : register(s0);
 
 struct VS_INPUT
 {
@@ -30,13 +36,13 @@ struct PS_INPUT
     float4 color : COLOR;
 };
 
-PS_INPUT mainVS(VS_INPUT input) // Vertex Shader
+// 일반 버텍스 셰이더
+PS_INPUT mainVS(VS_INPUT input)
 {
     PS_INPUT output;
     
     output.position = mul(mul(input.position, World), VP);
     
-    // CustomColor.a가 0보다 크면 CustomColor(기즈모 축 색상) 사용, 아니면 정점 컬러 사용
     if (CustomColor.a > 0.0f)
     {
         output.color = CustomColor;
@@ -49,10 +55,47 @@ PS_INPUT mainVS(VS_INPUT input) // Vertex Shader
     return output;
 }
 
-float4 mainPS(PS_INPUT input) : SV_TARGET // Pixel Shader
+// 일반 픽셀 셰이더
+float4 mainPS(PS_INPUT input) : SV_TARGET
 {
     return input.color;
 }
+
+// 스카이스피어 전용 셰이더 구조체
+struct PS_INPUT_SKY
+{
+    float4 position : SV_POSITION;
+    float3 localPos : TEXCOORD0;
+};
+
+
+
+// 스카이스피어 전용 버텍스 셰이더
+PS_INPUT_SKY mainVS_Sky(VS_INPUT input)
+{
+    PS_INPUT_SKY output;
+    
+    float4 clipPos = mul(mul(input.position, World), VP);
+    output.position = clipPos.xyww;
+    output.localPos = input.position.xyz;
+    
+    return output;
+}
+
+
+
+// 스카이스피어 전용 픽셀 셰이더
+float4 mainPS_Sky(PS_INPUT_SKY input) : SV_TARGET
+{
+    float3 dir = normalize(input.localPos);
+    float u = 0.5f + atan2(dir.x, dir.z) / 6.2831853f;
+    float v = 0.5f - asin(clamp(dir.y, -1.0f, 1.0f)) / 3.1415926f;
+    
+    return MainTexture.Sample(MainSampler, float2(u, v));
+}
+
+
+
 
 PS_INPUT mainVS_Outline(VS_INPUT input)
 {

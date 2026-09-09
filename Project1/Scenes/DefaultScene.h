@@ -5,6 +5,8 @@
 #include "AWorldAxises.h"
 #include "PickingManager.h"
 #include "AGrid.h"
+#include "ASkySphere.h"
+
 
 class DefaultScene : public Scene
 {
@@ -16,17 +18,15 @@ public:
 	virtual void Update(float deltatime) override;
 	virtual void Render() override;
 
-	TWeakObjectPtr<ACube> cube;
-	TWeakObjectPtr<ACube> cube2;
-	TWeakObjectPtr<ASphere> sphere;
+	
 	AGizmo* gizmo = nullptr;
 
 	AWorldAxises* worldAxises;
 
-	FRay ray;
 
 	AGrid* grid;
 
+	ASkySphere* skysphere;
 
 };
 

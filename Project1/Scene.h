@@ -57,6 +57,7 @@ public:
                 RENDERER.DrawOutline(selected);
             }
         }
+
     }
 
     FFadeOverlay& GetFadeOverlay() { return m_fadeOverlay; }

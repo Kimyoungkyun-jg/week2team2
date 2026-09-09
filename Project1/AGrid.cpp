@@ -5,9 +5,9 @@ AGrid::AGrid(EGridType InType)
 	: GridType(InType)
 {
 	CreateVertices();
-	Mesh* newMesh = new Mesh();
-	newMesh->InitVertexBuffer(vertices);
-	SetMesh(newMesh, true);
+	// 그리드 타입별 키로 오브젝트 매니저에서 메시 생성 및 캐시
+	FString gridKey = (GridType == EGridType::Line) ? "GridLine" : "GridTriangle";
+	SetMesh(OBJECT.GetOrCreateMesh(gridKey, vertices));
 	SetPrimitive(EPrimitive::None);
 }
 

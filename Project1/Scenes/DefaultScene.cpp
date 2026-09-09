@@ -29,6 +29,9 @@ DefaultScene::DefaultScene()
 
 	// Gizmo 생성
 	gizmo = FObjectFactory::SpawnActor<AGizmo>();
+
+
+	skysphere = FObjectFactory::SpawnActor<ASkySphere>();
 }
 
 DefaultScene::~DefaultScene()
@@ -196,83 +199,6 @@ void DefaultScene::Render()
 	}
 	
 	ImGui::Separator();
-
-	// cube 디버그 섹션
-	ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.2f, 1.0f), "[ Cube Controls ]");
-	if (cube)
-	{
-		string uid = std::to_string(cube->GetID());
-
-		FVector loc = cube->GetLocation();
-		if (ImGui::DragFloat3(("Cube Pos##" + uid).c_str(), &loc.x, 0.01f, -10.0f, 10.0f))
-		{
-			cube->SetLocation(loc);
-		}
-
-		FVector scale = cube->GetScale();
-		if (ImGui::DragFloat3(("Cube Scale##" + uid).c_str(), &scale.x, 0.01f, 0.01f, 5.0f))
-		{
-			cube->SetScale(scale);
-		}
-
-		FQuaternion rot = cube->GetRotation();
-		bool bCubeChanged = false;
-		if (ImGui::DragFloat(("Rotation X" + uid).c_str(), &rot.x, 0.01f, -3.14f, 3.14f))
-		{
-			bCubeChanged = true;
-		}
-		if (ImGui::DragFloat(("Rotation Y" + uid).c_str(), &rot.y, 0.01f, -3.14f, 3.14f))
-		{
-			bCubeChanged = true;
-		}
-		if (ImGui::DragFloat(("Rotation Z" + uid).c_str(), &rot.z, 0.01f, -3.14f, 3.14f))
-		{
-			bCubeChanged = true;
-		}
-
-		if (bCubeChanged)
-		{
-			cube->SetRotation(rot);
-		}
-	}
-
-	// gizmo 디버그 섹션
-	ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.2f, 1.0f), "[ Gizmo Controls ]");
-	if (gizmo)
-	{
-		FVector loc = gizmo->GetLocation();
-		if (ImGui::DragFloat3("Gizmo Pos", &loc.x, 0.01f, -10.0f, 10.0f))
-		{
-			gizmo->SetLocation(loc);
-		}
-
-		FVector scale = gizmo->GetScale();
-		if (ImGui::DragFloat3("Gizmo Scale", &scale.x, 0.01f, 0.01f, 5.0f))
-		{
-			gizmo->SetScale(scale);
-		}
-
-		FQuaternion rot = gizmo->GetRotation();
-		bool bRotChanged = false;
-		if (ImGui::DragFloat("Rotation X", &rot.x, 0.01f, -3.14f, 3.14f))
-		{
-			bRotChanged = true;
-		}
-		if (ImGui::DragFloat("Rotation Y", &rot.y, 0.01f, -3.14f, 3.14f))
-		{
-			bRotChanged = true;
-		}
-		if (ImGui::DragFloat("Rotation Z", &rot.z, 0.01f, -3.14f, 3.14f))
-		{
-			bRotChanged = true;
-		}
-
-		if (bRotChanged)
-		{
-			gizmo->SetRotation(rot);
-		}
-	}
-
 	ImGui::End();
 
 	ImGui::Begin("Picking Primitive Property", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
