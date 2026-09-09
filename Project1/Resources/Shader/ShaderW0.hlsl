@@ -122,7 +122,7 @@ PS_INPUT mainVS_Outline(VS_INPUT input)
     
     float4 worldPos = mul(input.position, World);
 
-    output.position = mul(worldPos, VP);
+    output.position =clipPos;
     output.worldPosition = worldPos.xyz;
     output.color = float4(1.0f, 1.0f, 0.0f, 1.0f);
     return output;

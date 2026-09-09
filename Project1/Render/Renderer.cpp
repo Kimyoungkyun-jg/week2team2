@@ -771,6 +771,7 @@ void Renderer::DrawOutline(AActor* targetActor)
 	}
 
 	// 아웃라인 셰이더 유지 상태로 드로우
+	RENDERER.SetCustomColor(FLinearColor::Yellow);
 	mesh->IASet();
 	DeviceContext->Draw(mesh->GetNumVertices(), 0);
 
