@@ -211,6 +211,8 @@ void AGizmoAxis::Pressed()
 {
 	if (!TargetActor) return;
 
+
+
 	FRay ray = PICK.ScreenToWorldRay();
 	float denom = planeNormal.Dot(ray.Direction);
 	if (fabsf(denom) > 1e-6f)
@@ -243,14 +245,6 @@ void AGizmoAxis::Pressed()
 			// 축에 맞게 회전값 적용
 			FQuaternion newRot = (deltaRot *dragStartActorRotation).Normalized();
 			
-			// 이미 currentAxisDir을 계산해두었기 때문에 확인하지 않아도 괜찮음.
-			// switch (Axis)
-			// {
-			// case EGizmoAxis::X: newRot.x += alpha; break;
-			// case EGizmoAxis::Y: newRot.y += alpha; break;
-			// case EGizmoAxis::Z: newRot.z += alpha; break;
-			// default: break;
-			// }
 
 			TargetActor->SetRotation(newRot);
 		}

@@ -241,10 +241,23 @@ void Renderer::ReleaseRasterizerState() {
 bool Renderer::CreateVertexShader(LPCWSTR path, LPCSTR entryPoint,
                                   ID3D11VertexShader **outVS,
                                   ID3DBlob **outBlob) {
+  std::filesystem::path p(path);
+  if (!std::filesystem::exists(p)) {
+    if (std::filesystem::exists(p.filename())) {
+      p = p.filename();
+    } else if (std::filesystem::exists(std::filesystem::path(L"Resources/Shader") / p.filename())) {
+      p = std::filesystem::path(L"Resources/Shader") / p.filename();
+    } else if (std::filesystem::exists(std::filesystem::path(L"Project1") / path)) {
+      p = std::filesystem::path(L"Project1") / path;
+    } else if (std::filesystem::exists(std::filesystem::path(L"../Project1") / path)) {
+      p = std::filesystem::path(L"../Project1") / path;
+    }
+  }
+
   ID3DBlob *vsBlob = nullptr;
   ID3DBlob *errorBlob = nullptr;
 
-  HRESULT hr = D3DCompileFromFile(path, nullptr, nullptr, entryPoint, "vs_5_0",
+  HRESULT hr = D3DCompileFromFile(p.c_str(), nullptr, nullptr, entryPoint, "vs_5_0",
                                   0, 0, &vsBlob, &errorBlob);
 
   if (FAILED(hr) || !vsBlob) {
@@ -269,10 +282,23 @@ bool Renderer::CreateVertexShader(LPCWSTR path, LPCSTR entryPoint,
 
 bool Renderer::CreatePixelShader(LPCWSTR path, LPCSTR entryPoint,
                                  ID3D11PixelShader **outPS) {
+  std::filesystem::path p(path);
+  if (!std::filesystem::exists(p)) {
+    if (std::filesystem::exists(p.filename())) {
+      p = p.filename();
+    } else if (std::filesystem::exists(std::filesystem::path(L"Resources/Shader") / p.filename())) {
+      p = std::filesystem::path(L"Resources/Shader") / p.filename();
+    } else if (std::filesystem::exists(std::filesystem::path(L"Project1") / path)) {
+      p = std::filesystem::path(L"Project1") / path;
+    } else if (std::filesystem::exists(std::filesystem::path(L"../Project1") / path)) {
+      p = std::filesystem::path(L"../Project1") / path;
+    }
+  }
+
   ID3DBlob *psBlob = nullptr;
   ID3DBlob *errorBlob = nullptr;
 
-  HRESULT hr = D3DCompileFromFile(path, nullptr, nullptr, entryPoint, "ps_5_0",
+  HRESULT hr = D3DCompileFromFile(p.c_str(), nullptr, nullptr, entryPoint, "ps_5_0",
                                   0, 0, &psBlob, &errorBlob);
 
   if (FAILED(hr) || !psBlob) {

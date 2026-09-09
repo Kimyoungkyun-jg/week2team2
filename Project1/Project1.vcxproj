@@ -49,8 +49,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(ProjectDir)..\bin\Release\</OutDir>
-    <IntDir>$(ProjectDir)..\bin-int\Release\</IntDir>
+    <OutDir>$(ProjectDir)..\Build\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\Build\$(Configuration)\</IntDir>
     <TargetName>Project1</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
@@ -71,7 +71,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\Project1;..\Project1\Actor;..\Project1\Actor\Gizmo;..\Project1\App;..\Project1\Core;..\Project1\Library;..\Project1\Library\DirectXTex;..\Project1\Library\ImGui;..\Project1\Library\json;..\Project1\Math;..\Project1\Physics;..\Project1\Render;..\Project1\Render\Buffer;..\Project1\Resources\Geometry;..\Project1\Resources;..\Project1\Resources\Shader;..\Project1\Resources\Textures;..\Project1\Scenes;..\Project1\UI;%(AdditionalIncludeDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\Project1\Library\DirectXTex\Debug;..\Project1;..\Project1\Actor;..\Project1\Actor\Gizmo;..\Project1\App;..\Project1\Core;..\Project1\Library;..\Project1\Library\DirectXTex;..\Project1\Library\ImGui;..\Project1\Library\json;..\Project1\Math;..\Project1\Physics;..\Project1\Render;..\Project1\Render\Buffer;..\Project1\Resources\Geometry;..\Project1\Resources;..\Project1\Resources\Shader;..\Project1\Resources\Textures;..\Project1\Scenes;..\Project1\UI;%(AdditionalIncludeDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ProjectReference>
     </ProjectReference>
@@ -102,12 +102,14 @@ copy /B /Y "$(ProjectDir)Resources\Shader\GridShader.hlsl" "$(TargetDir)GridShad
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\Project1;..\Project1\Actor;..\Project1\Actor\Gizmo;..\Project1\App;..\Project1\Core;..\Project1\Library;..\Project1\Library\DirectXTex;..\Project1\Library\ImGui;..\Project1\Library\json;..\Project1\Math;..\Project1\Physics;..\Project1\Render;..\Project1\Render\Buffer;..\Project1\Resources\Geometry;..\Project1\Resources;..\Project1\Resources\Shader;..\Project1\Resources\Textures;..\Project1\Scenes;..\Project1\UI;%(AdditionalIncludeDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\Project1\Library\DirectXTex\Release;..\Project1;..\Project1\Actor;..\Project1\Actor\Gizmo;..\Project1\App;..\Project1\Core;..\Project1\Library;..\Project1\Library\DirectXTex;..\Project1\Library\ImGui;..\Project1\Library\json;..\Project1\Math;..\Project1\Physics;..\Project1\Render;..\Project1\Render\Buffer;..\Project1\Resources\Geometry;..\Project1\Resources;..\Project1\Resources\Shader;..\Project1\Resources\Textures;..\Project1\Scenes;..\Project1\UI;%(AdditionalIncludeDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ProjectReference>
     </ProjectReference>
     <PostBuildEvent>
-      <Command>copy /B /Y $(SolutionDir)\..\Project1\ShaderW0.hlsl ..\bin\Release\ShaderW0.hlsl</Command>
+      <Command>copy /B /Y "$(ProjectDir)Resources\Shader\ShaderW0.hlsl" "$(TargetDir)ShaderW0.hlsl"
+copy /B /Y "$(ProjectDir)Resources\Shader\GridShader.hlsl" "$(TargetDir)GridShader.hlsl"
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

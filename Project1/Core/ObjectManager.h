@@ -79,11 +79,7 @@ public:
 		}
 	}
 
-	// 콜라이더 맵만 클리어
-	void DestroyAllColliders()
-	{
-		ColliderMap.clear();
-	}
+	void DestroyAllColliders();
 
 	void Destroy(UObject* Target);
 	void DestroyAllObjects();

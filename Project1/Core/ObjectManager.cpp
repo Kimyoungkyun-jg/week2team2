@@ -15,8 +15,10 @@ bool ObjectManager::IsValidObject(const UObject *Target, uint32 UUID) const {
       return true;
   }
 
-  // 기즈모 축 검사
+  // 기즈모 객체 검사
   if (AGizmo::MainGizmo) {
+    if (AGizmo::MainGizmo == Target && AGizmo::MainGizmo->GetID() == UUID)
+      return true;
     for (const AGizmoAxis *Axis : AGizmo::MainGizmo->GetAxes()) {
       if (Axis == Target && Axis->GetID() == UUID)
         return true;
@@ -34,8 +36,7 @@ void ObjectManager::Destroy(UObject *Target) {
       }
 
       UObject *temp = AllObjects[i];
-      swap(AllObjects[i], AllObjects.back());
-      AllObjects.pop_back();
+      AllObjects.RemoveAt(i);
       delete temp;
       break;
     }
@@ -58,3 +59,13 @@ void ObjectManager::DestroyAllActors() {
     }
   }
 }
+
+void ObjectManager::DestroyAllColliders() {
+  for (int32 i = static_cast<int32>(AllObjects.size()) - 1; i >= 0; --i) {
+    if (ACollider *col = Cast<ACollider>(AllObjects[i])) {
+      col->Destroy();
+    }
+  }
+  ColliderMap.clear();
+}
+

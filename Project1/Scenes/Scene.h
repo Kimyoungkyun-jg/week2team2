@@ -47,6 +47,10 @@ public:
         {
             if (objects[i] && objects[i]->GetIsActive())
             {
+                // 기즈모는 모든 오브젝트와 아웃라인 렌더링 후 맨 마지막에 렌더링
+                if (objects[i] == AGizmo::MainGizmo)
+                    continue;
+
                 objects[i]->Render();
             }
         }
@@ -56,8 +60,12 @@ public:
             if (selected) {
                 RENDERER.DrawOutline(selected);
             }
+            // 기즈모를 항상 최상단에 렌더링
+            AGizmo::MainGizmo->Render();
         }
 
+        // 기본 깊이 상태 복원
+        RENDERER.SetDefaultDepthState();
     }
 
     FFadeOverlay& GetFadeOverlay() { return m_fadeOverlay; }
