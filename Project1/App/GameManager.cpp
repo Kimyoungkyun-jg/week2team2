@@ -26,6 +26,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			UINT height = HIWORD(lParam);
 
 			RENDERER.Resize(width, height);
+			ConsoleWindow::GetInstance().RequestResize();
 		}
 		break;
 	}

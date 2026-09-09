@@ -10,6 +10,8 @@ public:
 	void AddLog(const char* Format, ...);
 	void ClearLogs();
 
+	void RequestResize();
+
 private:
 	ConsoleWindow();
 	~ConsoleWindow();
@@ -18,6 +20,7 @@ private:
 	ConsoleWindow& operator=(const ConsoleWindow&) = delete;
 
 	// UI
+	void UpdateLayout();
 	void DrawToolBar();
 	void DrawOptionsAndFilter();
 	void DrawLogArea();
@@ -26,6 +29,7 @@ private:
 
 	// 명령어 실행
 	void ExecuteCommand(const char* Input);
+	bool ExecuteBasicCommand(const FString& Command);
 	void ExecuteHelp();
 	void ExecuteHistory();
 
@@ -49,6 +53,7 @@ private:
 	void UpdateSuggestions(const FString& Input);
 	
 	FString Trim(const FString& Str);
+	FString ToUpper(const FString& Str);
 
 private:
 	TArray<FString> Logs;
@@ -66,6 +71,8 @@ private:
 	ImGuiTextFilter Filter;
 
 	bool AutoScroll = true;
+	bool bWasCollapsed = false;
+	bool bResizeRequested = true;
 };
 
 
