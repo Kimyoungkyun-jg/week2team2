@@ -4,7 +4,8 @@
 #include "AGizmo.h"
 #include "AWorldAxises.h"
 #include "PickingManager.h"
-#include "AGrid.h"
+#include "ASkySphere.h"
+#include "UGrid.h"
 
 class DefaultScene : public Scene
 {
@@ -16,15 +17,14 @@ public:
 	virtual void Update(float deltatime) override;
 	virtual void Render() override;
 
-	ACube* cube = nullptr;
-	ACube* cube2 = nullptr;
-	ASphere* sphere = nullptr;
+	
 	AGizmo* gizmo = nullptr;
 
 	AWorldAxises* worldAxises;
 
-	FRay ray;
+	UGrid Ugrid;
 
-	AGrid* grid;
+	ASkySphere* skysphere;
+
 };
 

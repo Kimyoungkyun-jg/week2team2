@@ -77,6 +77,12 @@ using namespace std;
 #define CAMERA Camera::GetInstance()
 
 #define PICK PickingManager::GetInstance()
+#define OBJECT ObjectManager::GetInstance()
+#define GM GameManager::GetInstance()
+
+#define IMGUI UIManager::GetInstance()
+#define SAVELOAD SaveLoadManager::GetInstance()
+
 
 #define WIN_WIDTH 1920	
 #define WIN_HEIGHT 1080
@@ -87,11 +93,19 @@ typedef string FString;
 
 #include "Containers.h"
 
+//카메라
+#include "Camera.h"
+
+#include "ObjectManager.h"
+#include "WeakObjectPtr.h"
+#include "PickingManager.h"
+
 //Scene Header
 #include "Scene.h"
 #include "SceneManager.h"
 
-//카메라
-#include "Camera.h"
+//UI Header
+#include "UIManager.h"
 
-#include "PickingManager.h"
+//SaveLoad Header
+#include "SaveLoadManager.h"

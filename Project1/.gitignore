@@ -1,0 +1,3 @@
+# packages 폴더 내부 파일(build/ 포함) 강제 추적 허용
+!packages/
+!packages/**
