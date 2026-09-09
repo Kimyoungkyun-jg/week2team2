@@ -512,6 +512,22 @@ void Renderer::PrepareOutlineShader(ID3D11InputLayout* layout)
 	DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
 }
 
+void Renderer::PrepareGridShader(ID3D11InputLayout* layout)
+{
+	ID3D11InputLayout* targetLayout = layout ? layout : SimpleInputLayout;
+
+	if (CurrentInputLayout != targetLayout)
+	{
+		CurrentInputLayout = targetLayout;
+		DeviceContext->IASetInputLayout(targetLayout);
+	}
+
+	// 기존 Vertex Shader 사용
+	DeviceContext->VSSetShader(GridVertexShader, nullptr, 0);
+
+	// Grid 전용 Pixel Shader 사용
+	DeviceContext->PSSetShader(GridPixelShader, nullptr, 0);
+}
 void Renderer::PrepareSkyShader(ID3D11InputLayout* layout)
 {
 	ID3D11InputLayout* targetLayout = layout ? layout : SimpleInputLayout;
