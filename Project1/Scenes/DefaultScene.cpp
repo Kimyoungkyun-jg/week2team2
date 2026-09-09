@@ -350,19 +350,26 @@ void DefaultScene::Render()
 				s_lastActorID = uid;
 			}
 
-			bool bChangedX = ImGui::DragFloat(("Rotation X##" + uid).c_str(), &s_euler[0], 1.0f, -180.0f, 180.0f);
-			bool bActiveX = ImGui::IsItemActive();
+			bool bPrimChanged = false;
+			if (ImGui::DragFloat(("Rotation X##" + uid).c_str(), &s_euler[0], 1.0f, -180.0f, 180.0f))
+			{
+				bPrimChanged = true;
+			}
+			
+			if (ImGui::DragFloat(("Rotation Y##" + uid).c_str(), &s_euler[1], 1.0f, -180.0f, 180.0f))
+			{
+				bPrimChanged = true;
+			}
 
-			bool bChangedY = ImGui::DragFloat(("Rotation Y##" + uid).c_str(), &s_euler[1], 1.0f, -180.0f, 180.0f);
-			bool bActiveY = ImGui::IsItemActive();
+			if (ImGui::DragFloat(("Rotation Z##" + uid).c_str(), &s_euler[2], 1.0f, -180.0f, 180.0f))
+			{
+				bPrimChanged = true;
+			}
 
-			bool bChangedZ = ImGui::DragFloat(("Rotation Z##" + uid).c_str(), &s_euler[2], 1.0f, -180.0f, 180.0f);
-			bool bActiveZ = ImGui::IsItemActive();
-
-			s_isEditingInImGui = bActiveX || bActiveY || bActiveZ;
+			s_isEditingInImGui = bPrimChanged;
 
 			// 위젯 조작 시에만 각도를 라디안으로 변환하여 적용
-			if (bChangedX || bChangedY || bChangedZ)
+			if (bPrimChanged)
 			{
 				FQuaternion newRot = FQuaternion::FromEuler(
 					s_euler[0] * (Global::PI / 180.0f),

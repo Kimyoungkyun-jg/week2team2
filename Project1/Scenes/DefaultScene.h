@@ -27,6 +27,6 @@ public:
 
 	AGrid* grid;
 
-	bool bPrimChanged = false;
+
 };
 
