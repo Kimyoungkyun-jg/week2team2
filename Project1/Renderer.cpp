@@ -363,12 +363,17 @@ bool Renderer::CreateInputLayout(const D3D11_INPUT_ELEMENT_DESC* layoutDesc, UIN
 void Renderer::CreateShader()
 {
 	LPCWSTR shaderPath = L"ShaderW0.hlsl";
+	LPCWSTR GridshaderPath = L"GridShader.hlsl";
 
 	//Vertex & Pixel Shader 컴파일 및 생성
 	ID3DBlob* vsBlob = nullptr;
+	ID3DBlob* gridVSBlob = nullptr;
+
 	CreateVertexShader(shaderPath, "mainVS", &SimpleVertexShader, &vsBlob);
 	CreatePixelShader(shaderPath, "mainPS", &SimplePixelShader);
 	CreateVertexShader(shaderPath, "mainVS_Outline", &OutlineVertexShader);
+	CreateVertexShader(GridshaderPath,"mainVS_Grid",&GridVertexShader,&gridVSBlob);
+	CreatePixelShader(GridshaderPath, "mainPS_Grid", &GridPixelShader);
 	CreateVertexShader(shaderPath, "mainVS_Sky", &SkyVertexShader);
 	CreatePixelShader(shaderPath, "mainPS_Sky", &SkyPixelShader);
 
@@ -507,6 +512,22 @@ void Renderer::PrepareOutlineShader(ID3D11InputLayout* layout)
 	DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
 }
 
+void Renderer::PrepareGridShader(ID3D11InputLayout* layout)
+{
+	ID3D11InputLayout* targetLayout = layout ? layout : SimpleInputLayout;
+
+	if (CurrentInputLayout != targetLayout)
+	{
+		CurrentInputLayout = targetLayout;
+		DeviceContext->IASetInputLayout(targetLayout);
+	}
+
+	// 기존 Vertex Shader 사용
+	DeviceContext->VSSetShader(GridVertexShader, nullptr, 0);
+
+	// Grid 전용 Pixel Shader 사용
+	DeviceContext->PSSetShader(GridPixelShader, nullptr, 0);
+}
 void Renderer::PrepareSkyShader(ID3D11InputLayout* layout)
 {
 	ID3D11InputLayout* targetLayout = layout ? layout : SimpleInputLayout;

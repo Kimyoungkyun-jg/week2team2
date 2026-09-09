@@ -156,6 +156,7 @@
     <ClInclude Include="IUIPanel.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="SaveLoadManager.h" />
+    <ClInclude Include="UGrid.h" />
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="UIPanel.h" />
     <ClInclude Include="VertexBuffer.h" />
@@ -212,6 +213,7 @@
     <ClCompile Include="Intersection.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="SaveLoadManager.cpp" />
+    <ClCompile Include="UGrid.cpp" />
     <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="UIPanel.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
@@ -221,6 +223,9 @@
     <Text Include="CubeVertice.txt" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="GridShader.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">mainVS_Grid</EntryPointName>
+    </FxCompile>
     <FxCompile Include="ShaderW0.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>
