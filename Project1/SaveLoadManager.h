@@ -9,17 +9,17 @@ class AActor;
 class SaveLoadManager
 {
 public:
-    // utility class 이므로 생성자 금지
-    SaveLoadManager() = delete;
-    ~SaveLoadManager() = delete;
 
-    static void SaveScene(const FString& path);
-    static TArray<UObject*> LoadScene(const FString& path);
+static SaveLoadManager& GetInstance();
+static void SaveScene(const FString& path);
+static TArray<UObject*> LoadScene(const FString& path);
 
 private:
-    // <location, ratation, scale> 을 인자로 받아서 AACtor*를 반환하는 공통타입 함수
-    using CreatorFunc = std::function<AActor*(FVector, FQuaternion, FVector)>;
-    static TMap<string, CreatorFunc>& GetActorCreatorRegistry();
-    static string EPrimitiveToStr(EPrimitive prim);
+// <location, ratation, scale> 을 인자로 받아서 AACtor*를 반환하는 공통타입 함수
+using CreatorFunc = std::function<AActor*(FVector, FQuaternion, FVector)>;
+static TMap<string, CreatorFunc>& GetActorCreatorRegistry();
+static string EPrimitiveToStr(EPrimitive prim);
 
+SaveLoadManager() = default;
+~SaveLoadManager() = default;
 };

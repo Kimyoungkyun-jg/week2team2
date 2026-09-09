@@ -22,6 +22,12 @@ constexpr int CURRENT_SCENE_VERSION = 1;
 // 알파벳 순서가 아닌 input 순서로 push하기 위함
 using json = nlohmann::ordered_json;
 
+SaveLoadManager& SaveLoadManager::GetInstance()
+{
+    static SaveLoadManager instance;
+    return instance;
+}
+
 // 타입 이름 String으로 받아서 Spawn
 TMap<string, SaveLoadManager::CreatorFunc>& SaveLoadManager::GetActorCreatorRegistry()
 {
