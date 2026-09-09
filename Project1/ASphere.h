@@ -1,4 +1,4 @@
-#pragma once
+#include "Sphere.h"
 
 class ASphere : public AActor
 {
@@ -7,8 +7,9 @@ class ASphere : public AActor
 
 public:
 	ASphere() {
-		// 오브젝트 매니저를 통해 구 메시 캐시 사용
-		SetMesh(OBJECT.GetOrCreateMesh("Sphere", sphere_vertices));
+		// 구체 정점 최초 계산 후 캐시
+		static const std::vector<FVertexColor> sphereVertices = CreateSphereVertices(0.5f, 20, 20, false);
+		SetMesh(OBJECT.GetOrCreateMesh("Sphere", sphereVertices));
 	}
 
 

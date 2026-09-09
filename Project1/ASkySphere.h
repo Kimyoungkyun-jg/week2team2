@@ -12,7 +12,7 @@ public:
 	ASkySphere()
 	{
 		// 오브젝트 매니저를 통해 스카이스피어 메시 생성 및 캐시
-		SetMesh(OBJECT.GetOrCreateMesh("SkySphere", sphere_vertices));
+		SetMesh(OBJECT.GetOrCreateMesh("SkySphere", skysphere_vertices));
 
 		mesh->SetTexture(L"Textures/Sky.jpg");
 
