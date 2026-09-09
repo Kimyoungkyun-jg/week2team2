@@ -7,6 +7,7 @@
 #include "AGrid.h"
 #include "ASkySphere.h"
 
+#include "UGrid.h"
 
 class DefaultScene : public Scene
 {
@@ -25,6 +26,7 @@ public:
 
 
 	AGrid* grid;
+	UGrid Ugrid;
 
 	ASkySphere* skysphere;
 

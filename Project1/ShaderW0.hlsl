@@ -34,6 +34,7 @@ struct PS_INPUT
 {
     float4 position : SV_POSITION;
     float4 color : COLOR;
+    float3 worldPosition : TEXCOORD0;
 };
 
 // 일반 버텍스 셰이더
@@ -119,7 +120,10 @@ PS_INPUT mainVS_Outline(VS_INPUT input)
     
     clipPos.xy += offsetDir * pixelToNdc * clipPos.w;
     
-    output.position = clipPos;
+    float4 worldPos = mul(input.position, World);
+
+    output.position = mul(worldPos, VP);
+    output.worldPosition = worldPos.xyz;
     output.color = float4(1.0f, 1.0f, 0.0f, 1.0f);
     return output;
 }

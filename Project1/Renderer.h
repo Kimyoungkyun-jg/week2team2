@@ -50,6 +50,17 @@ public:
 	ID3D11VertexShader* SkyVertexShader = nullptr;
 	ID3D11PixelShader* SkyPixelShader = nullptr;
 
+	ID3D11VertexShader* GridVertexShader = nullptr;
+	ID3D11PixelShader* GridPixelShader = nullptr;
+	ID3D11InputLayout* GridInputLayout = nullptr;
+
+	// Direct2D & WIC Management
+	ID2D1Factory* D2DFactory = nullptr;
+	ID2D1RenderTarget* D2DRenderTarget = nullptr;
+	IDWriteFactory* DWriteFactory = nullptr;
+	IWICImagingFactory* WICFactory = nullptr;
+
+	// values
 	// 화면 및 뷰포트 정보
 	D3D11_VIEWPORT ViewportInfo;
 	FLOAT ClearColor[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
@@ -136,7 +147,13 @@ public:
 		SetCustomColor({ 0.0f, 0.0f, 0.0f, 0.0f });
 		SetTexture(nullptr);
 	}
-	
+
+	void PrepareGridShader(ID3D11InputLayout* layout);
+	ID3D11InputLayout* GetGridInputLayout()
+	{
+		return GridInputLayout;
+	}
+
 	void PrepareOutlineShader(ID3D11InputLayout* layout = nullptr);
 	void PrepareSkyShader(ID3D11InputLayout* layout = nullptr);
 

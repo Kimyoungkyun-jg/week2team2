@@ -363,12 +363,17 @@ bool Renderer::CreateInputLayout(const D3D11_INPUT_ELEMENT_DESC* layoutDesc, UIN
 void Renderer::CreateShader()
 {
 	LPCWSTR shaderPath = L"ShaderW0.hlsl";
+	LPCWSTR GridshaderPath = L"GridShader.hlsl";
 
 	//Vertex & Pixel Shader 컴파일 및 생성
 	ID3DBlob* vsBlob = nullptr;
+	ID3DBlob* gridVSBlob = nullptr;
+
 	CreateVertexShader(shaderPath, "mainVS", &SimpleVertexShader, &vsBlob);
 	CreatePixelShader(shaderPath, "mainPS", &SimplePixelShader);
 	CreateVertexShader(shaderPath, "mainVS_Outline", &OutlineVertexShader);
+	CreateVertexShader(GridshaderPath,"mainVS_Grid",&GridVertexShader,&gridVSBlob);
+	CreatePixelShader(GridshaderPath, "mainPS_Grid", &GridPixelShader);
 	CreateVertexShader(shaderPath, "mainVS_Sky", &SkyVertexShader);
 	CreatePixelShader(shaderPath, "mainPS_Sky", &SkyPixelShader);
 
