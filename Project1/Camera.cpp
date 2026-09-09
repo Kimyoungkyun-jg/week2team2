@@ -68,8 +68,13 @@ FMatrix Camera::GetViewMatrix() const
 
 FMatrix Camera::GetProjectionMatrix(float aspectRatio) const
 {
-	float fovRadians = fov * (Global::PI / 180.0f);
-	return FMatrix::PerspectiveFov(fovRadians, aspectRatio, NearZ, FarZ);
+	if (ProjectionMode == Orthographic) {
+		return FMatrix::Orthographic(OrthoWidth, OrthoWidth/aspectRatio, NearZ, FarZ);
+	}
+	else {
+		float fovRadians = fov * (Global::PI / 180.0f);
+		return FMatrix::PerspectiveFov(fovRadians, aspectRatio, NearZ, FarZ);
+	}
 }
 
 void Camera::Update()
