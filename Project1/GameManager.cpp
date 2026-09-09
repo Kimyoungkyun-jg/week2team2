@@ -120,17 +120,9 @@ void GameManager::Render()
 	// 프레임 버퍼 클리어 및 뷰포트 설정
 	renderer.Prepare();
 
-	ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
-
-	ImGui::Begin("Engine Main Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-
-	ImGui::Text("DirectX 11 & ImGui Active");
-	ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
-	ImGui::End();
-
 	ConsoleWindow::GetInstance().DrawConsole();
 
-	RENDERER.UpdateFrameConstant();
+	renderer.UpdateFrameConstant();
 	CAMERA.SetVPBuffer();
 
 	// 씬 오브젝트 렌더링

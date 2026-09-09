@@ -24,12 +24,12 @@
 struct ClassInfo //클래스 정보를 담는 메타 데이터 클래스
 {
 	ClassInfo(string_view name, uint32 cID, const ClassInfo* superClass = nullptr)
-		: Name(name), TypeID(cID), SuperClass(superClass)
+		: Name(name), CID(cID), SuperClass(superClass)
 	{
 	}
 
 	string_view Name;
-	uint32 TypeID = 0;
+	uint32 CID = 0;
 	const ClassInfo* SuperClass = nullptr;
 
 	bool IsA(const ClassInfo* Targetclass) const
