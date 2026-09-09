@@ -180,25 +180,25 @@ copy /B /Y "$(ProjectDir)Resources\Shader\GridShader.hlsl" "$(TargetDir)GridShad
     <ClCompile Include="Core\ObjectManager.cpp" />
     <ClCompile Include="Core\UObject.cpp" />
     <ClCompile Include="Library\ImGui\imgui.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Library\ImGui\imgui_demo.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Library\ImGui\imgui_draw.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Library\ImGui\imgui_impl_dx11.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Library\ImGui\imgui_impl_win32.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Library\ImGui\imgui_tables.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Library\ImGui\imgui_widgets.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Math\FQuaternion.cpp" />

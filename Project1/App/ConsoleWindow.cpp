@@ -41,25 +41,78 @@ void ConsoleWindow::ClearLogs()
 	Logs.Empty();
 }
 
-void ConsoleWindow::DrawConsole()
+void ConsoleWindow::UpdateLayout()
 {
 	ImGuiViewport* Viewport = ImGui::GetMainViewport();
-	ImVec2 WorkPos = Viewport->WorkPos;
-	ImVec2 WorkSize = Viewport->WorkSize;
 
-	float ConsoleHeight = WorkSize.y * 0.3f;
+	float Height = Viewport->WorkSize.y * 0.3f;
 
-	// 메인 화면 하단 30%를 콘솔 영역으로 사용한다.
-	ImGui::SetNextWindowPos(ImVec2(WorkPos.x, WorkPos.y + WorkSize.y - ConsoleHeight));
-	ImGui::SetNextWindowSize(ImVec2(WorkSize.x, ConsoleHeight));
+	ImGui::SetNextWindowPos(
+		ImVec2(
+			Viewport->WorkPos.x,
+			Viewport->WorkPos.y + Viewport->WorkSize.y - Height
+		)
+	);
+
+	ImGui::SetNextWindowSize(
+		ImVec2(Viewport->WorkSize.x, Height)
+	);
+}
+
+void ConsoleWindow::RequestResize()
+{
+	bResizeRequested = true;
+}
+
+void ConsoleWindow::DrawConsole()
+{
+	//ImGuiViewport* Viewport = ImGui::GetMainViewport();
+	//ImVec2 WorkPos = Viewport->WorkPos;
+	//ImVec2 WorkSize = Viewport->WorkSize;
+
+	//float ConsoleHeight = WorkSize.y * 0.3f;
+
+	//// 메인 화면 하단 30%를 콘솔 영역으로 사용한다.
+	//ImGui::SetNextWindowPos(ImVec2(WorkPos.x, WorkPos.y + WorkSize.y - ConsoleHeight));
+	//ImGui::SetNextWindowSize(ImVec2(WorkSize.x, ConsoleHeight));
+
+	if (bResizeRequested)
+	{
+		UpdateLayout();
+		bResizeRequested = false;
+	}
 
 	ImGui::Begin("Console");
 
-	DrawToolBar();
-	DrawOptionsAndFilter();
-	DrawLogArea();
-	DrawSuggestions();
-	DrawInput();
+	bool bCollapsed = ImGui::IsWindowCollapsed();
+
+	// 접히는 순간
+	if (bCollapsed && !bWasCollapsed)
+	{
+		ImVec2 Size = ImGui::GetWindowSize();
+		ImGui::SetWindowSize(
+			ImVec2(100.0f, Size.y),
+			ImGuiCond_Always
+		);
+	}
+
+	// 다시 펼치는 순간
+	if (!bCollapsed && bWasCollapsed)
+	{
+		bResizeRequested = true; // 다음 프레임에 UpdateLayout()으로 원래 크기 복구
+	}
+
+	bWasCollapsed = bCollapsed;
+
+
+	if (!bCollapsed) {
+		DrawToolBar();
+		DrawOptionsAndFilter();
+		DrawLogArea();
+		DrawSuggestions();
+		DrawInput();
+	}
+	
 
 	ImGui::End();
 }
@@ -180,6 +233,7 @@ void ConsoleWindow::DrawInput()
 	{
 		if (InputBuf[0] != '\0')
 		{
+			AddLog("> %s", InputBuf);
 			ExecuteCommand(InputBuf);
 			InputBuf[0] = '\0';
 		}
@@ -204,23 +258,8 @@ void ConsoleWindow::ExecuteCommand(const char* Input)
 	// “ ” 형태의 따옴표도 일반 " 로 처리한다.
 	NormalizeQuotes(Command);
 
-	if (Command == "HELP")
-	{
-		ExecuteHelp();
+	if (ExecuteBasicCommand(Command))
 		return;
-	}
-
-	if (Command == "CLEAR")
-	{
-		ClearLogs();
-		return;
-	}
-
-	if (Command == "HISTORY")
-	{
-		ExecuteHistory();
-		return;
-	}
 
 	if (Command.rfind("UE_LOG", 0) == 0)
 	{
@@ -248,6 +287,31 @@ void ConsoleWindow::ExecuteCommand(const char* Input)
 	AddLog("Unknown Command");
 	return;
 
+}
+
+bool ConsoleWindow::ExecuteBasicCommand(const FString& Command)
+{
+	FString Cmd = ToUpper(Command);
+	
+	if (Cmd == "HELP")
+	{
+		ExecuteHelp();
+		return true;
+	}
+
+	if (Cmd == "CLEAR")
+	{
+		ClearLogs();
+		return true;
+	}
+
+	if (Cmd == "HISTORY")
+	{
+		ExecuteHistory();
+		return true;
+	}
+
+	return false;
 }
 
 void ConsoleWindow::ExecuteHelp()
@@ -283,6 +347,7 @@ bool ConsoleWindow::ParseUELog(const FString& Input)
 {
 	ParsedArguments.Empty();
 
+	FString UpperCommand = ToUpper(Input);
 	const FString Command = "UE_LOG";
 
 	// UE_LOG로 시작하는지 확인.
@@ -386,6 +451,7 @@ bool ConsoleWindow::ParseTypeCompare(const FString& Input)
 	ParsedArguments.Empty();
 
 	const FString Command = "TYPE";
+	FString UpperCommand = ToUpper(Input);
 
 	// TYPE으로 시작하는지 확인.
 	if (Input.rfind(Command, 0) != 0)
@@ -563,10 +629,12 @@ void ConsoleWindow::UpdateSuggestions(const FString& Input)
 	if (Input.empty())
 		return;
 
+	FString UpperCmd = ToUpper(Input);
+
 	// 현재 입력 문자열로 시작하는 명령어만 추천 목록에 넣는다.
 	for (const FString& Command : Commands)
 	{
-		if (Command.rfind(Input, 0) == 0)
+		if (Command.rfind(UpperCmd, 0) == 0)
 			Suggestions.Add(Command);
 	}
 
@@ -607,4 +675,16 @@ FString ConsoleWindow::Trim(const FString& Str)
 		--End;
 
 	return Str.substr(Start, End - Start);
+}
+
+FString ConsoleWindow::ToUpper(const FString& Str)
+{
+	FString Result = Str;
+
+	for (char& C : Result)
+	{
+		C = static_cast<char>(std::toupper(static_cast<unsigned char>(C)));
+	}
+
+	return Result;
 }
