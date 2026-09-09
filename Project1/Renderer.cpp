@@ -605,19 +605,19 @@ void Renderer::CreateDepthStencil()
 
 
 	{// 아웃라이너용
-		//깊이 스텐실 상태 (1이 아니라면 아웃라이너 그리기)
+		// 가려진 영역도 항상 최상단 렌더링 본체는 스텐실로 보호
 		D3D11_DEPTH_STENCIL_DESC outlinerDesc = {};
 		outlinerDesc.DepthEnable = FALSE;
-		outlinerDesc.DepthFunc = D3D11_COMPARISON_LESS;
+		outlinerDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 
 		outlinerDesc.StencilEnable = TRUE;
 		outlinerDesc.StencilReadMask = 0xFF;
 		outlinerDesc.StencilWriteMask = 0xFF;
 
-		outlinerDesc.FrontFace.StencilFunc = D3D11_COMPARISON_NOT_EQUAL;	// 통과 조건: 새값!=기존값이면 통과!
-		outlinerDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;		// stencil 실패시
-		outlinerDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;	// stencil 통과, 깊이 실패
-		outlinerDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;		// 둘다 통과시
+		outlinerDesc.FrontFace.StencilFunc = D3D11_COMPARISON_NOT_EQUAL;
+		outlinerDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		outlinerDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		outlinerDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 
 		outlinerDesc.BackFace = outlinerDesc.FrontFace;
 
@@ -646,7 +646,7 @@ void Renderer::CreateDepthStencil()
 		selectedDesc.StencilWriteMask = 0xFF;
 
 		selectedDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		selectedDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		selectedDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_REPLACE;
 		selectedDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
 		selectedDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
@@ -738,28 +738,21 @@ void Renderer::DrawOutline(AActor* targetActor)
 	Transform trans = targetActor->GetTransform();
 	Mesh* mesh = targetActor->GetMesh();
 
-	//셰이더 및 아웃라인 상태 설정
+	// 아웃라인 셰이더 및 깊이 스텐실 상태 설정
 	PrepareOutlineShader(mesh->GetInputLayout());
-	RENDERER.SetOutlineParams(5.0f);
+	RENDERER.SetOutlineParams(4.0f);
 	SetOutlineState();
-
-	//메시보다 1.05배 큰 월드 행렬 구성
-	FMatrix S = FMatrix::Scale(trans.Scale * 1.05f);
-	FMatrix R = trans.Rotation.ToMatrix();
-	FMatrix T = FMatrix::Translation(trans.Location);
-	FMatrix outlineWorld = S * R * T;
 
 	if (targetActor->worldBuffer)
 	{
-		targetActor->worldBuffer->SetMat(outlineWorld);
+		targetActor->worldBuffer->SetMat(trans.WorldMat);
 		targetActor->worldBuffer->SetVSBuffer(0);
 	}
 
-	//그리는 건 mesh에서만 진행
-	mesh->SetColor(FLinearColor::Yellow);
-	mesh->Render();
-
+	// 아웃라인 셰이더 유지 상태로 드로우
+	mesh->IASet();
 	DeviceContext->Draw(mesh->GetNumVertices(), 0);
+
 	SetDefaultDepthState();
 }
 
