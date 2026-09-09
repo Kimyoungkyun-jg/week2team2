@@ -72,6 +72,10 @@ void DefaultScene::Render()
 	if (ImGui::Checkbox("Orthgraphic", &isOrtho)) {
 		cam.SetProjectionMode(isOrtho ? Orthographic : Perspective);
 	}
+	float fov = cam.GetFOV();
+	if (ImGui::SliderFloat("FOV", &fov, 10.0f, 150.0f))
+		cam.SetFOV(fov);
+	ImGui::Text("FOV: %.3f", cam.GetFOV());
 
 	FVector camLoc = cam.GetLocation();
 	if (ImGui::DragFloat3("Cam Pos", &camLoc.x, 0.05f, -20.0f, 20.0f))

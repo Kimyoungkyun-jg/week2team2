@@ -52,6 +52,7 @@ public:
 	float& GetRotationSpeedRef() { return rotationSpeed; }
 
 	float GetFOV() const { return fov; }
+	void SetFOV(float inFov) { fov = inFov; }
 
 	FMatrix GetViewMatrix() const;
 	FMatrix GetProjectionMatrix(float aspectRatio) const;
