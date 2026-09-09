@@ -80,3 +80,14 @@ void SceneManager::Render()
 {
 	if (m_currentScene) m_currentScene->Render();
 }
+
+void SceneManager::Release()
+{
+	m_currentScene = nullptr;
+	// 모든 씬 해제
+	for (auto& pair : m_scenes)
+	{
+		delete pair.second;
+	}
+	m_scenes.clear();
+}

@@ -20,6 +20,11 @@ public:
 		}
 		AllClassInfoMap.clear();
 
+		DestroyAllMeshes();
+	}
+
+	void DestroyAllMeshes()
+	{
 		for (auto& pair : AllMeshMap)
 		{
 			delete pair.second;

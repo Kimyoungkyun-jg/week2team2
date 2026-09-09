@@ -16,6 +16,7 @@ public:
     void ChangeScene(const FString& name);
     void Update(float deltaTime);
     void Render();
+    void Release();
 
 private:
     SceneManager() = default;

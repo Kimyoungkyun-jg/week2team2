@@ -227,6 +227,9 @@ void Renderer::ReleaseDeviceAndSwapChain()
 {
 	if (DeviceContext)
 	{
+		// 파이프라인 바인딩 해제
+		DeviceContext->ClearState();
+		DeviceContext->Flush();
 		DeviceContext->Release();
 		DeviceContext = nullptr;
 	}

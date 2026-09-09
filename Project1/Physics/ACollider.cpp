@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "ACollider.h"
 #include "Global.h"
-#include "ObjectManager.h"
 
 
 ACollider::~ACollider() {

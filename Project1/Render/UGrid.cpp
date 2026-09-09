@@ -2,6 +2,20 @@
 #include "UGrid.h"
 
 
+UGrid::~UGrid()
+{
+    if (GridMesh)
+    {
+        delete GridMesh;
+        GridMesh = nullptr;
+    }
+    if (WorldBuffer)
+    {
+        delete WorldBuffer;
+        WorldBuffer = nullptr;
+    }
+}
+
 void UGrid::Initialize()
 {
     CreateVertices();

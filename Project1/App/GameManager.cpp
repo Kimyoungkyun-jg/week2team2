@@ -144,8 +144,12 @@ void GameManager::Render()
 
 void GameManager::ReleaseAll()
 {
-	// 모든 오브젝트 명시적 해제
+	// 씬 리소스 해제
+	SCENE.Release();
+
+	// 모든 오브젝트 해제
 	OBJECT.DestroyAllObjects();
+	OBJECT.DestroyAllMeshes();
 
 	// 임구이 종료
 	ImGui_ImplDX11_Shutdown();
