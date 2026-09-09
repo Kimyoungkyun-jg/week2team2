@@ -230,6 +230,7 @@ void Renderer::CreateShader()
 	ID3DBlob* vsBlob = nullptr;
 	CreateVertexShader(shaderPath, "mainVS", &SimpleVertexShader, &vsBlob);
 	CreatePixelShader(shaderPath, "mainPS", &SimplePixelShader);
+	CreateVertexShader(shaderPath, "mainVS_Outline", &OutlineVertexShader);
 
 	//정점 타입만 넘기면 FVertexTraits를 통해 자동으로 InputLayout을 생성하고 TMap에 등록
 	RegisterInputLayout<FVertexSimple>(vsBlob);
@@ -260,6 +261,12 @@ void Renderer::ReleaseShader()
 	{
 		SimplePixelShader->Release();
 		SimplePixelShader = nullptr;
+	}
+
+	if (OutlineVertexShader)
+	{
+		OutlineVertexShader->Release();
+		OutlineVertexShader = nullptr;
 	}
 
 	if (SimpleVertexShader)
@@ -325,6 +332,17 @@ void Renderer::Prepare()
 
 	UINT stencilRef = 1; // 스텐실에 기록할 기준값
 	DeviceContext->OMSetDepthStencilState(dsState, stencilRef);
+}
+
+void Renderer::PrepareOutlineShader(ID3D11InputLayout* layout)
+{
+	ID3D11InputLayout* targetLayout = layout ? layout : SimpleInputLayout;
+	if (CurrentInputLayout != targetLayout) {
+		CurrentInputLayout = targetLayout;
+		DeviceContext->IASetInputLayout(targetLayout);
+	}
+	DeviceContext->VSSetShader(OutlineVertexShader, nullptr, 0);
+	DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
 }
 
 
@@ -479,16 +497,20 @@ void Renderer::SetOutlineState()
 	DeviceContext->OMSetDepthStencilState(dsOutlineState, stencilRef);
 }
 
+void Renderer::SetOutlineParams(float pixels)
+{
+	SetCustomColor(FLinearColor(pixels, ViewportInfo.Width, ViewportInfo.Height, 1.0f));
+}
+
 void Renderer::DrawOutline(AActor* targetActor)
 {
 	if (!targetActor || !targetActor->GetMesh()) return;
 
 	Mesh* mesh = targetActor->GetMesh();
-	const Transform& transform = targetActor->GetTransform();
 
 	//셰이더 및 아웃라인 상태 설정
-	PrepareShader(mesh->GetInputLayout());
-	SetCustomColor(FLinearColor::Yellow);
+	PrepareOutlineShader(mesh->GetInputLayout());
+	RENDERER.SetOutlineParams(5.0f);
 	SetOutlineState();
 
 	//메시보다 1.05배 큰 월드 행렬 구성
@@ -508,6 +530,9 @@ void Renderer::DrawOutline(AActor* targetActor)
 
 	//원래 월드 행렬 및 기본 깊이 복원
 	targetActor->SetWorldBuffer();
+
+	mesh->IASet();
+	DeviceContext->Draw(mesh->GetNumVertices(), 0);
 	SetDefaultDepthState();
 }
 
