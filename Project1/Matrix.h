@@ -19,6 +19,7 @@ struct FMatrix
     // 카메라 / 투영
     static FMatrix LookAt(const FVector& eye, const FVector& target, const FVector up);     // (보는 방향 x, 타겟 방향 y, 위쪽 방향 z)
     static FMatrix PerspectiveFov(float fovY, float aspectRatio, float nearZ, float farZ);  // (시야각(FoV), 화면비, 거리 범위)
+    static FMatrix Orthographic(float width, float hegiht, float nearZ, float farZ);  // (화면 크기, 거리 범위)
 
     // 행렬곱 / 전치행렬
     FMatrix operator* (const FMatrix& other) const; 

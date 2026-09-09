@@ -66,7 +66,13 @@ void DefaultScene::Render()
 
 	// 카메라 디버그 섹션
 	ImGui::TextColored(ImVec4(0.2f, 1.0f, 0.4f, 1.0f), "[ Camera Controls ]");
+	
 	Camera& cam = CAMERA;
+	bool isOrtho = (cam.GetProjectionMode() == Orthographic);
+	if (ImGui::Checkbox("Orthgraphic", &isOrtho)) {
+		cam.SetProjectionMode(isOrtho ? Orthographic : Perspective);
+	}
+
 	FVector camLoc = cam.GetLocation();
 	if (ImGui::DragFloat3("Cam Pos", &camLoc.x, 0.05f, -20.0f, 20.0f))
 	{
