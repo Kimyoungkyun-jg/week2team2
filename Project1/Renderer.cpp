@@ -135,7 +135,7 @@ void Renderer::CreateRasterizerState()
 {
 	D3D11_RASTERIZER_DESC rasterizerdesc = {};
 	rasterizerdesc.FillMode = D3D11_FILL_SOLID;
-	rasterizerdesc.CullMode = D3D11_CULL_NONE;
+	rasterizerdesc.CullMode = D3D11_CULL_BACK;
 	rasterizerdesc.FrontCounterClockwise = FALSE;
 	rasterizerdesc.DepthClipEnable = TRUE;
 
