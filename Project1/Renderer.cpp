@@ -513,22 +513,6 @@ void Renderer::DrawOutline(AActor* targetActor)
 	RENDERER.SetOutlineParams(5.0f);
 	SetOutlineState();
 
-	//메시보다 1.05배 큰 월드 행렬 구성
-	FMatrix S = FMatrix::Scale(transform.Scale * 1.05f);
-	FMatrix R = FMatrix::RotationZ(transform.Rotation.z) * FMatrix::RotationX(transform.Rotation.x) * FMatrix::RotationY(transform.Rotation.y);
-	FMatrix T = FMatrix::Translation(transform.Location);
-	FMatrix outlineWorld = S * R * T;
-
-	if (targetActor->worldBuffer)
-	{
-		targetActor->worldBuffer->SetMat(outlineWorld);
-		targetActor->worldBuffer->SetVSBuffer(0);
-	}
-
-	//그리는 건 mesh에서만 진행
-	mesh->Render();
-
-	//원래 월드 행렬 및 기본 깊이 복원
 	targetActor->SetWorldBuffer();
 
 	mesh->IASet();
