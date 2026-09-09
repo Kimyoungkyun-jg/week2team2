@@ -78,7 +78,22 @@ void ConsoleWindow::DrawConsole()
 
 	if (bResizeRequested)
 	{
-		UpdateLayout();
+		ImGuiViewport* Viewport = ImGui::GetMainViewport();
+
+		if (bWasCollapsed)
+		{
+			// 접힌 상태에서는 짧은 바 유지
+			ImGui::SetNextWindowSize(
+				ImVec2(100.0f, 0.0f),
+				ImGuiCond_Always
+			);
+		}
+		else
+		{
+			// 펼쳐진 상태에서는 하단 전체 크기
+			UpdateLayout();
+		}
+
 		bResizeRequested = false;
 	}
 
@@ -265,7 +280,7 @@ void ConsoleWindow::ExecuteCommand(const char* Input)
 	{
 		if (!ParseUELog(Command))
 		{
-			AddLog("Syntax Error");
+			AddLog("[Error] Syntax Error");
 			return;
 		}
 
@@ -277,14 +292,14 @@ void ConsoleWindow::ExecuteCommand(const char* Input)
 	{
 		if (!ParseTypeCompare(Command))
 		{
-			AddLog("Syntax Error");
+			AddLog("[Error] Syntax Error");
 			return;
 		}
 		ExecuteTypeCompare();
 		return;
 	}
 
-	AddLog("Unknown Command");
+	AddLog("[Error] Unknown Command");
 	return;
 
 }
