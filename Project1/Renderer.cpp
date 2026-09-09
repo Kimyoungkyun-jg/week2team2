@@ -202,11 +202,17 @@ void Renderer::CreateDeviceAndSwapChain(HWND hWindow)
 	swapchaindesc.OutputWindow = hWindow;
 	swapchaindesc.Windowed = TRUE;
 
+	UINT createDeviceFlags = 0;
+
+	#ifdef _DEBUG
+		createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;   // 디버그 레이어도 같이 켜기
+	#endif
+
 	D3D11CreateDeviceAndSwapChain(
 		nullptr,
 		D3D_DRIVER_TYPE_HARDWARE,
 		nullptr,
-		D3D11_CREATE_DEVICE_BGRA_SUPPORT,
+		createDeviceFlags,
 		featurelevels,
 		ARRAYSIZE(featurelevels),
 		D3D11_SDK_VERSION,

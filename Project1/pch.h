@@ -80,6 +80,9 @@ using namespace std;
 #define OBJECT ObjectManager::GetInstance()
 #define GM GameManager::GetInstance()
 
+#define IMGUI UIManager::GetInstance()
+#define SAVELOAD SaveLoadManager::GetInstance()
+
 
 #define WIN_WIDTH 1920	
 #define WIN_HEIGHT 1080
@@ -100,3 +103,9 @@ typedef string FString;
 //Scene Header
 #include "Scene.h"
 #include "SceneManager.h"
+
+//UI Header
+#include "UIManager.h"
+
+//SaveLoad Header
+#include "SaveLoadManager.h"
