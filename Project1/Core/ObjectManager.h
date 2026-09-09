@@ -50,71 +50,40 @@ public:
 		AllClassInfoMap[name] = newInfo;
 		return newInfo;
 	}
-	void Destroy(UObject* Target)
+	TMap<uint32, ACollider*> ColliderMap;
+
+	void AddCollider(ACollider* col)
 	{
-		for (int32 i = static_cast<int32>(AllObjects.size()) - 1; i >= 0; --i)
+		if (col)
 		{
-			if (AllObjects[i] == Target)
-			{
-				if (ACollider* Collider = dynamic_cast<ACollider*>(Target))
-				{
-					CollisionManager::GetInstance().DeleteColider(Collider->GetID());
-				}
-
-				UObject* temp = AllObjects[i];
-				swap(AllObjects[i], AllObjects.back());
-				AllObjects.pop_back();
-				
-				delete(temp);
-
-
-				break;
-			}
+			ColliderMap[col->GetID()] = col;
 		}
 	}
 
-	void DestroyAllObjects()
+	// 콜라이더 맵에서만 제거
+	void DestroyCollider(uint32 id)
 	{
-		for (int32 i = static_cast<int32>(AllObjects.size()) - 1; i >= 0; --i)
-		{
-			delete(AllObjects[i]);
-		}
-
-		AllObjects.clear();
+		ColliderMap.Remove(id);
 	}
 
-	void DestroyAllActors()
+	void DestroyCollider(ACollider* col)
 	{
-		for (int32 i = static_cast<int32>(AllObjects.size()) - 1; i >= 0; --i)
+		if (col)
 		{
-			if (AActor* Actor = dynamic_cast<AActor*>(AllObjects[i]))
-			{
-				CollisionManager::GetInstance().DeleteColider(Actor->GetID());
-			}
-
-			UObject* temp = AllObjects[i];
-			swap(AllObjects[i], AllObjects.back());
-			AllObjects.pop_back();
-			delete(temp);
+			ColliderMap.Remove(col->GetID());
 		}
 	}
 
-	// new Scene 만들 때 사용하는 Colliders 삭제 함수
+	// 콜라이더 맵만 클리어
 	void DestroyAllColliders()
 	{
-		for (int32 i = static_cast<int32>(AllObjects.size()) - 1; i >= 0; --i)
-		{
-			ACollider* Actor = dynamic_cast<ACollider*>(AllObjects[i]);
-			if(!Actor) continue;
-
-			CollisionManager::GetInstance().DeleteColider(Actor->GetID());
-
-			UObject* temp = AllObjects[i];
-			swap(AllObjects[i], AllObjects.back());
-			AllObjects.pop_back();
-			delete(temp);
-		}
+		ColliderMap.clear();
 	}
+
+	void Destroy(UObject* Target);
+	void DestroyAllObjects();
+	void DestroyAllActors();
+	void DestroyAllActor() { DestroyAllActors(); }
 
 	UObject* Find(uint32 ID)
 	{

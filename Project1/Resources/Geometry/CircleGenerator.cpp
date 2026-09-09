@@ -16,11 +16,11 @@ TArray<FVertexColor> CircleGenerator::MakeCircle(int segmentCount, float r, floa
         // 중심점
         vertices.Add({ 0.0f, 0.0f, 0.0f, r, g, b, a });
         
-        // 현재 둘레점
-        vertices.Add({ cosf(theta1), sinf(theta1), 0.0f, r, g, b, a });
-        
         // 다음 둘레점
         vertices.Add({ cosf(theta2), sinf(theta2), 0.0f, r, g, b, a });
+
+        // 현재 둘레점
+        vertices.Add({ cosf(theta1), sinf(theta1), 0.0f, r, g, b, a });
     }
 
 

@@ -98,7 +98,7 @@ public:
 		T* Colider = SpawnActor<T>(Location, Scale, std::forward<Args>(args)...);
 
 		Colider->SetMass(Mass);
-		CollisionManager::GetInstance().AddColider(Colider);
+		ObjectManager::GetInstance().AddCollider(Colider);
 
 		return static_cast<T*>(Colider);
 	}
@@ -106,10 +106,10 @@ public:
 	static inline bool TraceSphere(TArray<ACollider*>& Result, FVector Location = {0,0,0}, float Radius = 1.0f)
 	{
 		bool bFound = false;
-		TArray<ACollider*> Colliders = CollisionManager::GetInstance().colliders;
-		for (ACollider* c : Colliders)
+		for (auto& pair : ObjectManager::GetInstance().ColliderMap)
 		{
-			if ((c->GetLocation() - Location).LengthSquared() <= Radius * Radius)
+			ACollider* c = pair.second;
+			if (c && (c->GetLocation() - Location).LengthSquared() <= Radius * Radius)
 			{
 				Result.push_back(c);
 				bFound = true;
