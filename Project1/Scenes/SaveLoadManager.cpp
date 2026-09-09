@@ -120,7 +120,7 @@ void SaveLoadManager::SaveScene(const FString& path)
         if (!actor) continue;
         
         FVector location = actor->GetLocation();    // location 저장
-        FQuaternion rotation = actor->GetRotation();    // rotation 저장
+        FVector euler = FQuaternion::ToEuler(actor->GetRotation());    // rotation 저장
         FVector scale = actor->GetScale();          // scale 저장
         EPrimitive type = actor->GetPrimitive();    // type 저장
         if (type == EPrimitive::Gizmo) continue; // Gizmo면 pass
@@ -128,7 +128,7 @@ void SaveLoadManager::SaveScene(const FString& path)
         json objJson;
         // objJson["UUID"]     = actor->GetID();
         objJson["Location"] = { location.x, location.y, location.z }; // {x,y,z}-> [x,y,z] 형태로 저장됨
-        objJson["Rotation"] = { rotation.x, rotation.y, rotation.z };
+        objJson["Rotation"] = { euler.x, euler.y, euler.z };
         objJson["Scale"]    = { scale.x, scale.y, scale.z };
         // objJson["Class"]    = string(actor->GetObjClassName()); // ACube, ASphere ...
         objJson["Type"]     = EPrimitiveToStr(type);           // Sphere -> "Sphere", Cube -> "Cube"
